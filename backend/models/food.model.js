@@ -23,6 +23,6 @@ const foodModelSchema = new Schema({
   },
 });
 
-const FoodModel = model("FoodModel", foodModelSchema);
+const FoodModel = model("menuItem", foodModelSchema);
 
 export default FoodModel;
