@@ -31,7 +31,7 @@ const beverageModelSchema = new Schema({
   sizesPrices: [sizePriceSchema],
 });
 
-const BeverageModel = model('menuItem', beverageModelSchema);
+const BeverageModel = model('beverage', beverageModelSchema);
 
 export default BeverageModel;
 
