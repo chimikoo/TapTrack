@@ -115,6 +115,7 @@ const deleteUser = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("You are not authorized to perform this action");
   }
+
   const { id } = req.params;
   // delete the user
   await UserModel.findByIdAndDelete(id);
@@ -123,3 +124,4 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 export { register, login, logout, updateUser, deleteUser };
+

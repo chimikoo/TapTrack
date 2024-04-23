@@ -10,4 +10,5 @@ const isManager = asyncHandler((req, res, next) => {
   next();
 });
 
+
 export default isManager;
