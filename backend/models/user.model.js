@@ -20,7 +20,7 @@ const userModelSchema = new Schema({
   role: { 
     type: String, 
     enum: ["waiter", "manager", "admin"], 
-    default: "user" 
+    default: "waiter" 
 },
 });
 

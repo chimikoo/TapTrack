@@ -11,4 +11,5 @@ const isWaiter = asyncHandler((req, res, next) => {
   }
   next();
 });
+
 export default isWaiter
