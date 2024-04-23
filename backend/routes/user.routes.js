@@ -1,7 +1,12 @@
 import { Router } from "express";
-import { deleteUser, login, logout, register, updateUser } from "../controllers/user.controllers.js";
-import { isAdmin } from "../middlewares/isAdmin.js";
-
+import {
+  deleteUser,
+  login,
+  logout,
+  register,
+  updateUser,
+} from "../controllers/user.controllers.js";
+import isAuth from "../middlewares/isAuth.js";
 
 const router = Router();
 
@@ -15,9 +20,9 @@ router.post("/login", login);
 router.get("/logout", logout);
 
 // PUT /users/update/:id
-router.put("/update/:id", isAdmin, updateUser);
+router.put("/update/:id", isAuth, updateUser);
 
 // DELETE /users/delete/:id
-router.delete("/delete/:id", isAdmin, deleteUser);
+router.delete("/delete/:id", isAuth, deleteUser);
 
 export default router;

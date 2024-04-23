@@ -1,7 +1,7 @@
 import asyncHandler from "../config/asyncHandler.js";
 import jwt from "jsonwebtoken";
 
-export const isAdmin = asyncHandler((req, res, next) => {
+const isAuth = asyncHandler((req, res, next) => {
   const token = req.cookies.token;
   if (token) {
     try {
@@ -19,3 +19,5 @@ export const isAdmin = asyncHandler((req, res, next) => {
     throw new Error("You are not authorized! No token found!");
   }
 });
+
+export default isAuth;
