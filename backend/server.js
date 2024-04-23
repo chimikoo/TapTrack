@@ -18,6 +18,7 @@ app.use(cookieParser());
 
 // ROUTES
 app.use("/users", userRoutes);
+app.use("/users/menu/items", menuRoutes);
 
 // ERROR HANDLER
 app.use(errorHandler);
