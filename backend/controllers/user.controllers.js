@@ -90,10 +90,12 @@ const updateUser = asyncHandler(async (req, res) => {
   }
   const { id } = req.params;
   const { username, password, name, email, role } = req.body;
+  // hash the updated password
+  const hashedPassword = await bcrypt.hash(password, 12);
   // Update the user
   await UserModel.findByIdAndUpdate(id, {
     username,
-    password,
+    password: hashedPassword,
     name,
     email,
     role,
