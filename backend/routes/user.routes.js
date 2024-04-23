@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { deleteUser, login, logout, register, updateUser } from "../controllers/user.controllers.js";
+import { isAdmin } from "../middlewares/isAdmin.js";
 
 const router = Router();
 
@@ -13,9 +14,9 @@ router.post("/login", login);
 router.get("/logout", logout);
 
 // PUT /users/update/:id
-router.put("/update/:id", updateUser);
+router.put("/update/:id", isAdmin, updateUser);
 
 // DELETE /users/delete/:id
-router.delete("/delete/:id", deleteUser);
+router.delete("/delete/:id", isAdmin, deleteUser);
 
 export default router;

@@ -49,9 +49,13 @@ const login = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
   // Create a token
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
-  });
+  const token = jwt.sign(
+    { userId: user._id, userRole: user.role },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "30d",
+    }
+  );
   // Set a cookie
   const cookieOptions = {
     httpOnly: true,
@@ -79,18 +83,19 @@ const logout = asyncHandler(async (req, res) => {
 @access   Private
 */
 const updateUser = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "admin") {
+    res.status(401);
+    throw new Error("You are not authorized to perform this action");
+  }
   const { id } = req.params;
   const { username, password, name, email, role } = req.body;
-  // Check if the user exists
-  const user = await UserModel.findOne({ username });
-  if (!user) {
-    res.status(400);
-    throw new Error("User not found");
-  }
+  // hash the updated password
+  const hashedPassword = await bcrypt.hash(password, 12);
   // Update the user
   await UserModel.findByIdAndUpdate(id, {
     username,
-    password,
+    password: hashedPassword,
     name,
     email,
     role,
@@ -105,12 +110,16 @@ const updateUser = asyncHandler(async (req, res) => {
 @access   Private
 */
 const deleteUser = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "admin") {
+    res.status(401);
+    throw new Error("You are not authorized to perform this action");
+  }
   const { id } = req.params;
   // delete the user
   await UserModel.findByIdAndDelete(id);
   // Send the response
   res.status(200).json({ message: "User deleted successfully" });
 });
-
 
 export { register, login, logout, updateUser, deleteUser };
