@@ -1,9 +1,10 @@
 import express from "express";
 import colors from "colors";
+import cookieParser from "cookie-parser";
 import connectDB from "./config/connectDB.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import userRoutes from "./routes/user.routes.js";
-import cookieParser from "cookie-parser";
+import menuRoutes from "./routes/menu.routes.js";
 
 const { PORT } = process.env;
 const app = express();
