@@ -22,10 +22,6 @@ const userModelSchema = new Schema({
     enum: ["waiter", "manager", "admin"], 
     default: "waiter" 
 },
-  forcedLogout: {
-    type: Boolean,
-    default: false
-  }
 });
 
 const UserModel = model("user", userModelSchema);
