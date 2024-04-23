@@ -5,7 +5,7 @@ const sizePriceSchema = new Schema({
   price: Number,
 });
 
-const drinkModelSchema = new Schema({
+const beverageModelSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -14,10 +14,15 @@ const drinkModelSchema = new Schema({
     type: String,
     required: true,
   },
+  category: {
+    type: String,
+    required: true,
+    default: 'beverage'
+  },
   type: {
     type: String,
     required: true,
-    enum: ['Wine', 'Spirits', 'Beer', 'Soda'],
+    enum: ['wine', 'spirits', 'beer', 'soda'],
   },
   extras: {
     type: [String],
@@ -26,14 +31,15 @@ const drinkModelSchema = new Schema({
   sizesPrices: [sizePriceSchema],
 });
 
-const DrinkModel = model('menuItem', drinkModelSchema);
+const BeverageModel = model('menuItem', beverageModelSchema);
 
-export default DrinkModel;
+export default BeverageModel;
 
 // ** This is what a post man request would look like for example **
 // {
 //  "name": "Example Drink",
 //  "description": "This is an example drink",
+//  "category": "beverage",
 //  "type": "Wine",
 //  "extras": ["Extra 1", "Extra 2"],
 //  "sizesPrices": [
