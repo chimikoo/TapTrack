@@ -2,6 +2,7 @@ import { Router } from "express";
 import { deleteUser, login, logout, register, updateUser } from "../controllers/user.controllers.js";
 import { isAdmin } from "../middlewares/isAdmin.js";
 
+
 const router = Router();
 
 // POST /users/register
