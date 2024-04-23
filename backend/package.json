@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "node --watch --env-file=.env server.js",
-    "seeder": "node seeder.js",
+    "seeder": "node --env-file=.env seeder.js",
     "start": "node server.js"
   },
   "author": "",
