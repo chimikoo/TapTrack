@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 // Define sub-schema for nested objects
 const receiptSchema = new Schema({
-  orderId: { type: Schema.Types.ObjectId, ref: "Order", required: true }, // Reference to the order
+  orderId: { type: Schema.Types.ObjectId, ref: "order", required: true }, // Reference to the order
   totalAmount: { type: Number, required: true },
   paymentMethod: {
     type: String,
