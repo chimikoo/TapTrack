@@ -17,6 +17,6 @@ router.get("/logout", logout);
 router.put("/update/:id", isAdmin, updateUser);
 
 // DELETE /users/delete/:id
-router.delete("/delete/:id", deleteUser);
+router.delete("/delete/:id", isAdmin, deleteUser);
 
 export default router;
