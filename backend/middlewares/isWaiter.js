@@ -1,6 +1,6 @@
 import asyncHandler from "../config/asyncHandler.js";
 
-export const isWaiter = asyncHandler((req, res, next) => {
+const isWaiter = asyncHandler((req, res, next) => {
   if (
     req.user.role !== "user" &&
     req.user.role !== "admin" &&
@@ -11,3 +11,4 @@ export const isWaiter = asyncHandler((req, res, next) => {
   }
   next();
 });
+

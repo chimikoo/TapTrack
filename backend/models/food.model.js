@@ -15,7 +15,8 @@ const foodModelSchema = new Schema({
   },
   category: { 
     type: String, 
-    required: true 
+    required: true,
+    enum: ["starter", "main", "side", "dessert"]
   },
   extra: { 
     type: [String], 
@@ -23,6 +24,6 @@ const foodModelSchema = new Schema({
   },
 });
 
-const FoodModel = model("menuItem", foodModelSchema);
+const FoodModel = model("food", foodModelSchema);
 
 export default FoodModel;
