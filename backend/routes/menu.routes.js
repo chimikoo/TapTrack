@@ -1,4 +1,6 @@
 import { Router } from "express";
+import isAuth from "../middlewares/isAuth.js";
+
 import {
   createBeverageItem,
   createFoodItem,
@@ -18,42 +20,42 @@ import {
 const router = Router();
 
 // GET /users/menu/items
-router.get("/", getAllMenuItems);
+router.get("/", isAuth, getAllMenuItems);
 
 // GET /users/menu/items/foods
-router.get("/foods", getAllFoodItems);
+router.get("/foods", isAuth, getAllFoodItems);
 
 // GET /users/menu/items/beverages
-router.get("/beverages", getAllBeverageItems);
+router.get("/beverages", isAuth, getAllBeverageItems);
 
 // GET /users/menu/items/foods/:id
-router.get("/foods/:id", getOneFoodItem);
+router.get("/foods/:id", isAuth, getOneFoodItem);
 
 // GET /users/menu/items/beverages/:id
-router.get("/beverages/:id", getOneBeverageItem);
+router.get("/beverages/:id", isAuth, getOneBeverageItem);
 
 // POST /users/menu/items/addFood
-router.post("/addFood", createFoodItem);
+router.post("/addFood", isAuth, createFoodItem);
 
 // POST /users/menu/items/addBeverage
-router.post("/addBeverage", createBeverageItem);
+router.post("/addBeverage", isAuth, createBeverageItem);
 
 // PUT /users/menu/items/updateFood/:id
-router.put("/updateFood/:id", updateFoodItem);
+router.put("/updateFood/:id", isAuth, updateFoodItem);
 
 // PUT /users/menu/items/updateBeverage/:id
-router.put("/updateBeverage/:id", updateBeverageItem);
+router.put("/updateBeverage/:id", isAuth, updateBeverageItem);
 
 // DELETE /users/menu/items/deleteFood/:id
-router.delete("/deleteFood/:id", deleteFoodItem);
+router.delete("/deleteFood/:id", isAuth, deleteFoodItem);
 
 // DELETE /users/menu/items/deleteBeverage/:id
-router.delete("/deleteBeverage/:id", deleteBeverageItem);
+router.delete("/deleteBeverage/:id", isAuth, deleteBeverageItem);
 
 // PATCH /users/menu/items/updateFoodExtras/:id
-router.patch("/updateFoodExtras/:id", updateFoodExtras);
+router.patch("/updateFoodExtras/:id", isAuth, updateFoodExtras);
 
 // PATCH /users/menu/items/updateBeverageExtras/:id
-router.patch("/updateBeverageExtras/:id", updateBeverageExtras);
+router.patch("/updateBeverageExtras/:id", isAuth, updateBeverageExtras);
 
 export default router;

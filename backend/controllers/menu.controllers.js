@@ -8,6 +8,11 @@ import BeverageModel from "../models/beverage.model.js";
 @access Public
 */
 const getAllMenuItems = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const foods = await FoodModel.find();
   const beverages = await BeverageModel.find();
   res
@@ -21,6 +26,11 @@ const getAllMenuItems = asyncHandler(async (req, res) => {
 @access Public
 */
 const getAllFoodItems = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const foods = await FoodModel.find();
   res.status(200).json({ message: "All food items", data: foods });
 });
@@ -31,6 +41,11 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
 @access Public
 */
 const getAllBeverageItems = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const beverages = await BeverageModel.find();
   res.status(200).json({ message: "All beverage items", data: beverages });
 });
@@ -41,6 +56,11 @@ const getAllBeverageItems = asyncHandler(async (req, res) => {
 @access Public
 */
 const getOneFoodItem = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const food = await FoodModel.findById(req.params.id);
   if (!food) {
     res.status(404);
@@ -55,6 +75,11 @@ const getOneFoodItem = asyncHandler(async (req, res) => {
 @access Public
 */
 const getOneBeverageItem = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const beverage = await BeverageModel.findById(req.params.id);
   if (!beverage) {
     res.status(404);
@@ -69,6 +94,11 @@ const getOneBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const createFoodItem = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const { name, price, description, category } = req.body;
   const newFoodItem = await FoodModel.create({
     name,
@@ -85,6 +115,11 @@ const createFoodItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const createBeverageItem = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const { name, description, category, type, sizesPrices } = req.body;
   const newBeverageItem = await BeverageModel.create({
     name,
@@ -104,6 +139,11 @@ const createBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const updateFoodItem = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const { name, price, description, category } = req.body;
   const updatedFoodItem = await FoodModel.findByIdAndUpdate(
     req.params.id,
@@ -119,6 +159,11 @@ const updateFoodItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const updateBeverageItem = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const { name, description, category, type, sizesPrices } = req.body;
   const updatedBeverageItem = await BeverageModel.findByIdAndUpdate(
     req.params.id,
@@ -136,6 +181,11 @@ const updateBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const deleteFoodItem = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   await FoodModel.findByIdAndDelete(req.params.id);
   res.status(200).json({ message: "Food item deleted" });
 });
@@ -146,6 +196,11 @@ const deleteFoodItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const deleteBeverageItem = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   await BeverageModel.findByIdAndDelete(req.params.id);
   res.status(200).json({ message: "Beverage item deleted" });
 });
@@ -156,6 +211,11 @@ const deleteBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const updateFoodExtras = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const { extras } = req.body;
   const updatedFoodItem = await FoodModel.findByIdAndUpdate(
     req.params.id,
@@ -171,6 +231,11 @@ const updateFoodExtras = asyncHandler(async (req, res) => {
 @access Private
 */
 const updateBeverageExtras = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
   const { extras } = req.body;
   const updatedBeverageItem = await BeverageModel.findByIdAndUpdate(
     req.params.id,
