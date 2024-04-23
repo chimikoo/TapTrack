@@ -17,5 +17,12 @@ export const isAdmin = asyncHandler((req, res, next) => {
   } else {
     res.status(401);
     throw new Error("You are not authorized! No token found!");
+
+const isAdmin = asyncHandler((req, res, next) => {
+  if (req.user.role !== "admin") {
+    res.status(403);
+    throw new Error("Access forbidden. You must be an admin.");
   }
 });
+
+export default isAdmin;
