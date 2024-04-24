@@ -5,7 +5,7 @@ import ExtraModel from "../models/extra.model.js";
 
 /* 
 @desc   Get all menu items
-@route  GET /users/menu/items
+@route  GET /users/menu-items
 @access Public
 */
 const getAllMenuItems = asyncHandler(async (req, res) => {
@@ -23,7 +23,7 @@ const getAllMenuItems = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Get all food items
-@route  GET /users/menu/items/foods
+@route  GET /users/menu-items/foods
 @access Public
 */
 const getAllFoodItems = asyncHandler(async (req, res) => {
@@ -38,7 +38,7 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Get all beverage items
-@route  GET /users/menu/items/beverages
+@route  GET /users/menu-items/beverages
 @access Public
 */
 const getAllBeverageItems = asyncHandler(async (req, res) => {
@@ -53,7 +53,7 @@ const getAllBeverageItems = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Get one food item
-@route  GET /users/menu/items/food/:id
+@route  GET /users/menu-items/foods/:id
 @access Public
 */
 const getOneFoodItem = asyncHandler(async (req, res) => {
@@ -72,7 +72,7 @@ const getOneFoodItem = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Get one beverage item
-@route  GET /users/menu/items/beverage/:id
+@route  GET /users/menu-items/beverages/:id
 @access Public
 */
 const getOneBeverageItem = asyncHandler(async (req, res) => {
@@ -91,7 +91,7 @@ const getOneBeverageItem = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Create a food item
-@route  POST /users/menu/items/addFood
+@route  POST /users/menu-items/foods
 @access Private
 */
 const createFoodItem = asyncHandler(async (req, res) => {
@@ -112,7 +112,7 @@ const createFoodItem = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Create a beverage item
-@route  POST /users/menu/items/addBeverage
+@route  POST /users/menu-items/beverages
 @access Private
 */
 const createBeverageItem = asyncHandler(async (req, res) => {
@@ -136,7 +136,7 @@ const createBeverageItem = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Update a food item
-@route  PUT /users/menu/items/updateFood/:id
+@route  PUT /users/menu-items/foods/:id
 @access Private
 */
 const updateFoodItem = asyncHandler(async (req, res) => {
@@ -156,7 +156,7 @@ const updateFoodItem = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Update a beverage item
-@route  PUT /users/menu/items/updateBeverage/:id
+@route  PUT /users/menu-items/beverages/:id
 @access Private
 */
 const updateBeverageItem = asyncHandler(async (req, res) => {
@@ -178,7 +178,7 @@ const updateBeverageItem = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Delete a food item
-@route  DELETE /users/menu/items/deleteFood/:id
+@route  DELETE /users/menu-items/foods/:id
 @access Private
 */
 const deleteFoodItem = asyncHandler(async (req, res) => {
@@ -193,7 +193,7 @@ const deleteFoodItem = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Delete a beverage item
-@route  DELETE /users/menu/items/deleteBeverage/:id
+@route  DELETE /users/menu-items/beverages/:id
 @access Private
 */
 const deleteBeverageItem = asyncHandler(async (req, res) => {
@@ -208,7 +208,7 @@ const deleteBeverageItem = asyncHandler(async (req, res) => {
 
 /* 
 @desc   ADD extras
-@route  POST /users/menu/items/addExtra/
+@route  POST /users/menu-items/extras
 @access Private
 */
 const addExtra = asyncHandler(async (req, res) => {
