@@ -20,8 +20,12 @@ app.use(cookieParser());
 
 // ROUTES
 app.use("/users", userRoutes);
+<<<<<<< HEAD
 app.use("/users/menu/items", menuRoutes);
 app.use("/users/menu/order", orderRoutes);
+=======
+app.use("/users/menu-items", menuRoutes);
+>>>>>>> main
 
 // ERROR HANDLER
 app.use(errorHandler);

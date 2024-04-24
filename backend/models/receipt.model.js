@@ -11,6 +11,7 @@ const receiptSchema = new Schema({
   },
   transactionDate: { type: Date, default: Date.now },
   notes: { type: String, default: "" },
+  isPaid: { type: Boolean, default: false },
 });
 
 // Calculate totalAmount before saving the receipt document
@@ -36,7 +37,7 @@ receiptSchema.pre("save", async function (next) {
     const beverageSubtotals = order.drinks.map((beverage) =>
       calculateBeverageSubtotal(beverage)
     );
-    
+
     const totalAmount =
       foodSubtotals.reduce((acc, curr) => acc + curr, 0) +
       beverageSubtotals.reduce((acc, curr) => acc + curr, 0);
