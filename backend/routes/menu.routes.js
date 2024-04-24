@@ -11,9 +11,8 @@ import {
   getAllMenuItems,
   getOneBeverageItem,
   getOneFoodItem,
-  updateBeverageExtras,
   updateBeverageItem,
-  updateFoodExtras,
+  addExtra,
   updateFoodItem,
 } from "../controllers/menu.controllers.js";
 
@@ -52,10 +51,7 @@ router.delete("/deleteFood/:id", isAuth, deleteFoodItem);
 // DELETE /users/menu/items/deleteBeverage/:id
 router.delete("/deleteBeverage/:id", isAuth, deleteBeverageItem);
 
-// PATCH /users/menu/items/updateFoodExtras/:id
-router.patch("/updateFoodExtras/:id", isAuth, updateFoodExtras);
-
-// PATCH /users/menu/items/updateBeverageExtras/:id
-router.patch("/updateBeverageExtras/:id", isAuth, updateBeverageExtras);
+// POST /users/menu/items/addExtra
+router.post("/addExtra", isAuth, addExtra);
 
 export default router;

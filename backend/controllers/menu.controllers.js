@@ -1,6 +1,7 @@
 import asyncHandler from "../config/asyncHandler.js";
 import FoodModel from "../models/food.model.js";
 import BeverageModel from "../models/beverage.model.js";
+import ExtraModel from "../models/extra.model.js";
 
 /* 
 @desc   Get all menu items
@@ -206,45 +207,19 @@ const deleteBeverageItem = asyncHandler(async (req, res) => {
 });
 
 /* 
-@desc   Update food extras
-@route  PATCH /users/menu/items/updateFoodExtras/:id
+@desc   ADD extras
+@route  POST /users/menu/items/addExtra/
 @access Private
 */
-const updateFoodExtras = asyncHandler(async (req, res) => {
+const addExtra = asyncHandler(async (req, res) => {
   const { userRole } = req;
   if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
     res.status(403);
     throw new Error("Not authorized!");
   }
-  const { extras } = req.body;
-  const updatedFoodItem = await FoodModel.findByIdAndUpdate(
-    req.params.id,
-    { $push: { extras } },
-    { new: true }
-  );
-  res.status(200).json({ message: "Food item updated", data: updatedFoodItem });
-});
-
-/* 
-@desc   Update beverage extras
-@route  PATCH /users/menu/items/updateBeverageExtras/:id
-@access Private
-*/
-const updateBeverageExtras = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
-  const { extras } = req.body;
-  const updatedBeverageItem = await BeverageModel.findByIdAndUpdate(
-    req.params.id,
-    { $push: { extras } },
-    { new: true }
-  );
-  res
-    .status(200)
-    .json({ message: "Beverage item updated", data: updatedBeverageItem });
+  const { extra, price } = req.body;
+  const newExtra = await ExtraModel.create({ extra, price });
+  res.status(201).json({ message: "Extra added", data: newExtra });
 });
 
 export {
@@ -259,6 +234,5 @@ export {
   updateBeverageItem,
   deleteFoodItem,
   deleteBeverageItem,
-  updateFoodExtras,
-  updateBeverageExtras,
+  addExtra,
 };
