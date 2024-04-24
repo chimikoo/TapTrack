@@ -48,6 +48,11 @@ const login = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Invalid credentials");
   }
+
+  // Start shift duration tracking
+  req.shiftStart = new Date();
+  console.log("Shift started at:", req.shiftStart);
+  
   // Create a token
   const token = jwt.sign(
     { userId: user._id, userRole: user.role },
@@ -73,6 +78,12 @@ const login = asyncHandler(async (req, res) => {
 @access   Private
 */
 const logout = asyncHandler(async (req, res) => {
+  // End shift duration tracking
+  const shiftEnd = new Date();
+  const shiftDuration = shiftEnd - req.shiftStart;
+  console.log("Shift ended at:", shiftEnd);
+  console.log("Total shift duration:", shiftDuration, "ms");
+  req.shiftStart = null; // reset shiftStart to null to allow for starting a new shift
   res.clearCookie("token");
   res.status(200).json({ message: "User logged out successfully" });
 });
@@ -124,4 +135,3 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 export { register, login, logout, updateUser, deleteUser };
-
