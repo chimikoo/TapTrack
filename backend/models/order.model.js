@@ -27,13 +27,16 @@ const orderSchema = new Schema({
   tableNumber: { type: Number, required: true },
   timestamp: { type: Date, default: Date.now },
   drinks: [
-    { type: Schema.Types.ObjectId, ref: "beverage", required: true }, // "beverage" is your beverage model
-  ], 
- 
+    { type: Schema.Types.ObjectId, ref: "beverage", required: true }, 
+  ],
+
   starter: [starterSchema],
   main: mainSchema,
   side: sideSchema,
   desert: [desertSchema],
+  extras: [
+    { type: Schema.Types.ObjectId, ref: "extra" }, 
+  ],
 });
 
 // Create and export the Mongoose model
