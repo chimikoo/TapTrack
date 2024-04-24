@@ -11,7 +11,7 @@ import isAuth from "../middlewares/isAuth.js";
 const router = Router();
 
 // POST /users/register
-router.post("/register", register);
+router.post("/register", isAuth, register);
 
 // POST /users/login
 router.post("/login", login);
