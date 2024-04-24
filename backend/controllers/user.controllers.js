@@ -9,6 +9,11 @@ import UserModel from "../models/user.model.js";
 @access   Public
 */
 const register = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "admin") {
+    res.status(401);
+    throw new Error("You are not authorized to perform this action");
+  }
   const { username, password, name, email } = req.body;
   // Check if the user already exists
   const userExists = await UserModel.findOne({ username });

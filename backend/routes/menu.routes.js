@@ -1,5 +1,4 @@
 import { Router } from "express";
-import isAuth from "../middlewares/isAuth.js";
 
 import {
   createBeverageItem,
@@ -18,40 +17,35 @@ import {
 
 const router = Router();
 
-// GET /users/menu/items
-router.get("/", isAuth, getAllMenuItems);
+// GET /users/menu-items
+router.get("/", getAllMenuItems);
 
-// GET /users/menu/items/foods
-router.get("/foods", isAuth, getAllFoodItems);
+// foods routes
+router
+  .route("/foods")
+  .get(getAllFoodItems) // GET /users/menu-items/foods
+  .post(createFoodItem); // POST /users/menu-items/foods
+  
+router
+  .route("/foods/:id")
+  .get(getOneFoodItem) // GET /users/menu-items/foods/:id
+  .put(updateFoodItem) // PUT /users/menu-items/foods/:id
+  .delete(deleteFoodItem); // DELETE /users/menu-items/foods/:id
 
-// GET /users/menu/items/beverages
-router.get("/beverages", isAuth, getAllBeverageItems);
+// beverages routes
+router
+  .route("/beverages")
+  .get(getAllBeverageItems) // GET /users/menu-items/beverages
+  .post(createBeverageItem); // POST /users/menu-items/beverages
 
-// GET /users/menu/items/foods/:id
-router.get("/foods/:id", isAuth, getOneFoodItem);
+router
+  .route("/beverages/:id")
+  .get(getOneBeverageItem) // GET /users/menu-items/beverages/:id
+  .put(updateBeverageItem) // PUT /users/menu-items/beverages/:id
+  .delete(deleteBeverageItem); // DELETE /users/menu-items/beverages/:id
 
-// GET /users/menu/items/beverages/:id
-router.get("/beverages/:id", isAuth, getOneBeverageItem);
 
-// POST /users/menu/items/addFood
-router.post("/addFood", isAuth, createFoodItem);
-
-// POST /users/menu/items/addBeverage
-router.post("/addBeverage", isAuth, createBeverageItem);
-
-// PUT /users/menu/items/updateFood/:id
-router.put("/updateFood/:id", isAuth, updateFoodItem);
-
-// PUT /users/menu/items/updateBeverage/:id
-router.put("/updateBeverage/:id", isAuth, updateBeverageItem);
-
-// DELETE /users/menu/items/deleteFood/:id
-router.delete("/deleteFood/:id", isAuth, deleteFoodItem);
-
-// DELETE /users/menu/items/deleteBeverage/:id
-router.delete("/deleteBeverage/:id", isAuth, deleteBeverageItem);
-
-// POST /users/menu/items/addExtra
-router.post("/addExtra", isAuth, addExtra);
+// POST /users/menu-items/extras
+router.post("/extras", addExtra);
 
 export default router;
