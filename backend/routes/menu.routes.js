@@ -1,5 +1,4 @@
 import { Router } from "express";
-import isAuth from "../middlewares/isAuth.js";
 
 import {
   createBeverageItem,
@@ -19,34 +18,34 @@ import {
 const router = Router();
 
 // GET /users/menu-items
-router.get("/", isAuth, getAllMenuItems);
+router.get("/", getAllMenuItems);
 
 // foods routes
 router
   .route("/foods")
-  .get(isAuth, getAllFoodItems) // GET /users/menu-items/foods
-  .post(isAuth, createFoodItem); // POST /users/menu-items/foods
+  .get(getAllFoodItems) // GET /users/menu-items/foods
+  .post(createFoodItem); // POST /users/menu-items/foods
   
 router
   .route("/foods/:id")
-  .get(isAuth, getOneFoodItem) // GET /users/menu-items/foods/:id
-  .put(isAuth, updateFoodItem) // PUT /users/menu-items/foods/:id
-  .delete(isAuth, deleteFoodItem); // DELETE /users/menu-items/foods/:id
+  .get(getOneFoodItem) // GET /users/menu-items/foods/:id
+  .put(updateFoodItem) // PUT /users/menu-items/foods/:id
+  .delete(deleteFoodItem); // DELETE /users/menu-items/foods/:id
 
 // beverages routes
 router
   .route("/beverages")
-  .get(isAuth, getAllBeverageItems) // GET /users/menu-items/beverages
-  .post(isAuth, createBeverageItem); // POST /users/menu-items/beverages
+  .get(getAllBeverageItems) // GET /users/menu-items/beverages
+  .post(createBeverageItem); // POST /users/menu-items/beverages
 
 router
   .route("/beverages/:id")
-  .get(isAuth, getOneBeverageItem) // GET /users/menu-items/beverages/:id
-  .put(isAuth, updateBeverageItem) // PUT /users/menu-items/beverages/:id
-  .delete(isAuth, deleteBeverageItem); // DELETE /users/menu-items/beverages/:id
+  .get(getOneBeverageItem) // GET /users/menu-items/beverages/:id
+  .put(updateBeverageItem) // PUT /users/menu-items/beverages/:id
+  .delete(deleteBeverageItem); // DELETE /users/menu-items/beverages/:id
 
 
 // POST /users/menu-items/extras
-router.post("/extras", isAuth, addExtra);
+router.post("/extras", addExtra);
 
 export default router;

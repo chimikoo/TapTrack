@@ -6,6 +6,7 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import userRoutes from "./routes/user.routes.js";
 import menuRoutes from "./routes/menu.routes.js";
 import orderRoutes from "./routes/order.routes.js";
+import isAuth from "./middlewares/isAuth.js";
 
 const { PORT } = process.env;
 const app = express();
@@ -20,12 +21,8 @@ app.use(cookieParser());
 
 // ROUTES
 app.use("/users", userRoutes);
-<<<<<<< HEAD
-app.use("/users/menu/items", menuRoutes);
-app.use("/users/menu/order", orderRoutes);
-=======
-app.use("/users/menu-items", menuRoutes);
->>>>>>> main
+app.use("/users/menu-items", isAuth, menuRoutes);
+app.use("/users/menu-orders", isAuth, orderRoutes);
 
 // ERROR HANDLER
 app.use(errorHandler);
