@@ -89,7 +89,22 @@ const getOrderById = asyncHandler(async (req, res) => {
 @route  PUT /users/menu-orders/:id
 @access Private
 */
-const updateOrder = asyncHandler(async (req, res) => {});
+const updateOrder = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
+  const order = await Order.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+  res.status(200).json({ message: "Order updated successfully", data: order });
+});
 
 /* 
 @desc   Delete an order
