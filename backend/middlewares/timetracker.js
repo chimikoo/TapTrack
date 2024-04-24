@@ -16,3 +16,6 @@ function endShift() {
   console.log("Shift ended at:", shiftEnd);
   console.log("Total shift duration:", shiftDuration, "ms");
 }
+
+
+export { startShift, endShift };
