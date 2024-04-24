@@ -33,7 +33,7 @@ const orderSchema = new Schema({
   starter: [starterSchema],
   main: mainSchema,
   side: sideSchema,
-  desert: [desertSchema],
+  dessert: [desertSchema],
   extras: [
     { type: Schema.Types.ObjectId, ref: "extra" }, 
   ],
