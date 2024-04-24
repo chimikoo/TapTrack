@@ -7,6 +7,7 @@ const isAuth = asyncHandler((req, res, next) => {
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET);
       // add the userRole to the request object
+      req.userId = payload.userId; // will be used in the order controllers
       req.userRole = payload.userRole;
       next();
     } catch (error) {
