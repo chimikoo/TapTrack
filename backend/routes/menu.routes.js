@@ -18,40 +18,35 @@ import {
 
 const router = Router();
 
-// GET /users/menu/items
+// GET /users/menu-items
 router.get("/", isAuth, getAllMenuItems);
 
-// GET /users/menu/items/foods
-router.get("/foods", isAuth, getAllFoodItems);
+// foods routes
+router
+  .route("/foods")
+  .get(isAuth, getAllFoodItems) // GET /users/menu-items/foods
+  .post(isAuth, createFoodItem); // POST /users/menu-items/foods
+  
+router
+  .route("/foods/:id")
+  .get(isAuth, getOneFoodItem) // GET /users/menu-items/foods/:id
+  .put(isAuth, updateFoodItem) // PUT /users/menu-items/foods/:id
+  .delete(isAuth, deleteFoodItem); // DELETE /users/menu-items/foods/:id
 
-// GET /users/menu/items/beverages
-router.get("/beverages", isAuth, getAllBeverageItems);
+// beverages routes
+router
+  .route("/beverages")
+  .get(isAuth, getAllBeverageItems) // GET /users/menu-items/beverages
+  .post(isAuth, createBeverageItem); // POST /users/menu-items/beverages
 
-// GET /users/menu/items/foods/:id
-router.get("/foods/:id", isAuth, getOneFoodItem);
+router
+  .route("/beverages/:id")
+  .get(isAuth, getOneBeverageItem) // GET /users/menu-items/beverages/:id
+  .put(isAuth, updateBeverageItem) // PUT /users/menu-items/beverages/:id
+  .delete(isAuth, deleteBeverageItem); // DELETE /users/menu-items/beverages/:id
 
-// GET /users/menu/items/beverages/:id
-router.get("/beverages/:id", isAuth, getOneBeverageItem);
 
-// POST /users/menu/items/foods
-router.post("/foods", isAuth, createFoodItem);
-
-// POST /users/menu/items/beverages
-router.post("/beverages", isAuth, createBeverageItem);
-
-// PUT /users/menu/items/foods/:id
-router.put("/foods/:id", isAuth, updateFoodItem);
-
-// PUT /users/menu/items/beverages/:id
-router.put("/beverages/:id", isAuth, updateBeverageItem);
-
-// DELETE /users/menu/items/foods/:id
-router.delete("/foods/:id", isAuth, deleteFoodItem);
-
-// DELETE /users/menu/items/beverages/:id
-router.delete("/beverages/:id", isAuth, deleteBeverageItem);
-
-// POST /users/menu/items/extras
+// POST /users/menu-items/extras
 router.post("/extras", isAuth, addExtra);
 
 export default router;
