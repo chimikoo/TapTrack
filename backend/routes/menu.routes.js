@@ -33,25 +33,25 @@ router.get("/foods/:id", isAuth, getOneFoodItem);
 // GET /users/menu/items/beverages/:id
 router.get("/beverages/:id", isAuth, getOneBeverageItem);
 
-// POST /users/menu/items/addFood
-router.post("/addFood", isAuth, createFoodItem);
+// POST /users/menu/items/foods
+router.post("/foods", isAuth, createFoodItem);
 
-// POST /users/menu/items/addBeverage
-router.post("/addBeverage", isAuth, createBeverageItem);
+// POST /users/menu/items/beverages
+router.post("/beverages", isAuth, createBeverageItem);
 
-// PUT /users/menu/items/updateFood/:id
-router.put("/updateFood/:id", isAuth, updateFoodItem);
+// PUT /users/menu/items/foods/:id
+router.put("/foods/:id", isAuth, updateFoodItem);
 
-// PUT /users/menu/items/updateBeverage/:id
-router.put("/updateBeverage/:id", isAuth, updateBeverageItem);
+// PUT /users/menu/items/beverages/:id
+router.put("/beverages/:id", isAuth, updateBeverageItem);
 
-// DELETE /users/menu/items/deleteFood/:id
-router.delete("/deleteFood/:id", isAuth, deleteFoodItem);
+// DELETE /users/menu/items/foods/:id
+router.delete("/foods/:id", isAuth, deleteFoodItem);
 
-// DELETE /users/menu/items/deleteBeverage/:id
-router.delete("/deleteBeverage/:id", isAuth, deleteBeverageItem);
+// DELETE /users/menu/items/beverages/:id
+router.delete("/beverages/:id", isAuth, deleteBeverageItem);
 
-// POST /users/menu/items/addExtra
-router.post("/addExtra", isAuth, addExtra);
+// POST /users/menu/items/extras
+router.post("/extras", isAuth, addExtra);
 
 export default router;
