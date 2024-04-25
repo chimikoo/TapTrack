@@ -7,11 +7,15 @@ import {
   updateUser,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
+import {
+  userValidationRules,
+  validate,
+} from "../middlewares/userValidation.js";
 
 const router = Router();
 
 // POST /users/register
-router.post("/register", isAuth, register);
+router.post("/register", isAuth, userValidationRules(), validate, register);
 
 // POST /users/login
 router.post("/login", login);
