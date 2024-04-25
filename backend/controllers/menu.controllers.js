@@ -14,8 +14,11 @@ const getAllMenuItems = asyncHandler(async (req, res) => {
     res.status(403);
     throw new Error("Not authorized!");
   }
-  const foods = await FoodModel.find();
-  const beverages = await BeverageModel.find();
+  const foodQuery = FoodModel.find();
+  const beverageQuery = BeverageModel.find();
+
+  const foods = await foodQuery;
+  const beverages = await beverageQuery;
   res
     .status(200)
     .json({ message: "All menu items", data: { foods, beverages } });
@@ -32,8 +35,24 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
     res.status(403);
     throw new Error("Not authorized!");
   }
-  const foods = await FoodModel.find();
-  res.status(200).json({ message: "All food items", data: foods });
+  let foodQuery = FoodModel.find();
+  // Filtering food items
+  if (req.query.category) {
+    foodQuery = foodQuery.where("category").equals(req.query.category);
+  }
+  if (req.query.name) {
+    foodQuery = foodQuery.where("name").regex(new RegExp(req.query.name, "i"));
+  }
+  if (req.query.price) {
+    foodQuery = foodQuery.where("price").lt(req.query.price);
+  }
+
+  const foods = await foodQuery;
+  res.status(200).json({
+    message: "All food items",
+    numberItems: foods.length,
+    data: foods,
+  });
 });
 
 /* 
@@ -47,8 +66,32 @@ const getAllBeverageItems = asyncHandler(async (req, res) => {
     res.status(403);
     throw new Error("Not authorized!");
   }
-  const beverages = await BeverageModel.find();
-  res.status(200).json({ message: "All beverage items", data: beverages });
+  let beverageQuery = BeverageModel.find();
+  // Filtering beverage items
+  if (req.query.name) {
+    beverageQuery = beverageQuery
+      .where("name")
+      .regex(new RegExp(req.query.name, "i"));
+  }
+  if (req.query.type) {
+    beverageQuery = beverageQuery.where("type").equals(req.query.type);
+  }
+  if (req.query.price) {
+    beverageQuery = beverageQuery
+      .where("sizesPrices.price")
+      .lt(req.query.price);
+  }
+  if (req.query.size) {
+    beverageQuery = beverageQuery
+      .where("sizesPrices.size")
+      .equals(req.query.size);
+  }
+  const beverages = await beverageQuery;
+  res.status(200).json({
+    message: "All beverage items",
+    numberItems: beverages.length,
+    data: beverages,
+  });
 });
 
 /* 
