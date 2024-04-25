@@ -14,14 +14,14 @@ const getAllMenuItems = asyncHandler(async (req, res) => {
     res.status(403);
     throw new Error("Not authorized!");
   }
-  const foodQuery = FoodModel.find();
-  const beverageQuery = BeverageModel.find();
+  const foods = await FoodModel.find();
+  const beverages = await BeverageModel.find();
 
-  const foods = await foodQuery;
-  const beverages = await beverageQuery;
-  res
-    .status(200)
-    .json({ message: "All menu items", data: { foods, beverages } });
+  res.status(200).json({
+    message: "All menu items",
+    numberItems: foods.length + beverages.length,
+    data: { foods, beverages },
+  });
 });
 
 /* 
@@ -47,10 +47,26 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
     foodQuery = foodQuery.where("price").lt(req.query.price);
   }
 
+  // Sorting
+  if (req.query.sort) {
+    foodQuery = foodQuery.sort(req.query.sort);
+  }
+
+  // Pagination
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const startIndex = (page - 1) * limit;
+  foodQuery = foodQuery.limit(limit).skip(startIndex);
+
   const foods = await foodQuery;
+  const totalPages = Math.ceil((await FoodModel.countDocuments()) / limit);
+  const totalItems = await FoodModel.countDocuments();
   res.status(200).json({
     message: "All food items",
-    numberItems: foods.length,
+    totalItems,
+    itemsPerPage: limit,
+    currentPage: page,
+    totalPages,
     data: foods,
   });
 });
@@ -86,9 +102,27 @@ const getAllBeverageItems = asyncHandler(async (req, res) => {
       .where("sizesPrices.size")
       .equals(req.query.size);
   }
+
+  // Sorting
+  if (req.query.sort) {
+    beverageQuery = beverageQuery.sort(req.query.sort);
+  }
+
+  // Pagination
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const startIndex = (page - 1) * limit;
+  beverageQuery = beverageQuery.limit(limit).skip(startIndex);
+
   const beverages = await beverageQuery;
+  const totalPages = Math.ceil((await BeverageModel.countDocuments()) / limit);
+  const totalItems = await BeverageModel.countDocuments();
   res.status(200).json({
     message: "All beverage items",
+    totalItems,
+    itemsPerPage: limit,
+    currentPage: page,
+    totalPages,
     numberItems: beverages.length,
     data: beverages,
   });
