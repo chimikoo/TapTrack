@@ -4,7 +4,6 @@ import { Schema, model } from "mongoose";
 const WorkingHoursSchema = new Schema({
   loggedInAt: {
     type: Date,
-    required: true,
   },
   loggedOutAt: {
     type: Date,

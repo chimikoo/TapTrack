@@ -17,7 +17,7 @@ router.post("/register", isAuth, register);
 router.post("/login", login);
 
 // GET /users/logout
-router.get("/logout", logout);
+router.get("/logout", isAuth, logout);
 
 // PUT /users/update/:id
 router.put("/update/:id", isAuth, updateUser);

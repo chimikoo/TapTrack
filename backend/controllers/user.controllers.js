@@ -98,16 +98,17 @@ const login = asyncHandler(async (req, res) => {
 @access   Private
 */
 const logout = asyncHandler(async (req, res) => {
-  const { userId } = req.user; // Assuming you have middleware to extract user ID from the request
+  const { userId } = req; // Assuming you have middleware to extract user ID from the request
   // Find the user's hour tracking record
   const hourTracking = await HourTracking.findOne({ userId });
+  console.log(hourTracking);
   if (!hourTracking) {
     res.status(404);
     throw new Error("Hour tracking record not found");
   }
   // Add entry to workingHours array
   const loggedOutAt = new Date();
-  hourTracking.workingHours.push({ loggedOutAt });
+  hourTracking.workingHours[hourTracking.workingHours.length - 1].loggedOutAt = loggedOutAt;
   await hourTracking.save(); // Save the user document with the updated workingHours array
 
   res.clearCookie("token");
