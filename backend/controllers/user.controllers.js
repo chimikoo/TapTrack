@@ -61,6 +61,15 @@ const login = asyncHandler(async (req, res) => {
       expiresIn: "30d",
     }
   );
+
+  // Add entry to workingHours array
+  const loggedInAt = new Date();
+  hourWorked.workingHours.push({ loggedInAt });
+  await hourWorked.save(); // Save the user document with the updated workingHours array
+
+  // You may also want to create a separate entry in the hour tracking model
+  await HourTracking.create({ userId: user._id, workingHours: [{ loggedInAt }] });
+
   // Set a cookie
   const cookieOptions = {
     httpOnly: true,
