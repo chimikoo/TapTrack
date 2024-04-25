@@ -28,26 +28,35 @@ const hourSchema = new Schema({
 // Define a method to calculate monthly hours for a user
 hourSchema.methods.calculateMonthlyHours = function (cutoffDate) {
   let totalHours = 0;
+  let durationHours = 0;
+  let durationMinutes = 0;
 
   // Loop through each working hours entry
-  for (const entry of this.workingHours) {
-    // Check if the entry falls within the cutoff date range
-    if (entry.loggedInAt >= cutoffDate && entry.loggedOutAt <= cutoffDate) {
-      // Calculate the duration between loggedInAt and loggedOutAt in milliseconds
-      const durationMs = entry.loggedOutAt - entry.loggedInAt;
+  for (let i = 0; i < this.workingHours.length - 1; i++) {
+    const entry = this.workingHours[i];
+    // Calculate the duration between loggedInAt and loggedOutAt in milliseconds
+    const durationMs = entry.loggedOutAt - entry.loggedInAt;
+    console.log(durationMs);
+    // Convert duration from milliseconds to hours
+    durationHours = durationMs / (1000 * 60 * 60);
 
-      // Convert duration from milliseconds to hours
-      const durationHours = durationMs / (1000 * 60 * 60);
+    // Add the duration to the total hours counter
+    totalHours += durationHours;
 
-      // Add the duration to the total hours counter
-      totalHours += durationHours;
-    }
+    // Calculate the remaining minutes
+    durationMinutes = (durationMs % (1000 * 60 * 60)) / (1000 * 60);
+
+    // Add the minutes to the total hours counter
+    totalHours += durationMinutes / 60;
   }
 
   // Update the totalMonthlyHours field in the schema
   this.totalMonthlyHours = totalHours;
 
-  return totalHours;
+  return {
+    hours: Math.round(durationHours),
+    minutes: Math.round(durationMinutes)
+    };
 };
 
 // Create the User model
