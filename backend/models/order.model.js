@@ -16,7 +16,7 @@ const sideSchema = new Schema({
   dishItem: { type: Schema.Types.ObjectId, ref: "food" },
 });
 
-const desertSchema = new Schema({
+const dessertSchema = new Schema({
   quantity: { type: Number, required: true },
   dishItem: { type: Schema.Types.ObjectId, ref: "food" },
 });
@@ -36,7 +36,7 @@ const orderSchema = new Schema({
   starter: [starterSchema],
   main: [mainSchema],
   side: [sideSchema],
-  dessert: [desertSchema],
+  dessert: [dessertSchema],
   extras: [{ type: Schema.Types.ObjectId, ref: "extra" }],
 });
 

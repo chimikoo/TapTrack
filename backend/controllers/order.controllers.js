@@ -47,7 +47,7 @@ const getAllOrders = asyncHandler(async (req, res) => {
     "main.dishItem",
     "side.dishItem",
     "dessert.dishItem",
-    "drinks",
+    "drinks.drinkItem",
     "extras",
   ]);
   if (orders.length === 0 || !orders) {
