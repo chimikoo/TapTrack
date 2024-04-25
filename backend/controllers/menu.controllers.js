@@ -67,6 +67,7 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
     itemsPerPage: limit,
     currentPage: page,
     totalPages,
+    numberItems: foods.length,
     data: foods,
   });
 });
