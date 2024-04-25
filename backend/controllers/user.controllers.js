@@ -69,7 +69,10 @@ const login = asyncHandler(async (req, res) => {
     let hourTracking = await HourTracking.findOne({ userId: user._id });
     if (!hourTracking) {
       // Create a new HourTracking record if it doesn't exist
-      hourTracking = await HourTracking.create({ userId: user._id, workingHours: [{ loggedInAt }] });
+      hourTracking = await HourTracking.create({
+        userId: user._id,
+        workingHours: [{ loggedInAt }],
+      });
     } else {
       hourTracking.workingHours.push({ loggedInAt });
       await hourTracking.save(); // Save the user document with the updated workingHours array
@@ -108,7 +111,8 @@ const logout = asyncHandler(async (req, res) => {
   }
   // Add entry to workingHours array
   const loggedOutAt = new Date();
-  hourTracking.workingHours[hourTracking.workingHours.length - 1].loggedOutAt = loggedOutAt;
+  hourTracking.workingHours[hourTracking.workingHours.length - 1].loggedOutAt =
+    loggedOutAt;
   await hourTracking.save(); // Save the user document with the updated workingHours array
 
   res.clearCookie("token");
@@ -116,6 +120,38 @@ const logout = asyncHandler(async (req, res) => {
 });
 
 /* 
+@desc     Force logout users who haven't logged out by end of day
+*/
+const forceLogoutUsers = async () => {
+  // Calculate end of day
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  // Find users who haven't logged out yet
+  const usersToForceLogout = await HourTracking.find({
+    "workingHours.loggedOutAt": { $exists: false }, // Users who haven't logged out
+    "workingHours.loggedInAt": { $lt: endOfDay }, // Users who logged in before end of day
+  }).populate("userId");
+
+  // Logout each user
+  for (const tracking of usersToForceLogout) {
+    // Clear the token
+    if (tracking.userId) {
+      res.clearCookie("token");
+    }
+    // Update the hour tracking record with logout time
+    tracking.workingHours[tracking.workingHours.length - 1].loggedOutAt =
+      new Date();
+    await tracking.save();
+  }
+};
+
+// Schedule force logout task to run at the end of each day
+setInterval(forceLogoutUsers, 24 * 60 * 60 * 1000); // Run once per day (24 hours, 60 minutes, 60 seconds, 1000 milliseconds)
+
+/*
+
+
 @desc     Calculate total hours worked in last 30 days
 @access   Private
 */
@@ -127,7 +163,6 @@ const getTotalHoursWorked = async (userId) => {
   }
   return hourTracking.calculateMonthlyHours(thirtyDaysAgo);
 };
-
 
 /* 
 @desc     Update a user
