@@ -16,9 +16,12 @@ const getAllMenuItems = asyncHandler(async (req, res) => {
   }
   const foods = await FoodModel.find();
   const beverages = await BeverageModel.find();
-  res
-    .status(200)
-    .json({ message: "All menu items", data: { foods, beverages } });
+
+  res.status(200).json({
+    message: "All menu items",
+    numberItems: foods.length + beverages.length,
+    data: { foods, beverages },
+  });
 });
 
 /* 
@@ -32,8 +35,41 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
     res.status(403);
     throw new Error("Not authorized!");
   }
-  const foods = await FoodModel.find();
-  res.status(200).json({ message: "All food items", data: foods });
+  let foodQuery = FoodModel.find();
+  // Filtering food items
+  if (req.query.category) {
+    foodQuery = foodQuery.where("category").equals(req.query.category);
+  }
+  if (req.query.name) {
+    foodQuery = foodQuery.where("name").regex(new RegExp(req.query.name, "i"));
+  }
+  if (req.query.price) {
+    foodQuery = foodQuery.where("price").lt(req.query.price);
+  }
+
+  // Sorting
+  if (req.query.sort) {
+    foodQuery = foodQuery.sort(req.query.sort);
+  }
+
+  // Pagination
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const startIndex = (page - 1) * limit;
+  foodQuery = foodQuery.limit(limit).skip(startIndex);
+
+  const foods = await foodQuery;
+  const totalPages = Math.ceil((await FoodModel.countDocuments()) / limit);
+  const totalItems = await FoodModel.countDocuments();
+  res.status(200).json({
+    message: "All food items",
+    totalItems,
+    itemsPerPage: limit,
+    currentPage: page,
+    totalPages,
+    numberItems: foods.length,
+    data: foods,
+  });
 });
 
 /* 
@@ -47,8 +83,50 @@ const getAllBeverageItems = asyncHandler(async (req, res) => {
     res.status(403);
     throw new Error("Not authorized!");
   }
-  const beverages = await BeverageModel.find();
-  res.status(200).json({ message: "All beverage items", data: beverages });
+  let beverageQuery = BeverageModel.find();
+  // Filtering beverage items
+  if (req.query.name) {
+    beverageQuery = beverageQuery
+      .where("name")
+      .regex(new RegExp(req.query.name, "i"));
+  }
+  if (req.query.type) {
+    beverageQuery = beverageQuery.where("type").equals(req.query.type);
+  }
+  if (req.query.price) {
+    beverageQuery = beverageQuery
+      .where("sizesPrices.price")
+      .lt(req.query.price);
+  }
+  if (req.query.size) {
+    beverageQuery = beverageQuery
+      .where("sizesPrices.size")
+      .equals(req.query.size);
+  }
+
+  // Sorting
+  if (req.query.sort) {
+    beverageQuery = beverageQuery.sort(req.query.sort);
+  }
+
+  // Pagination
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const startIndex = (page - 1) * limit;
+  beverageQuery = beverageQuery.limit(limit).skip(startIndex);
+
+  const beverages = await beverageQuery;
+  const totalPages = Math.ceil((await BeverageModel.countDocuments()) / limit);
+  const totalItems = await BeverageModel.countDocuments();
+  res.status(200).json({
+    message: "All beverage items",
+    totalItems,
+    itemsPerPage: limit,
+    currentPage: page,
+    totalPages,
+    numberItems: beverages.length,
+    data: beverages,
+  });
 });
 
 /* 

@@ -1,9 +1,10 @@
 import { Schema, model } from "mongoose";
+import Order from "./order.model.js";
 
 // Define sub-schema for nested objects
 const receiptSchema = new Schema({
   orderId: { type: Schema.Types.ObjectId, ref: "order", required: true }, // Reference to the order
-  totalAmount: { type: Number, required: true },
+  totalAmount: { type: Number },
   paymentMethod: {
     type: String,
     required: true,
@@ -15,11 +16,10 @@ const receiptSchema = new Schema({
 });
 
 // Calculate totalAmount before saving the receipt document
-receiptSchema.pre("save", async function (next) {
+/* receiptSchema.post("save", async function () {
   try {
-    const Order = require("./order.model.js"); // Import the Order model
     const order = await Order.findById(this.orderId).populate(
-      "drinks starter.dishItem main.dishItem side.dishItem desert.dishItem"
+      "drinks starter.dishItem main.dishItem side.dishItem dessert.dishItem"
     );
 
     const calculateFoodSubtotal = (foodItem) => {
@@ -31,7 +31,7 @@ receiptSchema.pre("save", async function (next) {
     };
 
     const foodSubtotals = order.starter
-      .concat(order.main, order.side, order.desert)
+      .concat(order.main, order.side, order.dessert)
       .map((foodItem) => calculateFoodSubtotal(foodItem));
 
     const beverageSubtotals = order.drinks.map((beverage) =>
@@ -45,12 +45,12 @@ receiptSchema.pre("save", async function (next) {
     // Set the calculated totalAmount
     this.totalAmount = totalAmount;
 
-    next();
+
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 });
-
+ */
 const Receipt = model("Receipt", receiptSchema);
 
 export default Receipt;

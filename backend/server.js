@@ -6,6 +6,7 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import userRoutes from "./routes/user.routes.js";
 import menuRoutes from "./routes/menu.routes.js";
 import orderRoutes from "./routes/order.routes.js";
+import receiptRoutes from "./routes/receipt.routes.js";
 import isAuth from "./middlewares/isAuth.js";
 
 const { PORT } = process.env;
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use("/users", userRoutes);
 app.use("/users/menu-items", isAuth, menuRoutes);
 app.use("/users/menu-orders", isAuth, orderRoutes);
+app.use("/users/checkout", isAuth, receiptRoutes);
 
 // ERROR HANDLER
 app.use(errorHandler);
