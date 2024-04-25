@@ -5,6 +5,7 @@ import {
   logout,
   register,
   updateUser,
+  getTotalHoursWorked,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import {
@@ -28,5 +29,8 @@ router.put("/update/:id", isAuth, updateUser);
 
 // DELETE /users/delete/:id
 router.delete("/delete/:id", isAuth, deleteUser);
+
+// GET /users/total-hours-worked
+router.get("/total-hours-worked", isAuth, getTotalHoursWorked);
 
 export default router;

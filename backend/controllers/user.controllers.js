@@ -117,15 +117,18 @@ const logout = asyncHandler(async (req, res) => {
 
 /* 
 @desc     Calculate total hours worked in last 30 days
+@route    GET /users/total-hours-worked
 @access   Private
 */
-const getTotalHoursWorked = async (userId) => {
+const getTotalHoursWorked = async (req, res) => {
+  const {userId} = req;
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // Calculate the date 30 days ago
   const hourTracking = await HourTracking.findOne({ userId });
   if (!hourTracking) {
     throw new Error("Hour tracking record not found");
   }
-  return hourTracking.calculateMonthlyHours(thirtyDaysAgo);
+  const totalHours = hourTracking.calculateMonthlyHours(thirtyDaysAgo);
+  res.status(200).json({ totalHours });
 };
 
 
