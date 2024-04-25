@@ -8,7 +8,6 @@ const WorkingHoursSchema = new Schema({
   },
   loggedOutAt: {
     type: Date,
-    required: true,
   },
 });
 

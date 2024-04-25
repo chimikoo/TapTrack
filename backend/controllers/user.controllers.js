@@ -65,13 +65,20 @@ const login = asyncHandler(async (req, res) => {
 
   // Add entry to workingHours array
   const loggedInAt = new Date();
-  let hourTracking = await HourTracking.findOne({ userId: user._id });
-  if (!hourTracking) {
-    // Create a new HourTracking record if it doesn't exist
-    hourTracking = await HourTracking.create({ userId: user._id, workingHours: [{ loggedInAt }] });
-  } else {
-    hourTracking.workingHours.push({ loggedInAt });
-    await hourTracking.save(); // Save the user document with the updated workingHours array
+  try {
+    let hourTracking = await HourTracking.findOne({ userId: user._id });
+    if (!hourTracking) {
+      // Create a new HourTracking record if it doesn't exist
+      hourTracking = await HourTracking.create({ userId: user._id, workingHours: [{ loggedInAt }] });
+    } else {
+      hourTracking.workingHours.push({ loggedInAt });
+      await hourTracking.save(); // Save the user document with the updated workingHours array
+    }
+    console.log("HourTracking document saved:", hourTracking);
+  } catch (error) {
+    console.error("Error creating HourTracking document:", error);
+    res.status(500).json({ message: "Internal server error" });
+    return;
   }
 
   // Set a cookie
