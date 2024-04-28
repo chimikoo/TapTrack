@@ -300,6 +300,39 @@ const addExtra = asyncHandler(async (req, res) => {
   res.status(201).json({ message: "Extra added", data: newExtra });
 });
 
+const updateItemStock = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  if (userRole !== "admin" && userRole !== "manager") {
+    res.status(403);
+    throw new Error("Not authorized!");
+  }
+  const { id, type } = req.params;
+  const { stock } = req.body;
+  
+  // Check if the type is for updating food or beverage item
+  let updatedItem;
+  if (type === "foods") {
+    updatedItem = await FoodModel.findByIdAndUpdate(
+      id,
+      { stock },
+      { new: true }
+    );
+  } else if (type === "beverages") {
+    updatedItem = await BeverageModel.findByIdAndUpdate(
+      id,
+      { stock },
+      { new: true }
+    );
+  }
+  
+  if (!updatedItem) {
+    res.status(404);
+    throw new Error("Item not found");
+  }
+
+  res.status(200).json({ message: "Item stock updated", data: updatedItem });
+});
+
 export {
   getAllMenuItems,
   getAllFoodItems,
@@ -313,4 +346,5 @@ export {
   deleteFoodItem,
   deleteBeverageItem,
   addExtra,
+  updateItemStock,
 };

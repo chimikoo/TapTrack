@@ -13,6 +13,7 @@ import {
   updateBeverageItem,
   addExtra,
   updateFoodItem,
+  updateItemStock
 } from "../controllers/menu.controllers.js";
 
 const router = Router();
@@ -47,5 +48,8 @@ router
 
 // POST /users/menu-items/extras
 router.post("/extras", addExtra);
+
+// PUT /users/menu-items/:type/:id/stock
+router.put("/:type/:id/stock", updateItemStock);
 
 export default router;

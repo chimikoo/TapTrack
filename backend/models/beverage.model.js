@@ -24,6 +24,10 @@ const beverageModelSchema = new Schema({
     required: true,
     enum: ['wine', 'spirits', 'beer', 'soda'],
   },
+  stock: { 
+    type: Number,
+    default: 0 
+  },
   sizesPrices: [sizePriceSchema],
 });
 
