@@ -1,5 +1,6 @@
 import asyncHandler from "../config/asyncHandler.js";
 import Order from "../models/order.model.js";
+import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 
 /* 
 @desc   Add an order
@@ -25,6 +26,12 @@ const addOrder = asyncHandler(async (req, res) => {
     dessert,
     extras,
   });
+  // remove quantity ordered from stock
+  await updateStockAfterOrder(drinks, "beverage");
+  await updateStockAfterOrder(starter, "food");
+  await updateStockAfterOrder(main, "food");
+  await updateStockAfterOrder(side, "food");
+  await updateStockAfterOrder(dessert, "food");
   res
     .status(201)
     .json({ message: "Order created successfully", data: newOrder });
