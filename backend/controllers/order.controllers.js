@@ -66,7 +66,7 @@ const getOrderById = asyncHandler(async (req, res) => {
     "main.dishItem",
     "side.dishItem",
     "dessert.dishItem",
-    "drinks",
+    "drinks.drinkItem",
     "extras",
   ]);
   if (!order) {
