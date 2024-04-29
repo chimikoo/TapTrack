@@ -2,7 +2,7 @@ import express from "express";
 import colors from "colors";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/connectDB.js";
-import { errorHandler } from "./middlewares/errorHandler.js";
+import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 import userRoutes from "./routes/user.routes.js";
 import menuRoutes from "./routes/menu.routes.js";
 import orderRoutes from "./routes/order.routes.js";
@@ -27,6 +27,7 @@ app.use("/users/menu-orders", isAuth, orderRoutes);
 app.use("/users/checkout", isAuth, receiptRoutes);
 
 // ERROR HANDLER
+app.use(notFound);
 app.use(errorHandler);
 
 // LISTEN
