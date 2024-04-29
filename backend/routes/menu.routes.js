@@ -49,7 +49,7 @@ router
 // POST /users/menu-items/extras
 router.post("/extras", addExtra);
 
-// PUT /users/menu-items/:type/:id/stock
-router.put("/:type/:id/stock", updateItemStock);
+// PUT /users/menu-items/stock/:type/:id
+router.put("/stock/:type/:id", updateItemStock);
 
 export default router;
