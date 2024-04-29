@@ -36,7 +36,6 @@ hourSchema.methods.calculateMonthlyHours = function (cutoffDate) {
     const entry = this.workingHours[i];
     // Calculate the duration between loggedInAt and loggedOutAt in milliseconds
     const durationMs = entry.loggedOutAt - entry.loggedInAt;
-    console.log(durationMs);
     // Convert duration from milliseconds to hours
     durationHours = durationMs / (1000 * 60 * 60);
 

@@ -101,7 +101,6 @@ const logout = asyncHandler(async (req, res) => {
   const { userId } = req; // Assuming you have middleware to extract user ID from the request
   // Find the user's hour tracking record
   const hourTracking = await HourTracking.findOne({ userId });
-  console.log(hourTracking);
   if (!hourTracking) {
     res.status(404);
     throw new Error("Hour tracking record not found");
