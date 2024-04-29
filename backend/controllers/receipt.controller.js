@@ -8,11 +8,6 @@ import calculateTotalAmount from "../utils/calculateTotalAmount.js";
 @access  Private
 */
 const getAllReceipts = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   // Populate the receipt and then populate the nested objects in the order
   const receipts = await Receipt.find().populate({
     path: "orderId",
@@ -33,11 +28,6 @@ const getAllReceipts = asyncHandler(async (req, res) => {
 @access  Private
 */
 const createReceipt = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const { orderId, paymentMethod, notes } = req.body;
   const totalAmount = await calculateTotalAmount(orderId);
   const newReceipt = await Receipt.create({
@@ -55,11 +45,6 @@ const createReceipt = asyncHandler(async (req, res) => {
 @access  Private
 */
 const getReceiptById = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const receipt = await Receipt.findById(req.params.id).populate({
     path: "orderId",
     populate: {
@@ -79,11 +64,6 @@ const getReceiptById = asyncHandler(async (req, res) => {
 @access  Private
 */
 const updateReceipt = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const { id } = req.params;
   const { paymentMethod, notes, isPaid } = req.body;
   const receipt = await Receipt.findByIdAndUpdate(
