@@ -8,11 +8,6 @@ import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 @access Private
 */
 const addOrder = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const userId = req.userId;
   const { tableNumber, drinks, starter, main, side, dessert, extras } =
     req.body;
@@ -43,11 +38,6 @@ const addOrder = asyncHandler(async (req, res) => {
 @access Private
 */
 const getAllOrders = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const orders = await Order.find().populate([
     "userId",
     "starter.dishItem",
@@ -70,18 +60,13 @@ const getAllOrders = asyncHandler(async (req, res) => {
 @access Private
 */
 const getOrderById = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const order = await Order.findById(req.params.id).populate([
     "userId",
     "starter.dishItem",
     "main.dishItem",
     "side.dishItem",
     "dessert.dishItem",
-    "drinks",
+    "drinks.drinkItem",
     "extras",
   ]);
   if (!order) {
@@ -97,11 +82,6 @@ const getOrderById = asyncHandler(async (req, res) => {
 @access Private
 */
 const updateOrder = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const order = await Order.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -119,11 +99,6 @@ const updateOrder = asyncHandler(async (req, res) => {
 @access Private
 */
 const deleteOrder = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const order = await Order.findByIdAndDelete(req.params.id);
   res.status(200).json({ message: "Order deleted successfully" });
 });
