@@ -138,6 +138,13 @@ const forceLogoutUsers = async () => {
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
+  // Check if EoD report is being generated
+  const isEodReportBeingGenerated = await EodModel.findOne({ createdAt: { $gt: endOfDay } });
+  if (isEodReportBeingGenerated) {
+    console.log("EoD report is being generated, skipping force logout");
+    return;
+  }
+
   // Find users who haven't logged out yet
   const usersToForceLogout = await HourTracking.find({
     "workingHours.loggedOutAt": { $exists: false }, // Users who haven't logged out
@@ -156,15 +163,11 @@ const forceLogoutUsers = async () => {
     await tracking.save();
   }
 };
-
-// Schedule force logout task to run at the end of each day
-setInterval(forceLogoutUsers, 24 * 60 * 60 * 1000); // Run once per day (24 hours, 60 minutes, 60 seconds, 1000 milliseconds)
-/*
-/* 
-@desc     Update a user
-@route    PATCH /users/update
-@access   Private
-*/
+// //
+// @desc     Update a user
+// @route    PATCH /users/update
+// @access   Private
+// *//
 const updateUser = asyncHandler(async (req, res) => {
   const { userRole } = req;
   if (userRole !== "admin") {
