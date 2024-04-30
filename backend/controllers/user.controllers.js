@@ -67,9 +67,14 @@ const login = asyncHandler(async (req, res) => {
   const loggedInAt = new Date();
   try {
     let hourTracking = await HourTracking.findOne({ userId: user._id });
+    console.log(hourTracking);
     if (!hourTracking) {
       // Create a new HourTracking record if it doesn't exist
-      hourTracking = await HourTracking.create({ userId: user._id, workingHours: [{ loggedInAt }] });
+      hourTracking = await HourTracking.create({
+        userId: user._id,
+        workingHours: [{ loggedInAt }],
+       /*  totalMonthlyHours: {hours: 0, minutes: 0}, */
+      });
     } else {
       hourTracking.workingHours.push({ loggedInAt });
       await hourTracking.save(); // Save the user document with the updated workingHours array
@@ -107,7 +112,8 @@ const logout = asyncHandler(async (req, res) => {
   }
   // Add entry to workingHours array
   const loggedOutAt = new Date();
-  hourTracking.workingHours[hourTracking.workingHours.length - 1].loggedOutAt = loggedOutAt;
+  hourTracking.workingHours[hourTracking.workingHours.length - 1].loggedOutAt =
+    loggedOutAt;
   await hourTracking.save(); // Save the user document with the updated workingHours array
 
   res.clearCookie("token");
@@ -120,14 +126,15 @@ const logout = asyncHandler(async (req, res) => {
 @access   Private
 */
 const getTotalHoursWorked = async (req, res) => {
-  const {userId} = req;
+  const { userId } = req;
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // Calculate the date 30 days ago
   const hourTracking = await HourTracking.findOne({ userId });
   if (!hourTracking) {
     throw new Error("Hour tracking record not found");
   }
-  const totalHours = hourTracking.calculateMonthlyHours(thirtyDaysAgo);
-  res.status(200).json({ totalHours });
+    hourTracking.totalMonthlyHours = hourTracking.calculateMonthlyHours(thirtyDaysAgo);
+    await hourTracking.save();
+  res.status(200).json({ totalHours: hourTracking.totalMonthlyHours });
 };
 
 /* 

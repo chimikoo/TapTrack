@@ -1,5 +1,16 @@
 import { Schema, model } from "mongoose";
 
+const monthlyHours = new Schema({
+  hours: {
+    type: Number,
+    default: 0,
+  },
+  minutes: {
+    type: Number,
+    default: 0,
+  },
+}, { _id: false});
+
 // Define the schema for working hours
 const WorkingHoursSchema = new Schema({
   loggedInAt: {
@@ -10,6 +21,7 @@ const WorkingHoursSchema = new Schema({
   },
 });
 
+
 // Define the schema for the User model
 const hourSchema = new Schema({
   // Add other fields as needed
@@ -19,11 +31,10 @@ const hourSchema = new Schema({
     required: true,
   },
   workingHours: [WorkingHoursSchema], // Array of working hours entries
-  totalMonthlyHours: {
-    type: Number,
-    default: 0, // Default value of total monthly hours is set to 0
-  },
+  totalMonthlyHours: monthlyHours,
 });
+
+
 
 // Define a method to calculate monthly hours for a user
 hourSchema.methods.calculateMonthlyHours = function (cutoffDate) {
