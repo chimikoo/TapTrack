@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "../config/asyncHandler.js";
 import UserModel from "../models/user.model.js";
 import HourTracking from "../models/hourTracking.model.js";
+import EodModel from "../models/eod.model.js";
 
 /* 
 @desc     Register a new user
@@ -73,7 +74,7 @@ const login = asyncHandler(async (req, res) => {
       hourTracking = await HourTracking.create({
         userId: user._id,
         workingHours: [{ loggedInAt }],
-       /*  totalMonthlyHours: {hours: 0, minutes: 0}, */
+        /*  totalMonthlyHours: {hours: 0, minutes: 0}, */
       });
     } else {
       hourTracking.workingHours.push({ loggedInAt });
@@ -132,31 +133,35 @@ const getTotalHoursWorked = async (req, res) => {
   if (!hourTracking) {
     throw new Error("Hour tracking record not found");
   }
-    hourTracking.totalMonthlyHours = hourTracking.calculateMonthlyHours(thirtyDaysAgo);
-    await hourTracking.save();
+  hourTracking.totalMonthlyHours =
+    hourTracking.calculateMonthlyHours(thirtyDaysAgo);
+  await hourTracking.save();
   res.status(200).json({ totalHours: hourTracking.totalMonthlyHours });
 };
 
 /* 
 @desc     Force logout users who haven't logged out by end of day
 */
-const forceLogoutUsers = async () => {
+const forceLogoutUsers = asyncHandler(async (req, res) => {
   // Calculate end of day
+  console.log("Entering the focedLogoutUsers function");
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
   // Check if EoD report is being generated
-  const isEodReportBeingGenerated = await EodModel.findOne({ timestamp: { $gt: endOfDay } });
+  /* const isEodReportBeingGenerated = await EodModel.findOne({ timestamp: { $gt: endOfDay } });
   if (isEodReportBeingGenerated) {
     console.log("EoD report is being generated, skipping force logout");
     return;
-  }
-
+  } */
+  /*  console.log(isEodReportBeingGenerated); */
   // Find users who haven't logged out yet
   const usersToForceLogout = await HourTracking.find({
-    "workingHours.loggedOutAt": { $exists: false }, // Users who haven't logged out
-    "workingHours.loggedInAt": { $lt: endOfDay }, // Users who logged in before end of day
+    workingHours: {
+      loggedOutAt: { $exists: false }
+    }, // Users who haven't logged out yet
   }).populate("userId");
+  console.log(usersToForceLogout);
 
   // Logout each user
   for (const tracking of usersToForceLogout) {
@@ -165,7 +170,7 @@ const forceLogoutUsers = async () => {
       new Date();
     await tracking.save();
   }
-};
+});
 // //
 // @desc     Update a user
 // @route    PATCH /users/update
@@ -212,4 +217,12 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "User deleted successfully" });
 });
 
-export { register, login, logout, updateUser, deleteUser, getTotalHoursWorked };
+export {
+  register,
+  login,
+  logout,
+  updateUser,
+  deleteUser,
+  getTotalHoursWorked,
+  forceLogoutUsers,
+};

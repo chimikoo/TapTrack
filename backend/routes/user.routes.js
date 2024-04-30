@@ -6,12 +6,14 @@ import {
   register,
   updateUser,
   getTotalHoursWorked,
+  forceLogoutUsers,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import {
   userValidationRules,
   validate,
 } from "../middlewares/userValidation.js";
+import isAdminOrManager from "../middlewares/isAdminOrManager.js";
 
 const router = Router();
 
@@ -32,5 +34,8 @@ router.delete("/delete/:id", isAuth, deleteUser);
 
 // GET /users/total-hours-worked
 router.get("/total-hours-worked", isAuth, getTotalHoursWorked);
+
+// PUT /users/forcedLogout/
+router.put("/forcedLogout", isAuth, isAdminOrManager, forceLogoutUsers);
 
 export default router;
