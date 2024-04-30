@@ -24,5 +24,7 @@ const receiptSchema = new Schema({
 
 
 const Receipt = model("Receipt", receiptSchema);
+const OldReceipt = model("OldReceipt", receiptSchema);
 
 export default Receipt;
+export { OldReceipt };
