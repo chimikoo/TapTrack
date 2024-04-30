@@ -43,12 +43,16 @@ const createReceipt = asyncHandler(async (req, res) => {
     "side.dishItem",
     "dessert.dishItem",
   ]);
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
 
   // Extract the items from the order
   const items = extractItemsFromOrder(order);
 
   // Calculate total amount of the order
-  const totalAmount = await calculateTotalAmount(orderId);
+  const totalAmount = await calculateTotalAmount(order);
 
   // Create the receipt object with the populated items array
   const newReceipt = await Receipt.create({
