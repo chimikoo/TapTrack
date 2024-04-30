@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { generateEodReport } from "../controllers/eod.controllers.js";
+import { generateEodReport, viewEodReport } from "../controllers/eod.controllers.js";
+
 import isAuth from "../middlewares/isAuth.js";
 
 const router = Router();
 
 // POST /eod/generate
-router.post("/generate", isAuth, generateEodReport);
+router.post("/", isAuth, generateEodReport);
+router.get("/", isAuth, viewEodReport);
 
 export default router;
