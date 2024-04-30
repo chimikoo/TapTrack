@@ -110,7 +110,7 @@ const logout = asyncHandler(async (req, res) => {
   hourTracking.workingHours[hourTracking.workingHours.length - 1].loggedOutAt = loggedOutAt;
   await hourTracking.save(); // Save the user document with the updated workingHours array
 
-  res.clearCookie("token");
+  // res.clearCookie("token");
   res.status(200).json({ message: "User logged out successfully" });
 });
 
@@ -139,7 +139,7 @@ const forceLogoutUsers = async () => {
   endOfDay.setHours(23, 59, 59, 999);
 
   // Check if EoD report is being generated
-  const isEodReportBeingGenerated = await EodModel.findOne({ createdAt: { $gt: endOfDay } });
+  const isEodReportBeingGenerated = await EodModel.findOne({ timestamp: { $gt: endOfDay } });
   if (isEodReportBeingGenerated) {
     console.log("EoD report is being generated, skipping force logout");
     return;
@@ -153,10 +153,6 @@ const forceLogoutUsers = async () => {
 
   // Logout each user
   for (const tracking of usersToForceLogout) {
-    // Clear the token
-    if (tracking.userId) {
-      res.clearCookie("token");
-    }
     // Update the hour tracking record with logout time
     tracking.workingHours[tracking.workingHours.length - 1].loggedOutAt =
       new Date();
