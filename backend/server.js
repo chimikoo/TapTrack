@@ -9,6 +9,7 @@ import orderRoutes from "./routes/order.routes.js";
 import receiptRoutes from "./routes/receipt.routes.js";
 import eodRoutes from "./routes/eod.routes.js";
 import isAuth from "./middlewares/isAuth.js";
+import isAdminOrManager from "./middlewares/isAdminOrManager.js";
 
 const { PORT } = process.env;
 const app = express();
@@ -26,7 +27,7 @@ app.use("/users", userRoutes);
 app.use("/users/menu-items", isAuth, menuRoutes);
 app.use("/users/menu-orders", isAuth, orderRoutes);
 app.use("/users/checkout", isAuth, receiptRoutes);
-app.use("/eod", isAuth, eodRoutes);
+app.use("/eod", isAuth, isAdminOrManager, eodRoutes);
 
 // ERROR HANDLER
 app.use(notFound);

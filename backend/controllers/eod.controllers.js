@@ -5,17 +5,11 @@ import Order from "../models/order.model.js";
 
 /* 
 @desc   Calculate and generate End of Day report
-@route  POST /eod/generate
+@route  POST /eod
 @access Private (Only accessible to admin or manager)
 */
 const generateEodReport = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
-
-  // Retrieve all paid receipts
+  // Retrieve all receipts
   const receipts = await Receipt.find({}).populate("orderId");
 
   // Initialize variables to calculate EoD report
@@ -29,7 +23,7 @@ const generateEodReport = asyncHandler(async (req, res) => {
   let totalBeverageItems = 0;
   const itemsSoldMap = new Map();
 
-  // Iterate over each paid receipt to calculate EoD report
+  // Iterate over each receipt to calculate EoD report
   receipts.forEach((receipt) => {
     totalOrders++;
     if (!receipt.isPaid) {
@@ -94,9 +88,30 @@ function updateItemsSoldMap(itemsSoldMap, item) {
   }
 }
 
+
+/* 
+@desc   View all End of Day reports
+@route  GET /eod
+@access Private (Only accessible to admin or manager)
+*/
 const viewEodReport = asyncHandler(async (req, res) => {
   const eodReports = await EodModel.find();
   res.status(200).json({ message: "All EoD reports", data: eodReports });
 });
 
-export { generateEodReport, viewEodReport };
+/* 
+@desc   View End of Day report for a specific day
+@route  GET /eod/:day
+@access Private (Only accessible to admin or manager)
+*/
+const viewEodReportByDay = asyncHandler(async (req, res) => {
+  const { day } = req.params;
+  const eodReport = await EodModel.findOne({ day });
+  if (!eodReport) {
+    res.status(404);
+    throw new Error("No EoD report found for the given day");
+  }
+  res.status(200).json({ message: "EoD report", data: eodReport });
+});
+
+export { generateEodReport, viewEodReport, viewEodReportByDay };
