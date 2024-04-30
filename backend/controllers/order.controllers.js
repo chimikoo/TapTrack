@@ -11,6 +11,10 @@ const addOrder = asyncHandler(async (req, res) => {
   const userId = req.userId;
   const { tableNumber, drinks, starter, main, side, dessert, extras } =
     req.body;
+  if (!tableNumber || !drinks || !starter || !main || !side || !dessert) {
+    res.status(400);
+    throw new Error("Please provide all required fields");
+  }
   const newOrder = await Order.create({
     userId,
     tableNumber,
@@ -27,6 +31,7 @@ const addOrder = asyncHandler(async (req, res) => {
   await updateStockAfterOrder(main, "food");
   await updateStockAfterOrder(side, "food");
   await updateStockAfterOrder(dessert, "food");
+
   res
     .status(201)
     .json({ message: "Order created successfully", data: newOrder });
@@ -100,6 +105,10 @@ const updateOrder = asyncHandler(async (req, res) => {
 */
 const deleteOrder = asyncHandler(async (req, res) => {
   const order = await Order.findByIdAndDelete(req.params.id);
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
   res.status(200).json({ message: "Order deleted successfully" });
 });
 

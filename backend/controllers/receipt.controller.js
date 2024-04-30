@@ -2,10 +2,11 @@ import asyncHandler from "../config/asyncHandler.js";
 import Receipt from "../models/receipt.model.js";
 import calculateTotalAmount from "../utils/calculateTotalAmount.js";
 import Order from "../models/order.model.js";
+import extractItemsFromOrder from "../utils/extractItemsFromOrder.js";
 
 /* 
 @desc    Get all receipts
-@route   GET /receipts
+@route   GET /users/checkout
 @access  Private
 */
 const getAllReceipts = asyncHandler(async (req, res) => {
@@ -25,12 +26,15 @@ const getAllReceipts = asyncHandler(async (req, res) => {
 
 /* 
 @desc    Create a receipt
-@route   POST /receipts
+@route   POST /users/checkout
 @access  Private
 */
 const createReceipt = asyncHandler(async (req, res) => {
   const { orderId, paymentMethod, notes } = req.body;
-
+  if (!orderId || !paymentMethod) {
+    res.status(400);
+    throw new Error("Please provide all required fields");
+  }
   // Retrieve the order to get the items
   const order = await Order.findById(orderId).populate([
     "drinks.drinkItem",
@@ -41,30 +45,7 @@ const createReceipt = asyncHandler(async (req, res) => {
   ]);
 
   // Extract the items from the order
-  const items = [];
-
-  const addItem = (item, quantity, category, size) => {
-    items.push({
-      itemName: item.name,
-      quantity: quantity,
-      price: size
-        ? item.sizesPrices.find((sizePrice) => sizePrice.size === size).price
-        : item.price,
-      category: category,
-    });
-  };
-
-  order.drinks.forEach((drink) =>
-    addItem(drink.drinkItem, drink.quantity, "beverage", drink.size)
-  );
-  order.starter.forEach((starter) =>
-    addItem(starter.dishItem, starter.quantity, "starter")
-  );
-  order.main.forEach((main) => addItem(main.dishItem, main.quantity, "main"));
-  order.side.forEach((side) => addItem(side.dishItem, side.quantity, "side"));
-  order.dessert.forEach((dessert) =>
-    addItem(dessert.dishItem, dessert.quantity, "dessert")
-  );
+  const items = extractItemsFromOrder(order);
 
   // Calculate total amount of the order
   const totalAmount = await calculateTotalAmount(orderId);
@@ -83,7 +64,7 @@ const createReceipt = asyncHandler(async (req, res) => {
 
 /* 
 @desc    Get a receipt by ID
-@route   GET /receipts/:id
+@route   GET /users/checkout/:id
 @access  Private
 */
 const getReceiptById = asyncHandler(async (req, res) => {
@@ -102,7 +83,7 @@ const getReceiptById = asyncHandler(async (req, res) => {
 
 /* 
 @desc    Update a receipt by ID
-@route   PUT /receipts/:id
+@route   PUT /users/checkout/:id
 @access  Private
 */
 const updateReceipt = asyncHandler(async (req, res) => {

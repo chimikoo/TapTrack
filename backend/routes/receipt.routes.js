@@ -1,5 +1,4 @@
-import e, { Router } from "express";
-import { get } from "mongoose";
+import { Router } from "express";
 import {
   createReceipt,
   getAllReceipts,
@@ -20,6 +19,5 @@ router.get("/:id", getReceiptById);
 
 // PATCH /users/checkout/:id
 router.patch("/:id", updateReceipt);
-
 
 export default router;

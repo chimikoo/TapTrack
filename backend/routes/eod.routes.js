@@ -5,8 +5,6 @@ import {
   viewEodReportByDay,
 } from "../controllers/eod.controllers.js";
 
-import isAuth from "../middlewares/isAuth.js";
-
 const router = Router();
 
 // POST /eod
