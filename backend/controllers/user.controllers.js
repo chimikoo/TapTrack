@@ -12,11 +12,12 @@ import EodModel from "../models/eod.model.js";
 */
 const register = asyncHandler(async (req, res) => {
   const { userRole } = req;
+  // Check if the user is authorized to perform this action, only admins can register new users
   if (userRole !== "admin") {
     res.status(401);
     throw new Error("You are not authorized to perform this action");
   }
-  const { username, password, name, email } = req.body;
+  const { username, password, firstName, lastName, email } = req.body;
   // Check if the user already exists
   const userExists = await UserModel.findOne({ username });
   if (userExists) {
@@ -29,7 +30,8 @@ const register = asyncHandler(async (req, res) => {
   const user = await UserModel.create({
     username,
     password: hashedPassword,
-    name,
+    firstName,
+    lastName,
     email,
   });
   // Send the response
@@ -186,14 +188,15 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
 // *//
 const updateUser = asyncHandler(async (req, res) => {
   const { userId } = req;
-  const { username, password, name, email } = req.body;
+  const { username, password, firstName, lastName, email } = req.body;
   // hash the updated password
   const hashedPassword = password ? await bcrypt.hash(password, 12) : password;
   // Update the user
   await UserModel.findByIdAndUpdate(userId, {
     username,
     password: hashedPassword,
-    name,
+    firstName,
+    lastName,
     email,
   });
   // Send the response
