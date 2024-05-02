@@ -158,7 +158,7 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
   // Find users who haven't logged out yet
   const usersToForceLogout = await HourTracking.find({
     workingHours: {
-      loggedOutAt: { $exists: false }
+      loggedOutAt: { $exists: false },
     }, // Users who haven't logged out yet
   }).populate("userId");
   console.log(usersToForceLogout);
@@ -185,7 +185,7 @@ const updateUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { username, password, name, email, role } = req.body;
   // hash the updated password
-  const hashedPassword = await bcrypt.hash(password, 12);
+  const hashedPassword = password ? await bcrypt.hash(password, 12) : password;
   // Update the user
   await UserModel.findByIdAndUpdate(id, {
     username,

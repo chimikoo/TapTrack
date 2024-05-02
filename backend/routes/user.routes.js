@@ -27,7 +27,7 @@ router.post("/login", login);
 router.get("/logout", isAuth, logout);
 
 // PUT /users/update/:id
-router.put("/update/:id", isAuth, updateUser);
+router.patch("/update/:id", isAuth, updateUser);
 
 // DELETE /users/delete/:id
 router.delete("/delete/:id", isAuth, deleteUser);
