@@ -11,7 +11,6 @@ const eodModelSchema = new Schema({
   totalFoodItems: { type: Number, default: 0 },
   totalBeverageItems: { type: Number, default: 0 },
   itemsSold: [{ itemName: String, quantity: Number }],
-  day: { type: Number, required: true, default: new Date().getDate() },
 });
 
 const EodModel = model("Eod", eodModelSchema);
