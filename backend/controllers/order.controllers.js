@@ -26,11 +26,16 @@ const addOrder = asyncHandler(async (req, res) => {
     extras,
   });
   // remove quantity ordered from stock
-  await updateStockAfterOrder(drinks, "beverage");
-  await updateStockAfterOrder(starter, "food");
-  await updateStockAfterOrder(main, "food");
-  await updateStockAfterOrder(side, "food");
-  await updateStockAfterOrder(dessert, "food");
+  try {
+    await updateStockAfterOrder(drinks, "beverage");
+    await updateStockAfterOrder(starter, "food");
+    await updateStockAfterOrder(main, "food");
+    await updateStockAfterOrder(side, "food");
+    await updateStockAfterOrder(dessert, "food");
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
 
   res
     .status(201)
@@ -61,9 +66,11 @@ const getAllOrders = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No orders found");
   }
-  res
-    .status(200)
-    .json({ message: "All orders", numberOfOrders: orders.length, data: orders });
+  res.status(200).json({
+    message: "All orders",
+    numberOfOrders: orders.length,
+    data: orders,
+  });
 });
 
 /* 
