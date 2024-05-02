@@ -52,23 +52,18 @@ hourSchema.methods.calculateMonthlyHours = function (cutoffDate) {
     const durationMs = entry.loggedOutAt - entry.loggedInAt;
     // Convert duration from milliseconds to hours
     durationHours = durationMs / (1000 * 60 * 60);
-
     // Add the duration to the total hours counter
     totalHours += durationHours;
 
     // Calculate the remaining minutes
     durationMinutes = (durationMs % (1000 * 60 * 60)) / (1000 * 60);
-
     // Add the minutes to the total hours counter
     totalHours += durationMinutes / 60;
   }
 
-  // Update the totalMonthlyHours field in the schema
-  this.totalMonthlyHours = totalHours;
-
   return {
-    hours: Math.round(durationHours),
-    minutes: Math.round(durationMinutes),
+    hours: Math.round(totalHours),
+    minutes: Math.round((totalHours * 60) % 60),
   };
 };
 

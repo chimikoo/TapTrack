@@ -12,11 +12,12 @@ import EodModel from "../models/eod.model.js";
 */
 const register = asyncHandler(async (req, res) => {
   const { userRole } = req;
+  // Check if the user is authorized to perform this action, only admins can register new users
   if (userRole !== "admin") {
     res.status(401);
     throw new Error("You are not authorized to perform this action");
   }
-  const { username, password, name, email } = req.body;
+  const { username, password, firstName, lastName, email } = req.body;
   // Check if the user already exists
   const userExists = await UserModel.findOne({ username });
   if (userExists) {
@@ -29,7 +30,8 @@ const register = asyncHandler(async (req, res) => {
   const user = await UserModel.create({
     username,
     password: hashedPassword,
-    name,
+    firstName,
+    lastName,
     email,
   });
   // Send the response
@@ -42,6 +44,13 @@ const register = asyncHandler(async (req, res) => {
 @access   Public
 */
 const login = asyncHandler(async (req, res) => {
+  // check if the user is already logged in
+  // by the presence of a token in the request cookies
+  if (req.cookies.token) {
+    res.status(400);
+    throw new Error("User is already logged in");
+  }
+
   const { username, password } = req.body;
   // Check if the user exists
   const user = await UserModel.findOne({ username });
@@ -68,13 +77,12 @@ const login = asyncHandler(async (req, res) => {
   const loggedInAt = new Date();
   try {
     let hourTracking = await HourTracking.findOne({ userId: user._id });
-    console.log(hourTracking);
+    // console.log(hourTracking);
     if (!hourTracking) {
       // Create a new HourTracking record if it doesn't exist
       hourTracking = await HourTracking.create({
         userId: user._id,
         workingHours: [{ loggedInAt }],
-        /*  totalMonthlyHours: {hours: 0, minutes: 0}, */
       });
     } else {
       hourTracking.workingHours.push({ loggedInAt });
@@ -117,7 +125,8 @@ const logout = asyncHandler(async (req, res) => {
     loggedOutAt;
   await hourTracking.save(); // Save the user document with the updated workingHours array
 
-  // res.clearCookie("token");
+  // Clear the cookie
+  res.clearCookie("token");
   res.status(200).json({ message: "User logged out successfully" });
 });
 
@@ -172,35 +181,55 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
   }
 });
 // //
-// @desc     Update a user
-// @route    PATCH /users/update
+// @desc     Update user info
+// @route    PATCH /users
 // @access   Private
 // *//
 const updateUser = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "admin") {
-    res.status(401);
-    throw new Error("You are not authorized to perform this action");
-  }
-  const { id } = req.params;
-  const { username, password, name, email, role } = req.body;
-  // hash the updated password
+  const { userId } = req;
+  const { username, password, firstName, lastName, email } = req.body;
+  // hash the updated password if the password is provided
   const hashedPassword = password ? await bcrypt.hash(password, 12) : password;
   // Update the user
-  await UserModel.findByIdAndUpdate(id, {
+  await UserModel.findByIdAndUpdate(userId, {
     username,
     password: hashedPassword,
-    name,
+    firstName,
+    lastName,
     email,
-    role,
   });
   // Send the response
   res.status(200).json({ message: "User updated successfully" });
 });
 
 /* 
-@desc     Delete a user
-@route    DELETE /users/delete
+@desc     Update a user's role
+@route    PATCH /users/:id
+@access   Private
+*/
+const updateUserRole = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  // Check if the user is authorized to perform this action, only admins can update user roles
+  if (userRole !== "admin") {
+    res.status(401);
+    throw new Error("You are not authorized to perform this action");
+  }
+  const { id } = req.params;
+  const { role } = req.body;
+  // Check if the role is valid
+  if (role !== "admin" && role !== "manager" && role !== "waiter") {
+    res.status(400);
+    throw new Error("Invalid role");
+  }
+  // Update the user's role
+  await UserModel.findByIdAndUpdate(id, { role });
+  // Send the response
+  res.status(200).json({ message: "User role updated successfully" });
+});
+
+/* 
+@desc     Delete a user by id
+@route    DELETE /users/:id
 @access   Private
 */
 const deleteUser = asyncHandler(async (req, res) => {
@@ -222,6 +251,7 @@ export {
   login,
   logout,
   updateUser,
+  updateUserRole,
   deleteUser,
   getTotalHoursWorked,
   forceLogoutUsers,

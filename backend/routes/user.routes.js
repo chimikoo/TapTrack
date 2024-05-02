@@ -7,6 +7,7 @@ import {
   updateUser,
   getTotalHoursWorked,
   forceLogoutUsers,
+  updateUserRole,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import {
@@ -26,11 +27,14 @@ router.post("/login", login);
 // GET /users/logout
 router.get("/logout", isAuth, logout);
 
-// PUT /users/update/:id
-router.patch("/update/:id", isAuth, updateUser);
+// PATCH /users
+router.patch("/", isAuth, updateUser);
 
-// DELETE /users/delete/:id
-router.delete("/delete/:id", isAuth, deleteUser);
+// PATCH /users/:id
+router.patch("/:id", isAuth, updateUserRole);
+
+// DELETE /users/:id
+router.delete("/:id", isAuth, deleteUser);
 
 // GET /users/total-hours-worked
 router.get("/total-hours-worked", isAuth, getTotalHoursWorked);
