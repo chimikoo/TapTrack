@@ -21,7 +21,13 @@ const getAllReceipts = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No receipts found");
   }
-  res.status(200).json({ message: "All receipts", data: receipts });
+  res
+    .status(200)
+    .json({
+      message: "All receipts",
+      numberOfReceipts: receipts.length,
+      data: receipts,
+    });
 });
 
 /* 
