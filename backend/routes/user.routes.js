@@ -7,6 +7,7 @@ import {
   updateUser,
   getTotalHoursWorked,
   forceLogoutUsers,
+  timeTrack,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import {
@@ -37,5 +38,8 @@ router.get("/total-hours-worked", isAuth, getTotalHoursWorked);
 
 // PUT /users/forcedLogout/
 router.put("/forcedLogout", isAuth, isAdminOrManager, forceLogoutUsers);
+
+// POST /users/timeTrack
+router.post("/timeTrack", isAuth, isAdminOrManager, timeTrack);
 
 export default router;
