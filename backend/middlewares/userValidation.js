@@ -27,13 +27,22 @@ const userValidationRules = () => {
       )
       .trim()
       .escape(),
-    body("name")
+    body("firstName")
       .exists()
       .withMessage("Name is required")
       .notEmpty()
       .withMessage("Name cannot be empty")
       .isString()
       .withMessage("Name should be a string")
+      .escape()
+      .trim(),
+    body("lastName")
+      .exists()
+      .withMessage("Last name is required")
+      .notEmpty()
+      .withMessage("Last name cannot be empty")
+      .isString()
+      .withMessage("Last name should be a string")
       .escape()
       .trim(),
     body("email")
