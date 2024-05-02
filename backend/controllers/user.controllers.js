@@ -4,6 +4,7 @@ import asyncHandler from "../config/asyncHandler.js";
 import UserModel from "../models/user.model.js";
 import HourTracking from "../models/hourTracking.model.js";
 import EodModel from "../models/eod.model.js";
+import TimeTrack from "../models/timeTrack.model.js";
 
 /* 
 @desc     Register a new user
@@ -246,6 +247,32 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "User deleted successfully" });
 });
 
+/* 
+@desc     Create a Blabla
+@route    POST /users/timeTrack
+@access   Private
+*/
+
+const timeTrack = asyncHandler(async (req, res) => {
+const currentDate = new Date();
+const year = currentDate.getFullYear();
+const month = currentDate.getMonth() + 1;
+
+const formattedMonth = month < 10 ? "0" + month : month.toString();
+
+const keyName = `${year}-${formattedMonth}`;
+
+  const { userId } = req;
+  const start = new Date();
+  const end = new Date();
+  const timeTrack = await TimeTrack.create({
+    userId,
+    [keyName]: { shifts: [{ start, end }] },
+  });
+  res.status(201).json({ message: "Time track created successfully", timeTrack });
+  })
+  
+
 export {
   register,
   login,
@@ -255,4 +282,5 @@ export {
   deleteUser,
   getTotalHoursWorked,
   forceLogoutUsers,
+  timeTrack,
 };
