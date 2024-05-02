@@ -77,13 +77,12 @@ const login = asyncHandler(async (req, res) => {
   const loggedInAt = new Date();
   try {
     let hourTracking = await HourTracking.findOne({ userId: user._id });
-    console.log(hourTracking);
+    // console.log(hourTracking);
     if (!hourTracking) {
       // Create a new HourTracking record if it doesn't exist
       hourTracking = await HourTracking.create({
         userId: user._id,
         workingHours: [{ loggedInAt }],
-        /*  totalMonthlyHours: {hours: 0, minutes: 0}, */
       });
     } else {
       hourTracking.workingHours.push({ loggedInAt });
@@ -189,7 +188,7 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
   const { userId } = req;
   const { username, password, firstName, lastName, email } = req.body;
-  // hash the updated password
+  // hash the updated password if the password is provided
   const hashedPassword = password ? await bcrypt.hash(password, 12) : password;
   // Update the user
   await UserModel.findByIdAndUpdate(userId, {
