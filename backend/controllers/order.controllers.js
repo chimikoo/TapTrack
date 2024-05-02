@@ -43,7 +43,12 @@ const addOrder = asyncHandler(async (req, res) => {
 @access Private
 */
 const getAllOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find().populate([
+  let ordersQuery = Order.find();
+  // filter orders by table
+  if (req.query.tableNumber) {
+    ordersQuery = Order.find({ tableNumber: req.query.tableNumber });
+  }
+  const orders = await ordersQuery.populate([
     "userId",
     "starter.dishItem",
     "main.dishItem",
@@ -56,7 +61,9 @@ const getAllOrders = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No orders found");
   }
-  res.status(200).json({ message: "All orders", data: orders });
+  res
+    .status(200)
+    .json({ message: "All orders", numberOfOrders: orders.length, data: orders });
 });
 
 /* 
