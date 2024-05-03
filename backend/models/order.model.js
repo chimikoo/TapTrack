@@ -45,7 +45,7 @@ const drinkSchema = new Schema(
 // Define the main schema for the order
 const orderSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
-  tableNumber: { type: Number, required: true },
+  tableNumber: { type: Schema.Types.ObjectId, ref: "table", required: true },
   timestamp: { type: Date, default: Date.now },
   drinks: [drinkSchema],
   starter: [starterSchema],

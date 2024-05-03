@@ -1,5 +1,6 @@
 import asyncHandler from "../config/asyncHandler.js";
 import Order from "../models/order.model.js";
+import Table from "../models/table.model.js";
 import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 
 /* 
@@ -9,15 +10,28 @@ import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 */
 const addOrder = asyncHandler(async (req, res) => {
   const userId = req.userId;
-  const { tableNumber, drinks, starter, main, side, dessert, extras } =
-    req.body;
+  const { tableNumber, drinks, starter, main, side, dessert, extras } = req.body;
+  console.log(req.body);
   if (!tableNumber || !drinks || !starter || !main || !side || !dessert) {
     res.status(400);
     throw new Error("Please provide all required fields");
   }
+
+  // Check if the table exists and is not occupied
+  let existingTable = await Table.findOne({ tableNumber, state: { $ne: "occupied" } });
+  if (!existingTable) {
+    // If the table doesn't exist or is occupied, create a new one
+    existingTable = await Table.create({
+      userId,
+      tableNumber,
+      state: "occupied",
+    });
+  }
+
+  // Create the order
   const newOrder = await Order.create({
     userId,
-    tableNumber,
+    tableNumber: existingTable._id,
     drinks,
     starter,
     main,
@@ -25,7 +39,12 @@ const addOrder = asyncHandler(async (req, res) => {
     dessert,
     extras,
   });
-  // remove quantity ordered from stock
+
+  // Assign the orderId to the table
+  existingTable.orderId = newOrder._id;
+  await existingTable.save();
+
+  // Remove quantity ordered from stock
   try {
     await updateStockAfterOrder(drinks, "beverage");
     await updateStockAfterOrder(starter, "food");
@@ -37,9 +56,7 @@ const addOrder = asyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 
-  res
-    .status(201)
-    .json({ message: "Order created successfully", data: newOrder });
+  res.status(201).json({ message: "Order created successfully", data: newOrder });
 });
 
 /* 
