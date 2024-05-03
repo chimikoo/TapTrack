@@ -254,24 +254,52 @@ const deleteUser = asyncHandler(async (req, res) => {
 */
 
 const timeTrack = asyncHandler(async (req, res) => {
-const currentDate = new Date();
-const year = currentDate.getFullYear();
-const month = currentDate.getMonth() + 1;
+  const currentDate = new Date();
+  // console.log("current date:", currentDate);
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth() + 2;
 
-const formattedMonth = month < 10 ? "0" + month : month.toString();
+  const formattedMonth = month < 10 ? "0" + month : month.toString();
 
-const keyName = `${year}-${formattedMonth}`;
+  const keyName = `${year}-${formattedMonth}`;
 
   const { userId } = req;
-  const start = new Date();
+  const start = new Date("2024-05-03T02:00:30");
   const end = new Date();
-  const timeTrack = await TimeTrack.create({
-    userId,
-    [keyName]: { shifts: [{ start, end }] },
+  // check if the user has a time track record for the current month
+  let timeTrack = await TimeTrack.findOne({ userId });
+  // if not, create a new time track record
+  if (!timeTrack) {
+    timeTrack = new TimeTrack({
+      userId,
+      months: new Map(),
+    });
+  }
+
+  // Ensure the current month exists in the `months` Map
+  if (!timeTrack.months.has(keyName)) {
+    timeTrack.months.set(keyName, {
+      monthlyTotal: { hours: 0, minutes: 0 },
+      shifts: [],
+    });
+  }
+  // daily total
+  const total = timeTrack.calculateDailyTotal(start, end);
+  // push the new shift to the shifts array
+  timeTrack.months.get(keyName).shifts.push({
+    start,
+    end,
+    total,
   });
-  res.status(201).json({ message: "Time track created successfully", timeTrack });
-  })
-  
+  // Update monthly total
+  timeTrack.months.get(keyName).monthlyTotal =
+    timeTrack.calculateMonthlyTotal(keyName);
+  // Save the time track record
+  await timeTrack.save();
+  res
+    .status(201)
+    .json({ message: "Time track created successfully", timeTrack });
+});
 
 export {
   register,
