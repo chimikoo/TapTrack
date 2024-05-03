@@ -8,6 +8,7 @@ import {
   getTotalHoursWorked,
   forceLogoutUsers,
   timeTrack,
+  updateUserRole,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import {

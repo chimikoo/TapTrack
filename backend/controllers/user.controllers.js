@@ -254,24 +254,51 @@ const deleteUser = asyncHandler(async (req, res) => {
 */
 
 const timeTrack = asyncHandler(async (req, res) => {
-const currentDate = new Date();
-const year = currentDate.getFullYear();
-const month = currentDate.getMonth() + 1;
+  const currentDate = new Date();
+  // console.log("current date:", currentDate);
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth() + 2;
 
-const formattedMonth = month < 10 ? "0" + month : month.toString();
+  const formattedMonth = month < 10 ? "0" + month : month.toString();
 
-const keyName = `${year}-${formattedMonth}`;
+  const keyName = `${year}-${formattedMonth}`;
 
   const { userId } = req;
-  const start = new Date();
+  const start = new Date("2024-05-03T02:00:30");
   const end = new Date();
-  const timeTrack = await TimeTrack.create({
-    userId,
-    [keyName]: { shifts: [{ start, end }] },
-  });
-  res.status(201).json({ message: "Time track created successfully", timeTrack });
-  })
-  
+  // check if the user has a time track record for the current month
+  let timeTrack = await TimeTrack.findOne({ userId });
+  // if not, create a new time track record
+  if (!timeTrack) {
+    timeTrack = new TimeTrack({
+      userId,
+      [keyName]: {
+        monthlyTotal: { hours: 0, minutes: 0 },
+        shifts: [],
+      },
+    });
+  }
+  // console.log("timeTrack:", timeTrack[keyName]);
+  // check if the month already has a shift
+  if (!timeTrack[keyName]) {
+    timeTrack[keyName] = {
+      monthlyTotal: { hours: 0, minutes: 0 },
+      shifts: [],
+    };
+    console.log("timeTrack:", timeTrack);
+  }
+  // daily total
+  const total = timeTrack.calculateDailyTotal(start, end);
+  console.log("total:", total);
+  // push the new shift to the shifts array
+  timeTrack[keyName].shifts.push({ start, end, total });
+  // monthly total
+  timeTrack[keyName].monthlyTotal = timeTrack.calculateMonthlyTotal(keyName);
+  await timeTrack.save();
+  res
+    .status(201)
+    .json({ message: "Time track created successfully", timeTrack });
+});
 
 export {
   register,
