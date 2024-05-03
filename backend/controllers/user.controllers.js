@@ -268,7 +268,6 @@ const timeTrack = asyncHandler(async (req, res) => {
   const end = new Date();
   // check if the user has a time track record for the current month
   let timeTrack = await TimeTrack.findOne({ userId });
-  console.log("timeTrack:", timeTrack);
   // if not, create a new time track record
   if (!timeTrack) {
     timeTrack = new TimeTrack({

@@ -85,13 +85,10 @@ timeTrackSchema.methods.calculateDailyTotal = function (start, end) {
   let minutes = 0;
   // Calculate the duration between start and end in milliseconds
   const durationMs = end - start;
-  console.log("duration ms: ", durationMs);
   // Convert duration from milliseconds to hours
   hours = durationMs / (1000 * 60 * 60);
-  console.log("hours", hours);
   // Calculate the remaining minutes
   minutes = (durationMs % (1000 * 60 * 60)) / (1000 * 60);
-  console.log("minutes", minutes);
 
   return {
     hours: Math.floor(hours),
