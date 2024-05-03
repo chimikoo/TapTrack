@@ -72,7 +72,11 @@ const timeTrackSchema = new Schema({
     ref: "User",
     required: true,
   },
-  [keyName]: monthlySchema,
+  months: {
+    type: Map,
+    of: monthlySchema,
+    default: {},
+  },
 });
 
 // Define a method to calculate daily total hours for a user
@@ -99,12 +103,19 @@ timeTrackSchema.methods.calculateDailyTotal = function (start, end) {
 timeTrackSchema.methods.calculateMonthlyTotal = function (keyName) {
   let hours = 0;
   let minutes = 0;
-  // Loop through each shift entry
-  for (let i = 0; i < this[keyName].shifts.length; i++) {
-    const entry = this[keyName].shifts[i];
-    hours += entry.total.hours;
-    minutes += entry.total.minutes;
+  // Check if the given month exists in the map
+  if (!this.months.has(keyName)) {
+    throw new Error(`Month ${keyName} does not exist.`);
   }
+
+  // Get the list of shifts for the given month
+  const shifts = this.months.get(keyName).shifts;
+
+  // Loop through each shift to calculate the total hours and minutes
+  shifts.forEach((shift) => {
+    hours += shift.total.hours;
+    minutes += shift.total.minutes;
+  });
   // Convert minutes to hours if greater than 60
   if (minutes >= 60) {
     hours += Math.floor(minutes / 60);

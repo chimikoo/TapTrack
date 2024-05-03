@@ -268,32 +268,34 @@ const timeTrack = asyncHandler(async (req, res) => {
   const end = new Date();
   // check if the user has a time track record for the current month
   let timeTrack = await TimeTrack.findOne({ userId });
+  console.log("timeTrack:", timeTrack);
   // if not, create a new time track record
   if (!timeTrack) {
     timeTrack = new TimeTrack({
       userId,
-      [keyName]: {
-        monthlyTotal: { hours: 0, minutes: 0 },
-        shifts: [],
-      },
+      months: new Map(),
     });
   }
-  // console.log("timeTrack:", timeTrack[keyName]);
-  // check if the month already has a shift
-  if (!timeTrack[keyName]) {
-    timeTrack[keyName] = {
+
+  // Ensure the current month exists in the `months` Map
+  if (!timeTrack.months.has(keyName)) {
+    timeTrack.months.set(keyName, {
       monthlyTotal: { hours: 0, minutes: 0 },
       shifts: [],
-    };
-    console.log("timeTrack:", timeTrack);
+    });
   }
   // daily total
   const total = timeTrack.calculateDailyTotal(start, end);
-  console.log("total:", total);
   // push the new shift to the shifts array
-  timeTrack[keyName].shifts.push({ start, end, total });
-  // monthly total
-  timeTrack[keyName].monthlyTotal = timeTrack.calculateMonthlyTotal(keyName);
+  timeTrack.months.get(keyName).shifts.push({
+    start,
+    end,
+    total,
+  });
+  // Update monthly total
+  timeTrack.months.get(keyName).monthlyTotal =
+    timeTrack.calculateMonthlyTotal(keyName);
+  // Save the time track record
   await timeTrack.save();
   res
     .status(201)
