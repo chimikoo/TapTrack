@@ -2,9 +2,9 @@ import { Schema, model } from "mongoose";
 
 const eodReceiptSchema = new Schema(
   {
-    itemName: { type: String, required: true },
+    itemName: { type: String, required: true, default: 'Unnamed Item' },
     quantity: { type: Number, required: true },
-    price: { type: Number, required: true },
+    price: { type: Number, required: true, default: 0},
     category: { type: String, required: true },
   },
   { _id: false }

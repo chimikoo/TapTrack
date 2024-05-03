@@ -3,6 +3,7 @@ import Receipt from "../models/receipt.model.js";
 import calculateTotalAmount from "../utils/calculateTotalAmount.js";
 import Order from "../models/order.model.js";
 import extractItemsFromOrder from "../utils/extractItemsFromOrder.js";
+import Table from "../models/table.model.js";
 
 /* 
 @desc    Get all receipts
@@ -21,13 +22,11 @@ const getAllReceipts = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No receipts found");
   }
-  res
-    .status(200)
-    .json({
-      message: "All receipts",
-      numberOfReceipts: receipts.length,
-      data: receipts,
-    });
+  res.status(200).json({
+    message: "All receipts",
+    numberOfReceipts: receipts.length,
+    data: receipts,
+  });
 });
 
 /* 
@@ -41,6 +40,7 @@ const createReceipt = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Please provide all required fields");
   }
+
   // Retrieve the order to get the items
   const order = await Order.findById(orderId).populate([
     "drinks.drinkItem",
@@ -68,6 +68,22 @@ const createReceipt = asyncHandler(async (req, res) => {
     notes,
     items,
   });
+
+  // Mark the order as paid
+  order.isPaid = true;
+  await order.save();
+
+  // Retrieve the associated table
+  const table = await Table.findOne({ orderId });
+  if (!table) {
+    res.status(404);
+    throw new Error("Table not found");
+  }
+
+  // Update table state to available and remove orderId
+  table.state = "available";
+  table.orderId = undefined;
+  await table.save();
 
   res.status(201).json({ message: "Receipt created", receipt: newReceipt });
 });
