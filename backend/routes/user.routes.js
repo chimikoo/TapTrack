@@ -12,6 +12,7 @@ import {
   updateUserRole,
   getUsersList,
   getUserById,
+  showAvatar,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import {
@@ -72,5 +73,8 @@ router.put("/forcedLogout", isAuth, isAdminOrManager, forceLogoutUsers);
 
 // GET /users/timeTrack/:month
 router.get("/timeTrack/:month", isAuth, timeTrack);
+
+// GET /users/:username/avatar
+router.get("/:username/avatar", isAuth, showAvatar);
 
 export default router;
