@@ -158,8 +158,8 @@ const updateUser = asyncHandler(async (req, res) => {
   const user = await UserModel.findById(userId);
   const oldAvatar = user.avatar;
   if (oldAvatar) {
-    // check if the path exists
-    if (fs.existsSync(`./uploads/${oldAvatar}`)) {
+    // check if the path exists and the avatar is not the default avatar
+    if (fs.existsSync(`./uploads/${oldAvatar}`) && oldAvatar !== "cat.png") {
       // delete the old avatar
       fs.unlinkSync(`./uploads/${oldAvatar}`);
     }

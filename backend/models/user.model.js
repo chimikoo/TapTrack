@@ -28,6 +28,7 @@ const userModelSchema = new Schema({
   },
   avatar: {
     type: String,
+    default: "cat.png",
   },
 });
 
