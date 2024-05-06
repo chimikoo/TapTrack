@@ -226,6 +226,47 @@ const timeTrack = asyncHandler(async (req, res) => {
   res.status(200).json({ monthData });
 });
 
+/* 
+@desc     Get a list of all users
+@route    GET /users
+@access   Private
+*/
+const getUsersList = asyncHandler(async (req, res) => {
+  // only admins can get the list of users
+  const { userRole } = req;
+  if (userRole !== "admin") {
+    res.status(401);
+    throw new Error("You are not authorized to perform this action");
+  }
+  const users = await UserModel.find();
+  if (!users || users.length === 0) {
+    res.status(400);
+    throw new Error("No users found");
+  }
+  res.status(200).json({ employees: users });
+});
+
+/* 
+@desc     Get a user by id
+@route    GET /users/:id
+@access   Private
+*/
+const getUserById = asyncHandler(async (req, res) => {
+  // only admins can get a user by id
+  const { userRole } = req;
+  if (userRole !== "admin") {
+    res.status(401);
+    throw new Error("You are not authorized to perform this action");
+  }
+  const { id } = req.params;
+  const user = await UserModel.findById(id);
+  if (!user) {
+    res.status(400);
+    throw new Error("User not found");
+  }
+  res.status(200).json({ employee: user });
+});
+
 export {
   register,
   login,
@@ -235,4 +276,6 @@ export {
   deleteUser,
   forceLogoutUsers,
   timeTrack,
+  getUsersList,
+  getUserById,
 };
