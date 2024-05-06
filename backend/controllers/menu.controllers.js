@@ -10,7 +10,15 @@ import ExtraModel from "../models/extra.model.js";
 */
 const getAllMenuItems = asyncHandler(async (req, res) => {
   const foods = await FoodModel.find();
+  if (!foods) {
+    res.status(404);
+    throw new Error("No food items found");
+  }
   const beverages = await BeverageModel.find();
+  if (!beverages) {
+    res.status(404);
+    throw new Error("No beverage items found");
+  }
 
   res.status(200).json({
     message: "All menu items",
@@ -49,8 +57,13 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
   foodQuery = foodQuery.limit(limit).skip(startIndex);
 
   const foods = await foodQuery;
+  if (!foods) {
+    res.status(404);
+    throw new Error("No food items found");
+  }
   const totalPages = Math.ceil((await FoodModel.countDocuments()) / limit);
   const totalItems = await FoodModel.countDocuments();
+
   res.status(200).json({
     message: "All food items",
     totalItems,
@@ -101,8 +114,13 @@ const getAllBeverageItems = asyncHandler(async (req, res) => {
   beverageQuery = beverageQuery.limit(limit).skip(startIndex);
 
   const beverages = await beverageQuery;
+  if (!beverages) {
+    res.status(404);
+    throw new Error("No beverage items found");
+  }
   const totalPages = Math.ceil((await BeverageModel.countDocuments()) / limit);
   const totalItems = await BeverageModel.countDocuments();
+
   res.status(200).json({
     message: "All beverage items",
     totalItems,
@@ -149,6 +167,10 @@ const getOneBeverageItem = asyncHandler(async (req, res) => {
 */
 const createFoodItem = asyncHandler(async (req, res) => {
   const { name, price, description, category } = req.body;
+  if (!name || !price || !description || !category) {
+    res.status(400);
+    throw new Error("Please fill in all fields");
+  }
   const newFoodItem = await FoodModel.create({
     name,
     price,
@@ -165,6 +187,10 @@ const createFoodItem = asyncHandler(async (req, res) => {
 */
 const createBeverageItem = asyncHandler(async (req, res) => {
   const { name, description, category, type, sizesPrices } = req.body;
+  if (!name || !description || !category || !type || !sizesPrices) {
+    res.status(400);
+    throw new Error("Please fill in all fields");
+  }
   const newBeverageItem = await BeverageModel.create({
     name,
     description,
@@ -189,6 +215,11 @@ const updateFoodItem = asyncHandler(async (req, res) => {
     { name, price, description, category },
     { new: true }
   );
+  if (!updatedFoodItem) {
+    res.status(404);
+    throw new Error("Food item not found");
+  }
+
   res.status(200).json({ message: "Food item updated", data: updatedFoodItem });
 });
 
@@ -204,6 +235,11 @@ const updateBeverageItem = asyncHandler(async (req, res) => {
     { name, description, category, type, sizesPrices },
     { new: true }
   );
+  if (!updatedBeverageItem) {
+    res.status(404);
+    throw new Error("Beverage item not found");
+  }
+
   res
     .status(200)
     .json({ message: "Beverage item updated", data: updatedBeverageItem });
@@ -236,6 +272,10 @@ const deleteBeverageItem = asyncHandler(async (req, res) => {
 */
 const addExtra = asyncHandler(async (req, res) => {
   const { extra, price } = req.body;
+  if (!extra || !price) {
+    res.status(400);
+    throw new Error("Please fill in all fields");
+  }
   const newExtra = await ExtraModel.create({ extra, price });
   res.status(201).json({ message: "Extra added", data: newExtra });
 });

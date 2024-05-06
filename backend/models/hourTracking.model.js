@@ -1,26 +1,31 @@
 import { Schema, model } from "mongoose";
 
-const monthlyHours = new Schema({
-  hours: {
-    type: Number,
-    default: 0,
+const monthlyHours = new Schema(
+  {
+    hours: {
+      type: Number,
+      default: 0,
+    },
+    minutes: {
+      type: Number,
+      default: 0,
+    },
   },
-  minutes: {
-    type: Number,
-    default: 0,
-  },
-}, { _id: false});
+  { _id: false }
+);
 
 // Define the schema for working hours
-const WorkingHoursSchema = new Schema({
-  loggedInAt: {
-    type: Date,
+const WorkingHoursSchema = new Schema(
+  {
+    loggedInAt: {
+      type: Date,
+    },
+    loggedOutAt: {
+      type: Date,
+    },
   },
-  loggedOutAt: {
-    type: Date,
-  },
-});
-
+  { _id: false }
+);
 
 // Define the schema for the User model
 const hourSchema = new Schema({
@@ -33,8 +38,6 @@ const hourSchema = new Schema({
   workingHours: [WorkingHoursSchema], // Array of working hours entries
   totalMonthlyHours: monthlyHours,
 });
-
-
 
 // Define a method to calculate monthly hours for a user
 hourSchema.methods.calculateMonthlyHours = function (cutoffDate) {
@@ -49,24 +52,19 @@ hourSchema.methods.calculateMonthlyHours = function (cutoffDate) {
     const durationMs = entry.loggedOutAt - entry.loggedInAt;
     // Convert duration from milliseconds to hours
     durationHours = durationMs / (1000 * 60 * 60);
-
     // Add the duration to the total hours counter
     totalHours += durationHours;
 
     // Calculate the remaining minutes
     durationMinutes = (durationMs % (1000 * 60 * 60)) / (1000 * 60);
-
     // Add the minutes to the total hours counter
     totalHours += durationMinutes / 60;
   }
 
-  // Update the totalMonthlyHours field in the schema
-  this.totalMonthlyHours = totalHours;
-
   return {
-    hours: Math.round(durationHours),
-    minutes: Math.round(durationMinutes)
-    };
+    hours: Math.round(totalHours),
+    minutes: Math.round((totalHours * 60) % 60),
+  };
 };
 
 // Create the User model

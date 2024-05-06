@@ -2,10 +2,8 @@ import { Router } from "express";
 import {
   generateEodReport,
   viewEodReport,
-  viewEodReportByDay,
+  viewEodReportByDate,
 } from "../controllers/eod.controllers.js";
-
-import isAuth from "../middlewares/isAuth.js";
 
 const router = Router();
 
@@ -15,7 +13,7 @@ router.post("/", generateEodReport);
 // GET /eod
 router.get("/", viewEodReport);
 
-// GET /eod/:day
-router.get("/:day", viewEodReportByDay);
+// GET /eod/:date
+router.get("/:date", viewEodReportByDate);
 
 export default router;

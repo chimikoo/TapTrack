@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "../config/asyncHandler.js";
 import UserModel from "../models/user.model.js";
 import HourTracking from "../models/hourTracking.model.js";
-import EodModel from "../models/eod.model.js";
+import TimeTrack from "../models/timeTrack.model.js";
+import { endShift, startShift } from "../utils/trackShifts.js";
 
 /* 
 @desc     Register a new user
@@ -12,11 +13,12 @@ import EodModel from "../models/eod.model.js";
 */
 const register = asyncHandler(async (req, res) => {
   const { userRole } = req;
+  // Check if the user is authorized to perform this action, only admins can register new users
   if (userRole !== "admin") {
     res.status(401);
     throw new Error("You are not authorized to perform this action");
   }
-  const { username, password, name, email } = req.body;
+  const { username, password, firstName, lastName, email } = req.body;
   // Check if the user already exists
   const userExists = await UserModel.findOne({ username });
   if (userExists) {
@@ -29,7 +31,8 @@ const register = asyncHandler(async (req, res) => {
   const user = await UserModel.create({
     username,
     password: hashedPassword,
-    name,
+    firstName,
+    lastName,
     email,
   });
   // Send the response
@@ -42,6 +45,13 @@ const register = asyncHandler(async (req, res) => {
 @access   Public
 */
 const login = asyncHandler(async (req, res) => {
+  // check if the user is already logged in
+  // by the presence of a token in the request cookies
+  if (req.cookies.token) {
+    res.status(400);
+    throw new Error("User is already logged in");
+  }
+
   const { username, password } = req.body;
   // Check if the user exists
   const user = await UserModel.findOne({ username });
@@ -64,28 +74,8 @@ const login = asyncHandler(async (req, res) => {
     }
   );
 
-  // Add entry to workingHours array
-  const loggedInAt = new Date();
-  try {
-    let hourTracking = await HourTracking.findOne({ userId: user._id });
-    console.log(hourTracking);
-    if (!hourTracking) {
-      // Create a new HourTracking record if it doesn't exist
-      hourTracking = await HourTracking.create({
-        userId: user._id,
-        workingHours: [{ loggedInAt }],
-        /*  totalMonthlyHours: {hours: 0, minutes: 0}, */
-      });
-    } else {
-      hourTracking.workingHours.push({ loggedInAt });
-      await hourTracking.save(); // Save the user document with the updated workingHours array
-    }
-    console.log("HourTracking document saved:", hourTracking);
-  } catch (error) {
-    console.error("Error creating HourTracking document:", error);
-    res.status(500).json({ message: "Internal server error" });
-    return;
-  }
+  // Add time tracking record
+  await startShift(user._id);
 
   // Set a cookie
   const cookieOptions = {
@@ -105,39 +95,14 @@ const login = asyncHandler(async (req, res) => {
 */
 const logout = asyncHandler(async (req, res) => {
   const { userId } = req; // Assuming you have middleware to extract user ID from the request
-  // Find the user's hour tracking record
-  const hourTracking = await HourTracking.findOne({ userId });
-  if (!hourTracking) {
-    res.status(404);
-    throw new Error("Hour tracking record not found");
-  }
-  // Add entry to workingHours array
-  const loggedOutAt = new Date();
-  hourTracking.workingHours[hourTracking.workingHours.length - 1].loggedOutAt =
-    loggedOutAt;
-  await hourTracking.save(); // Save the user document with the updated workingHours array
+  // Clear the cookie
+  res.clearCookie("token");
 
-  // res.clearCookie("token");
-  res.status(200).json({ message: "User logged out successfully" });
+  // record the end time of the last shift
+  const timeTrack = await endShift(userId);
+
+  res.status(200).json({ message: "User logged out successfully", timeTrack });
 });
-
-/* 
-@desc     Calculate total hours worked in last 30 days
-@route    GET /users/total-hours-worked
-@access   Private
-*/
-const getTotalHoursWorked = async (req, res) => {
-  const { userId } = req;
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // Calculate the date 30 days ago
-  const hourTracking = await HourTracking.findOne({ userId });
-  if (!hourTracking) {
-    throw new Error("Hour tracking record not found");
-  }
-  hourTracking.totalMonthlyHours =
-    hourTracking.calculateMonthlyHours(thirtyDaysAgo);
-  await hourTracking.save();
-  res.status(200).json({ totalHours: hourTracking.totalMonthlyHours });
-};
 
 /* 
 @desc     Force logout users who haven't logged out by end of day
@@ -158,7 +123,7 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
   // Find users who haven't logged out yet
   const usersToForceLogout = await HourTracking.find({
     workingHours: {
-      loggedOutAt: { $exists: false }
+      loggedOutAt: { $exists: false },
     }, // Users who haven't logged out yet
   }).populate("userId");
   console.log(usersToForceLogout);
@@ -172,35 +137,55 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
   }
 });
 // //
-// @desc     Update a user
-// @route    PATCH /users/update
+// @desc     Update user info
+// @route    PATCH /users
 // @access   Private
 // *//
 const updateUser = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "admin") {
-    res.status(401);
-    throw new Error("You are not authorized to perform this action");
-  }
-  const { id } = req.params;
-  const { username, password, name, email, role } = req.body;
-  // hash the updated password
-  const hashedPassword = await bcrypt.hash(password, 12);
+  const { userId } = req;
+  const { username, password, firstName, lastName, email } = req.body;
+  // hash the updated password if the password is provided
+  const hashedPassword = password ? await bcrypt.hash(password, 12) : password;
   // Update the user
-  await UserModel.findByIdAndUpdate(id, {
+  await UserModel.findByIdAndUpdate(userId, {
     username,
     password: hashedPassword,
-    name,
+    firstName,
+    lastName,
     email,
-    role,
   });
   // Send the response
   res.status(200).json({ message: "User updated successfully" });
 });
 
 /* 
-@desc     Delete a user
-@route    DELETE /users/delete
+@desc     Update a user's role
+@route    PATCH /users/:id
+@access   Private
+*/
+const updateUserRole = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  // Check if the user is authorized to perform this action, only admins can update user roles
+  if (userRole !== "admin") {
+    res.status(401);
+    throw new Error("You are not authorized to perform this action");
+  }
+  const { id } = req.params;
+  const { role } = req.body;
+  // Check if the role is valid
+  if (role !== "admin" && role !== "manager" && role !== "waiter") {
+    res.status(400);
+    throw new Error("Invalid role");
+  }
+  // Update the user's role
+  await UserModel.findByIdAndUpdate(id, { role });
+  // Send the response
+  res.status(200).json({ message: "User role updated successfully" });
+});
+
+/* 
+@desc     Delete a user by id
+@route    DELETE /users/:id
 @access   Private
 */
 const deleteUser = asyncHandler(async (req, res) => {
@@ -217,12 +202,80 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "User deleted successfully" });
 });
 
+/* 
+@desc     Get time tracking record for a user
+@route    GET /users/timeTrack/:month
+@access   Private
+*/
+const timeTrack = asyncHandler(async (req, res) => {
+  const { userId } = req;
+  const { month } = req.params;
+  // get the user's time track record
+  const timeTrack = await TimeTrack.findOne({ userId });
+  if (!timeTrack) {
+    res.status(400);
+    throw new Error("Time tracking record not found");
+  }
+  // get the object for the given month
+  const monthData = timeTrack.months.get(month);
+  if (!monthData) {
+    res.status(400);
+    throw new Error("Month not found");
+  }
+  // send the response
+  res.status(200).json({ monthData });
+});
+
+/* 
+@desc     Get a list of all users
+@route    GET /users
+@access   Private
+*/
+const getUsersList = asyncHandler(async (req, res) => {
+  // only admins can get the list of users
+  const { userRole } = req;
+  if (userRole !== "admin") {
+    res.status(401);
+    throw new Error("You are not authorized to perform this action");
+  }
+  const users = await UserModel.find();
+  if (!users || users.length === 0) {
+    res.status(400);
+    throw new Error("No users found");
+  }
+  res.status(200).json({ employees: users });
+});
+
+/* 
+@desc     Get a user by id
+@route    GET /users/:id
+@access   Private
+*/
+const getUserById = asyncHandler(async (req, res) => {
+  // only admins can get a user by id
+  const { userRole } = req;
+  if (userRole !== "admin") {
+    res.status(401);
+    throw new Error("You are not authorized to perform this action");
+  }
+  const { id } = req.params;
+  const user = await UserModel.findById(id);
+  if (!user) {
+    res.status(400);
+    throw new Error("User not found");
+  }
+  res.status(200).json({ employee: user });
+});
+
 export {
   register,
   login,
   logout,
   updateUser,
+  updateUserRole,
   deleteUser,
-  getTotalHoursWorked,
   forceLogoutUsers,
+  timeTrack,
+  getUsersList,
+  getUserById,
 };

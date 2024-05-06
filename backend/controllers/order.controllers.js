@@ -1,5 +1,6 @@
 import asyncHandler from "../config/asyncHandler.js";
 import Order from "../models/order.model.js";
+import Table from "../models/table.model.js";
 import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 
 /* 
@@ -9,11 +10,28 @@ import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 */
 const addOrder = asyncHandler(async (req, res) => {
   const userId = req.userId;
-  const { tableNumber, drinks, starter, main, side, dessert, extras } =
-    req.body;
+  const { tableNumber, drinks, starter, main, side, dessert, extras } = req.body;
+  console.log(req.body);
+  if (!tableNumber || !drinks || !starter || !main || !side || !dessert) {
+    res.status(400);
+    throw new Error("Please provide all required fields");
+  }
+
+  // Check if the table exists and is not occupied
+  let existingTable = await Table.findOne({ tableNumber, state: { $ne: "occupied" } });
+  if (!existingTable) {
+    // If the table doesn't exist or is occupied, create a new one
+    existingTable = await Table.create({
+      userId,
+      tableNumber,
+      state: "occupied",
+    });
+  }
+
+  // Create the order
   const newOrder = await Order.create({
     userId,
-    tableNumber,
+    tableNumber: existingTable._id,
     drinks,
     starter,
     main,
@@ -21,15 +39,24 @@ const addOrder = asyncHandler(async (req, res) => {
     dessert,
     extras,
   });
-  // remove quantity ordered from stock
-  await updateStockAfterOrder(drinks, "beverage");
-  await updateStockAfterOrder(starter, "food");
-  await updateStockAfterOrder(main, "food");
-  await updateStockAfterOrder(side, "food");
-  await updateStockAfterOrder(dessert, "food");
-  res
-    .status(201)
-    .json({ message: "Order created successfully", data: newOrder });
+
+  // Assign the orderId to the table
+  existingTable.orderId = newOrder._id;
+  await existingTable.save();
+
+  // Remove quantity ordered from stock
+  try {
+    await updateStockAfterOrder(drinks, "beverage");
+    await updateStockAfterOrder(starter, "food");
+    await updateStockAfterOrder(main, "food");
+    await updateStockAfterOrder(side, "food");
+    await updateStockAfterOrder(dessert, "food");
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+
+  res.status(201).json({ message: "Order created successfully", data: newOrder });
 });
 
 /* 
@@ -38,7 +65,12 @@ const addOrder = asyncHandler(async (req, res) => {
 @access Private
 */
 const getAllOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find().populate([
+  let ordersQuery = Order.find();
+  // filter orders by table
+  if (req.query.tableNumber) {
+    ordersQuery = Order.find({ tableNumber: req.query.tableNumber });
+  }
+  const orders = await ordersQuery.populate([
     "userId",
     "starter.dishItem",
     "main.dishItem",
@@ -51,7 +83,11 @@ const getAllOrders = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No orders found");
   }
-  res.status(200).json({ message: "All orders", data: orders });
+  res.status(200).json({
+    message: "All orders",
+    numberOfOrders: orders.length,
+    data: orders,
+  });
 });
 
 /* 
@@ -100,6 +136,10 @@ const updateOrder = asyncHandler(async (req, res) => {
 */
 const deleteOrder = asyncHandler(async (req, res) => {
   const order = await Order.findByIdAndDelete(req.params.id);
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
   res.status(200).json({ message: "Order deleted successfully" });
 });
 
