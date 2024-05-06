@@ -7,6 +7,7 @@ This backend system is designed for comprehensive management of restaurant opera
 - **User Management:** Handles registration, authentication, work hours tracked, and user role management.
 - **Menu Management:** Provides capabilities to add, update, delete, and view food and beverage items.
 - **Order Processing:** Supports placing, updating, and deleting orders.
+- **Stock Tracking:** Monitors and manages inventory levels of food and beverages, updating stock automatically as orders are placed and supplies are updated.
 - **Receipt Handling:** Manages the generation and retrieval of receipts for transactions.
 - **End-of-Day Reporting:** Automates the creation of financial reports at the end of each business day.
 - **Security:** Implements role-based access control for different endpoints.
