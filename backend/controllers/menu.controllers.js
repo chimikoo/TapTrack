@@ -9,13 +9,16 @@ import ExtraModel from "../models/extra.model.js";
 @access Public
 */
 const getAllMenuItems = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const foods = await FoodModel.find();
+  if (!foods) {
+    res.status(404);
+    throw new Error("No food items found");
+  }
   const beverages = await BeverageModel.find();
+  if (!beverages) {
+    res.status(404);
+    throw new Error("No beverage items found");
+  }
 
   res.status(200).json({
     message: "All menu items",
@@ -30,11 +33,6 @@ const getAllMenuItems = asyncHandler(async (req, res) => {
 @access Public
 */
 const getAllFoodItems = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   let foodQuery = FoodModel.find();
   // Filtering food items
   if (req.query.category) {
@@ -59,8 +57,13 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
   foodQuery = foodQuery.limit(limit).skip(startIndex);
 
   const foods = await foodQuery;
+  if (!foods) {
+    res.status(404);
+    throw new Error("No food items found");
+  }
   const totalPages = Math.ceil((await FoodModel.countDocuments()) / limit);
   const totalItems = await FoodModel.countDocuments();
+
   res.status(200).json({
     message: "All food items",
     totalItems,
@@ -78,11 +81,6 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
 @access Public
 */
 const getAllBeverageItems = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   let beverageQuery = BeverageModel.find();
   // Filtering beverage items
   if (req.query.name) {
@@ -116,8 +114,13 @@ const getAllBeverageItems = asyncHandler(async (req, res) => {
   beverageQuery = beverageQuery.limit(limit).skip(startIndex);
 
   const beverages = await beverageQuery;
+  if (!beverages) {
+    res.status(404);
+    throw new Error("No beverage items found");
+  }
   const totalPages = Math.ceil((await BeverageModel.countDocuments()) / limit);
   const totalItems = await BeverageModel.countDocuments();
+
   res.status(200).json({
     message: "All beverage items",
     totalItems,
@@ -135,11 +138,6 @@ const getAllBeverageItems = asyncHandler(async (req, res) => {
 @access Public
 */
 const getOneFoodItem = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const food = await FoodModel.findById(req.params.id);
   if (!food) {
     res.status(404);
@@ -154,11 +152,6 @@ const getOneFoodItem = asyncHandler(async (req, res) => {
 @access Public
 */
 const getOneBeverageItem = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const beverage = await BeverageModel.findById(req.params.id);
   if (!beverage) {
     res.status(404);
@@ -173,12 +166,11 @@ const getOneBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const createFoodItem = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const { name, price, description, category } = req.body;
+  if (!name || !price || !description || !category) {
+    res.status(400);
+    throw new Error("Please fill in all fields");
+  }
   const newFoodItem = await FoodModel.create({
     name,
     price,
@@ -194,12 +186,11 @@ const createFoodItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const createBeverageItem = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const { name, description, category, type, sizesPrices } = req.body;
+  if (!name || !description || !category || !type || !sizesPrices) {
+    res.status(400);
+    throw new Error("Please fill in all fields");
+  }
   const newBeverageItem = await BeverageModel.create({
     name,
     description,
@@ -218,17 +209,17 @@ const createBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const updateFoodItem = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const { name, price, description, category } = req.body;
   const updatedFoodItem = await FoodModel.findByIdAndUpdate(
     req.params.id,
     { name, price, description, category },
     { new: true }
   );
+  if (!updatedFoodItem) {
+    res.status(404);
+    throw new Error("Food item not found");
+  }
+
   res.status(200).json({ message: "Food item updated", data: updatedFoodItem });
 });
 
@@ -238,17 +229,17 @@ const updateFoodItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const updateBeverageItem = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const { name, description, category, type, sizesPrices } = req.body;
   const updatedBeverageItem = await BeverageModel.findByIdAndUpdate(
     req.params.id,
     { name, description, category, type, sizesPrices },
     { new: true }
   );
+  if (!updatedBeverageItem) {
+    res.status(404);
+    throw new Error("Beverage item not found");
+  }
+
   res
     .status(200)
     .json({ message: "Beverage item updated", data: updatedBeverageItem });
@@ -260,11 +251,6 @@ const updateBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const deleteFoodItem = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   await FoodModel.findByIdAndDelete(req.params.id);
   res.status(200).json({ message: "Food item deleted" });
 });
@@ -275,11 +261,6 @@ const deleteFoodItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const deleteBeverageItem = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   await BeverageModel.findByIdAndDelete(req.params.id);
   res.status(200).json({ message: "Beverage item deleted" });
 });
@@ -290,14 +271,46 @@ const deleteBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const addExtra = asyncHandler(async (req, res) => {
-  const { userRole } = req;
-  if (userRole !== "waiter" && userRole !== "admin" && userRole !== "manager") {
-    res.status(403);
-    throw new Error("Not authorized!");
-  }
   const { extra, price } = req.body;
+  if (!extra || !price) {
+    res.status(400);
+    throw new Error("Please fill in all fields");
+  }
   const newExtra = await ExtraModel.create({ extra, price });
   res.status(201).json({ message: "Extra added", data: newExtra });
+});
+
+/* 
+@desc   Update item stock
+@route  PUT /users/menu-items/stock/:type/:id
+@access Private
+*/
+const updateItemStock = asyncHandler(async (req, res) => {
+  const { id, type } = req.params;
+  const { stock } = req.body;
+
+  // Check if the type is for updating food or beverage item
+  let updatedItem;
+  if (type === "foods") {
+    updatedItem = await FoodModel.findByIdAndUpdate(
+      id,
+      { stock },
+      { new: true }
+    );
+  } else if (type === "beverages") {
+    updatedItem = await BeverageModel.findByIdAndUpdate(
+      id,
+      { stock },
+      { new: true }
+    );
+  }
+
+  if (!updatedItem) {
+    res.status(404);
+    throw new Error("Item not found");
+  }
+
+  res.status(200).json({ message: "Item stock updated", data: updatedItem });
 });
 
 export {
@@ -313,4 +326,5 @@ export {
   deleteFoodItem,
   deleteBeverageItem,
   addExtra,
+  updateItemStock,
 };

@@ -1,12 +1,7 @@
 import Order from "../models/order.model.js";
 
-const calculateTotalAmount = async (orderId) => {
+const calculateTotalAmount = async (order) => {
   try {
-    // Find the order by its ID and populate the nested objects
-    const order = await Order.findById(orderId).populate(
-      "drinks.drinkItem starter.dishItem main.dishItem side.dishItem dessert.dishItem"
-    );
-
     // Calculate the subtotal for each food item (starter, main, side, dessert)
     const calculateFoodSubtotal = (foodItem) => {
       return foodItem.quantity * foodItem.dishItem.price;

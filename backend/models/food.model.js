@@ -17,7 +17,11 @@ const foodModelSchema = new Schema({
     type: String, 
     required: true,
     enum: ["starter", "main", "side", "dessert"]
-  }
+  },
+  stock: { 
+    type: Number,
+    default: 0 
+  },
 });
 
 const FoodModel = model("food", foodModelSchema);
