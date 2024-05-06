@@ -1,3 +1,4 @@
+import fs from "fs";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import asyncHandler from "../config/asyncHandler.js";
@@ -144,8 +145,20 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
   const { userId } = req;
   const { username, password, firstName, lastName, email } = req.body;
+  const avatar = req.file.filename;
   // hash the updated password if the password is provided
   const hashedPassword = password ? await bcrypt.hash(password, 12) : password;
+
+  // get the user's old avatar
+  const user = await UserModel.findById(userId);
+  const oldAvatar = user.avatar;
+  if (oldAvatar) {
+    // check if the path exists
+    if (fs.existsSync(`./uploads/${oldAvatar}`)) {
+      // delete the old avatar
+      fs.unlinkSync(`./uploads/${oldAvatar}`);
+    }
+  }
   // Update the user
   await UserModel.findByIdAndUpdate(userId, {
     username,
@@ -153,7 +166,9 @@ const updateUser = asyncHandler(async (req, res) => {
     firstName,
     lastName,
     email,
+    avatar,
   });
+
   // Send the response
   res.status(200).json({ message: "User updated successfully" });
 });
