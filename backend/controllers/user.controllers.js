@@ -109,32 +109,30 @@ const logout = asyncHandler(async (req, res) => {
 */
 const forceLogoutUsers = asyncHandler(async (req, res) => {
   // Calculate end of day
-  console.log("Entering the focedLogoutUsers function");
+  console.log("Entering the forcedLogoutUsers function");
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
-  // Check if EoD report is being generated
-  /* const isEodReportBeingGenerated = await EodModel.findOne({ timestamp: { $gt: endOfDay } });
-  if (isEodReportBeingGenerated) {
-    console.log("EoD report is being generated, skipping force logout");
-    return;
-  } */
-  /*  console.log(isEodReportBeingGenerated); */
   // Find users who haven't logged out yet
   const usersToForceLogout = await HourTracking.find({
-    workingHours: {
-      loggedOutAt: { $exists: false },
-    }, // Users who haven't logged out yet
+    "workingHours.loggedOutAt": null,
   }).populate("userId");
   console.log(usersToForceLogout);
 
-  // Logout each user
   for (const tracking of usersToForceLogout) {
-    // Update the hour tracking record with logout time
-    tracking.workingHours[tracking.workingHours.length - 1].loggedOutAt =
-      new Date();
-    await tracking.save();
+    try {
+      const lastWorkingHour =
+        tracking.workingHours[tracking.workingHours.length - 1];
+      lastWorkingHour.loggedOutAt = new Date();
+      await tracking.save();
+    } catch (error) {
+      console.error(
+        `Error forcing logout for user ${tracking.userId}: ${error}`
+      );
+    }
   }
+
+  res.status(200).json({ message: "Users forced to logout successfully" });
 });
 // //
 // @desc     Update user info
