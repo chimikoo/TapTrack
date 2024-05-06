@@ -43,24 +43,25 @@ npm run dev
 
 ## API Documentation
 ### User Routes
-- **POST /users/register** - Register a new user.
-- **POST /users/login** - Authenticate a user and return a token.
-- **GET /users/logout** - Log out a user and invalidate the token.
+- **`POST /users/register`** - Register a new user.
+- **`POST /users/login`** - Authenticate a user and return a token.
+- **`GET /users/logout`** - Log out a user and invalidate the token.
 ### Menu Item Routes
-- **GET /menuItems** - Retrieve all menu items.
-- **POST /menuItems** - Add a new menu item.
-- **PUT /menuItems/:id** - Update an existing menu item.
-- **DELETE /menuItems/:id** - Delete a menu item.
+- **`GET /menuItems`** - Retrieve all menu items.
+- **`POST /menuItems`** - Add a new menu item.
+- **`PUT /menuItems/:id`** - Update an existing menu item.
+- **`DELETE /menuItems/:id`** - Delete a menu item.
 ### Order Routes
-- **POST /orders** - Place a new order.
-- **GET /orders/:id** - Retrieve a specific order by ID.
-- **PUT /orders/:id** - Update an existing order.
-- **DELETE /orders/:id** - Cancel an existing order.
+- **`POST /orders`** - Place a new order.
+- **`GET /orders/:id`** - Retrieve a specific order by ID.
+- **`PUT /orders/:id`** - Update an existing order.
+- **`DELETE /orders/:id`** - Cancel an existing order.
 ### Receipt Routes
-- **GET /receipts** - Retrieve all receipts.
-- **POST /receipts** - Create a new receipt for an order.
+- **`GET /receipts`** - Retrieve all receipts.
+- **`POST /receipts`** - Create a new receipt for an order.
 ### EOD Routes
-- **GET /eod/reports** - Generate an end-of-day report.
+- **`GET /eod/reports`** - Generate an end-of-day report.
+
 
 ## Middleware Description
 - **isAdminOrManager:** Validates if the user has admin or manager privileges.
