@@ -67,3 +67,9 @@ npm run dev
 - isAuth: Checks the authentication token and sets user context.
 - notFound: Handles 404 errors for undefined routes.
 - errorHandler: Catches and handles errors.
+
+## Contributing
+Please fork the repository and submit pull requests for any enhancements. Your contributions are greatly appreciated!
+
+## Contact
+For any inquiries or further information, please contact via email: chimikoo@gmail.com
