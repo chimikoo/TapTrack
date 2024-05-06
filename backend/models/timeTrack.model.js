@@ -14,11 +14,6 @@
 
 import { Schema, model } from "mongoose";
 
-const currentDate = new Date();
-const year = currentDate.getFullYear();
-const month = currentDate.getMonth() + 1;
-const formattedMonth = month < 10 ? "0" + month : month.toString();
-const keyName = `${year}-${formattedMonth}`;
 
 const totalSchema = new Schema(
   {

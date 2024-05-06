@@ -74,26 +74,38 @@ const login = asyncHandler(async (req, res) => {
     }
   );
 
-  // Add entry to workingHours array
-  const loggedInAt = new Date();
+  // Add time tracking record
+  const start = new Date();
+  const keyName = start.toISOString().slice(0, 7);
   try {
-    let hourTracking = await HourTracking.findOne({ userId: user._id });
-    // console.log(hourTracking);
-    if (!hourTracking) {
-      // Create a new HourTracking record if it doesn't exist
-      hourTracking = await HourTracking.create({
+    // check if the user has a time track record for the current month
+    let timeTrack = await TimeTrack.findOne({ userId: user._id });
+    // if not, create a new time track record
+    if (!timeTrack) {
+      timeTrack = new TimeTrack({
         userId: user._id,
-        workingHours: [{ loggedInAt }],
+        months: new Map(),
       });
-    } else {
-      hourTracking.workingHours.push({ loggedInAt });
-      await hourTracking.save(); // Save the user document with the updated workingHours array
     }
-    console.log("HourTracking document saved:", hourTracking);
+
+    // Ensure the current month exists in the `months` Map
+    if (!timeTrack.months.has(keyName)) {
+      timeTrack.months.set(keyName, {
+        monthlyTotal: { hours: 0, minutes: 0 },
+        shifts: [],
+      });
+    }
+
+    // push the new shift to the shifts array
+    timeTrack.months.get(keyName).shifts.push({
+      start,
+      end: null,
+      total: { hours: 0, minutes: 0 },
+    });
+    // save the time track record
+    await timeTrack.save();
   } catch (error) {
-    console.error("Error creating HourTracking document:", error);
-    res.status(500).json({ message: "Internal server error" });
-    return;
+    console.log("Error: ", error);
   }
 
   // Set a cookie
@@ -114,40 +126,45 @@ const login = asyncHandler(async (req, res) => {
 */
 const logout = asyncHandler(async (req, res) => {
   const { userId } = req; // Assuming you have middleware to extract user ID from the request
-  // Find the user's hour tracking record
-  const hourTracking = await HourTracking.findOne({ userId });
-  if (!hourTracking) {
-    res.status(404);
-    throw new Error("Hour tracking record not found");
-  }
-  // Add entry to workingHours array
-  const loggedOutAt = new Date();
-  hourTracking.workingHours[hourTracking.workingHours.length - 1].loggedOutAt =
-    loggedOutAt;
-  await hourTracking.save(); // Save the user document with the updated workingHours array
-
   // Clear the cookie
   res.clearCookie("token");
-  res.status(200).json({ message: "User logged out successfully" });
-});
 
-/* 
-@desc     Calculate total hours worked in last 30 days
-@route    GET /users/total-hours-worked
-@access   Private
-*/
-const getTotalHoursWorked = async (req, res) => {
-  const { userId } = req;
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // Calculate the date 30 days ago
-  const hourTracking = await HourTracking.findOne({ userId });
-  if (!hourTracking) {
-    throw new Error("Hour tracking record not found");
+  // record the end time of the last shift
+
+  // Find the user's time tracking record
+  const timeTrack = await TimeTrack.findOne({ userId });
+  if (!timeTrack) {
+    res.status(400);
+    throw new Error("Time tracking record not found");
   }
-  hourTracking.totalMonthlyHours =
-    hourTracking.calculateMonthlyHours(thirtyDaysAgo);
-  await hourTracking.save();
-  res.status(200).json({ totalHours: hourTracking.totalMonthlyHours });
-};
+  // create the end time
+  const end = new Date();
+  const keyName = end.toISOString().slice(0, 7);
+  // Check if the user has any shifts
+  if (timeTrack.months.get(keyName).shifts.length === 0) {
+    res.status(400);
+    throw new Error("No shifts found");
+  }
+  // Find the last shift in the current month
+  const lastShift =
+    timeTrack.months.get(keyName).shifts[
+      timeTrack.months.get(keyName).shifts.length - 1
+    ];
+  // Update the end time of the last shift
+  lastShift.end = end;
+  // Calculate the total hours worked in the last shift
+  lastShift.total = timeTrack.calculateDailyTotal(
+    lastShift.start,
+    lastShift.end
+  );
+  // update monthly total
+  timeTrack.months.get(keyName).monthlyTotal =
+    timeTrack.calculateMonthlyTotal(keyName);
+  // Save the time track record
+  await timeTrack.save();
+
+  res.status(200).json({ message: "User logged out successfully", timeTrack });
+});
 
 /* 
 @desc     Force logout users who haven't logged out by end of day
@@ -248,57 +265,27 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 /* 
-@desc     Create a Blabla
-@route    POST /users/timeTrack
+@desc     Get time tracking record for a user
+@route    GET /users/timeTrack/:month
 @access   Private
 */
-
 const timeTrack = asyncHandler(async (req, res) => {
-  const currentDate = new Date();
-  // console.log("current date:", currentDate);
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth() + 2;
-
-  const formattedMonth = month < 10 ? "0" + month : month.toString();
-
-  const keyName = `${year}-${formattedMonth}`;
-
   const { userId } = req;
-  const start = new Date("2024-05-03T02:00:30");
-  const end = new Date();
-  // check if the user has a time track record for the current month
-  let timeTrack = await TimeTrack.findOne({ userId });
-  // if not, create a new time track record
+  const { month } = req.params;
+  // get the user's time track record
+  const timeTrack = await TimeTrack.findOne({ userId });
   if (!timeTrack) {
-    timeTrack = new TimeTrack({
-      userId,
-      months: new Map(),
-    });
+    res.status(400);
+    throw new Error("Time tracking record not found");
   }
-
-  // Ensure the current month exists in the `months` Map
-  if (!timeTrack.months.has(keyName)) {
-    timeTrack.months.set(keyName, {
-      monthlyTotal: { hours: 0, minutes: 0 },
-      shifts: [],
-    });
+  // get the object for the given month
+  const monthData = timeTrack.months.get(month);
+  if (!monthData) {
+    res.status(400);
+    throw new Error("Month not found");
   }
-  // daily total
-  const total = timeTrack.calculateDailyTotal(start, end);
-  // push the new shift to the shifts array
-  timeTrack.months.get(keyName).shifts.push({
-    start,
-    end,
-    total,
-  });
-  // Update monthly total
-  timeTrack.months.get(keyName).monthlyTotal =
-    timeTrack.calculateMonthlyTotal(keyName);
-  // Save the time track record
-  await timeTrack.save();
-  res
-    .status(201)
-    .json({ message: "Time track created successfully", timeTrack });
+  // send the response
+  res.status(200).json({ monthData });
 });
 
 export {
@@ -308,7 +295,6 @@ export {
   updateUser,
   updateUserRole,
   deleteUser,
-  getTotalHoursWorked,
   forceLogoutUsers,
   timeTrack,
 };
