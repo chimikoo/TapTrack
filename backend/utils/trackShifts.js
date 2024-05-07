@@ -39,7 +39,6 @@ const endShift = async (userId) => {
   // Find the user's time tracking record
   const timeTrack = await TimeTrack.findOne({ userId });
   if (!timeTrack) {
-    res.status(400);
     throw new Error("Time tracking record not found");
   }
   // create the end time
@@ -47,7 +46,6 @@ const endShift = async (userId) => {
   const keyName = end.toISOString().slice(0, 7);
   // Check if the user has any shifts
   if (timeTrack.months.get(keyName).shifts.length === 0) {
-    res.status(400);
     throw new Error("No shifts found");
   }
   // Find the last shift in the current month

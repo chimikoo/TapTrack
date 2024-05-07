@@ -114,29 +114,12 @@ const logout = asyncHandler(async (req, res) => {
 @desc     Force logout users who haven't logged out by end of day
 */
 const forceLogoutUsers = asyncHandler(async (req, res) => {
-  // Calculate end of day
-  console.log("Entering the forcedLogoutUsers function");
-  const endOfDay = new Date();
-  endOfDay.setHours(23, 59, 59, 999);
-
-  // Find users who haven't logged out yet
-  const usersToForceLogout = await TimeTrack.find({
-    "workingHours.loggedOutAt": null,
-  }).populate("userId");
-  console.log(usersToForceLogout);
-
-  for (const tracking of usersToForceLogout) {
-    try {
-      const lastWorkingHour =
-        tracking.workingHours[tracking.workingHours.length - 1];
-      lastWorkingHour.loggedOutAt = new Date();
-      await tracking.save();
-    } catch (error) {
-      console.error(
-        `Error forcing logout for user ${tracking.userId}: ${error}`
-      );
-    }
-  }
+  // get all the time track records
+  const timeTracks = await TimeTrack.find();
+  // loop through all the time track records
+  timeTracks.forEach(async (timeTrack) => {
+    await endShift(timeTrack.userId);
+  });
 
   res.status(200).json({ message: "Users forced to logout successfully" });
 });
