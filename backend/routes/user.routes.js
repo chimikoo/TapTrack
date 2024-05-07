@@ -1,6 +1,4 @@
 import { Router } from "express";
-import multer from "multer";
-import fs from "fs";
 import {
   deleteUser,
   login,
@@ -20,29 +18,9 @@ import {
   validate,
 } from "../middlewares/userValidation.js";
 import isAdminOrManager from "../middlewares/isAdminOrManager.js";
-import { get } from "mongoose";
+import { upload } from "../utils/storage.js";
 
 const router = Router();
-
-// Multer configuration
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const dir = "./uploads";
-    // Create the directory if it doesn't exist
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    cb(null, dir);
-  },
-  filename: function (req, file, cb) {
-    const splitName = file.originalname.split(".");
-    const ext = splitName[splitName.length - 1];
-    const fileName = `${crypto.randomUUID()}.${ext}`;
-    cb(null, fileName);
-  },
-});
-
-const upload = multer({ storage: storage });
 
 // POST /users/register
 router.post("/register", isAuth, userValidationRules(), validate, register);
