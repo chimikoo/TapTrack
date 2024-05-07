@@ -7,9 +7,7 @@ import asyncHandler from "../config/asyncHandler.js";
 import UserModel from "../models/user.model.js";
 import TimeTrack from "../models/timeTrack.model.js";
 import { endShift, startShift } from "../utils/trackShifts.js";
-
-// Get the directory name of the current module
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import { clearImage } from "../utils/clearImage.js";
 
 /* 
 @desc     Register a new user
@@ -141,7 +139,8 @@ const updateUser = asyncHandler(async (req, res) => {
     // check if the path exists and the avatar is not the default avatar
     if (fs.existsSync(`./uploads/${oldAvatar}`) && oldAvatar !== "cat.png") {
       // delete the old avatar
-      fs.unlinkSync(`./uploads/${oldAvatar}`);
+      // fs.unlinkSync(`./uploads/${oldAvatar}`);
+      clearImage(`./uploads/${oldAvatar}`);
     }
   }
   // Update the user
@@ -284,6 +283,9 @@ const showAvatar = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Avatar not found");
   }
+  // Get the directory name of the current module
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  // Get the path to the user's avatar
   const picturePath = "uploads/" + user.avatar;
   const absolutePath = path.join(__dirname, "..", picturePath);
   res.sendFile(absolutePath);
