@@ -17,6 +17,18 @@ const addOrder = asyncHandler(async (req, res) => {
     throw new Error("Please provide all required fields");
   }
 
+  // Remove quantity ordered from stock
+  try {
+    await updateStockAfterOrder(drinks, "beverage");
+    await updateStockAfterOrder(starter, "food");
+    await updateStockAfterOrder(main, "food");
+    await updateStockAfterOrder(side, "food");
+    await updateStockAfterOrder(dessert, "food");
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+
   // Check if the table exists
   let existingTable = await Table.findOne({ tableNumber });
   if (!existingTable) {
@@ -33,18 +45,6 @@ const addOrder = asyncHandler(async (req, res) => {
   } else {
     res.status(400);
     throw new Error("Table is already occupied/reserved");
-  }
-
-  // Remove quantity ordered from stock
-  try {
-    await updateStockAfterOrder(drinks, "beverage");
-    await updateStockAfterOrder(starter, "food");
-    await updateStockAfterOrder(main, "food");
-    await updateStockAfterOrder(side, "food");
-    await updateStockAfterOrder(dessert, "food");
-  } catch (error) {
-    res.status(400);
-    throw new Error(error.message);
   }
 
   // Create the order
