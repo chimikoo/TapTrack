@@ -208,15 +208,16 @@ const deleteUser = asyncHandler(async (req, res) => {
 */
 const timeTrack = asyncHandler(async (req, res) => {
   const { userId } = req;
-  const { month } = req.params;
+  const { month, year } = req.query;
   // get the user's time track record
   const timeTrack = await TimeTrack.findOne({ userId });
   if (!timeTrack) {
     res.status(400);
     throw new Error("Time tracking record not found");
   }
+  const filedName = `${year}-${month < 10 ? `0${month}` : month}`;
   // get the object for the given month
-  const monthData = timeTrack.months.get(month);
+  const monthData = timeTrack.months.get(filedName);
   if (!monthData) {
     res.status(400);
     throw new Error("Month not found");
