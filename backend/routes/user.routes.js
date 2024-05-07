@@ -49,8 +49,8 @@ router.delete("/:id", isAuth, deleteUser);
 // PUT /users/forcedLogout/
 router.put("/forcedLogout", isAuth, isAdminOrManager, forceLogoutUsers);
 
-// GET /users/timeTrack/:month
-router.get("/timeTrack/:month", isAuth, timeTrack);
+// GET /users/timeTrack
+router.get("/timeTrack", isAuth, timeTrack);
 
 // GET /users/:username/avatar
 router.get("/:username/avatar", isAuth, showAvatar);

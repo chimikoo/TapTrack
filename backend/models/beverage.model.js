@@ -2,7 +2,10 @@ import { Schema, model } from "mongoose";
 
 const sizePriceSchema = new Schema(
   {
-    size: String,
+    size: {
+      type: String,
+      enum: ["small", "medium", "large"],
+    },
     price: Number,
   },
   { _id: false }
