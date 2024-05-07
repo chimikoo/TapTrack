@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import asyncHandler from "../config/asyncHandler.js";
@@ -5,6 +8,9 @@ import UserModel from "../models/user.model.js";
 import HourTracking from "../models/hourTracking.model.js";
 import TimeTrack from "../models/timeTrack.model.js";
 import { endShift, startShift } from "../utils/trackShifts.js";
+
+// Get the directory name of the current module
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /* 
 @desc     Register a new user
@@ -142,8 +148,20 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
   const { userId } = req;
   const { username, password, firstName, lastName, email } = req.body;
+  const avatar = req.file.filename;
   // hash the updated password if the password is provided
   const hashedPassword = password ? await bcrypt.hash(password, 12) : password;
+
+  // get the user's old avatar
+  const user = await UserModel.findById(userId);
+  const oldAvatar = user.avatar;
+  if (oldAvatar) {
+    // check if the path exists and the avatar is not the default avatar
+    if (fs.existsSync(`./uploads/${oldAvatar}`) && oldAvatar !== "cat.png") {
+      // delete the old avatar
+      fs.unlinkSync(`./uploads/${oldAvatar}`);
+    }
+  }
   // Update the user
   await UserModel.findByIdAndUpdate(userId, {
     username,
@@ -151,7 +169,9 @@ const updateUser = asyncHandler(async (req, res) => {
     firstName,
     lastName,
     email,
+    avatar,
   });
+
   // Send the response
   res.status(200).json({ message: "User updated successfully" });
 });
@@ -265,6 +285,28 @@ const getUserById = asyncHandler(async (req, res) => {
   res.status(200).json({ employee: user });
 });
 
+/* 
+@desc     Show user's avatar
+@route    GET /users/avatar
+@access   Private
+*/
+const showAvatar = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+  const user = await UserModel.findOne({ username });
+  if (!user) {
+    res.status(400);
+    throw new Error("User not found");
+  }
+  // Check if the user has an avatar
+  if (!user.avatar) {
+    res.status(400);
+    throw new Error("Avatar not found");
+  }
+  const picturePath = "uploads/" + user.avatar;
+  const absolutePath = path.join(__dirname, "..", picturePath);
+  res.sendFile(absolutePath);
+});
+
 export {
   register,
   login,
@@ -276,4 +318,5 @@ export {
   timeTrack,
   getUsersList,
   getUserById,
+  showAvatar,
 };
