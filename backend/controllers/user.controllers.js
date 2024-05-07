@@ -5,7 +5,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import asyncHandler from "../config/asyncHandler.js";
 import UserModel from "../models/user.model.js";
-import HourTracking from "../models/hourTracking.model.js";
 import TimeTrack from "../models/timeTrack.model.js";
 import { endShift, startShift } from "../utils/trackShifts.js";
 
