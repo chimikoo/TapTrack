@@ -120,7 +120,7 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
   endOfDay.setHours(23, 59, 59, 999);
 
   // Find users who haven't logged out yet
-  const usersToForceLogout = await HourTracking.find({
+  const usersToForceLogout = await TimeTrack.find({
     "workingHours.loggedOutAt": null,
   }).populate("userId");
   console.log(usersToForceLogout);
