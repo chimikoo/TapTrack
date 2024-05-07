@@ -59,11 +59,11 @@ router.patch("/", isAuth, upload.single("avatar"), updateUser);
 // GET /users
 router.get("/", isAuth, getUsersList);
 
-// GET /users/:id
-router.get("/:id", isAuth, getUserById);
+// GET /users/info/:id
+router.get("/info/:id", isAuth, getUserById);
 
-// PATCH /users/:id
-router.patch("/:id", isAuth, updateUserRole);
+// PATCH /users/role/:id
+router.patch("/role/:id", isAuth, updateUserRole);
 
 // DELETE /users/:id
 router.delete("/:id", isAuth, deleteUser);
