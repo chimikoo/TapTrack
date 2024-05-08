@@ -47,6 +47,9 @@ npm run dev
 - **`POST /users/register`** - Register a new user.
 - **`POST /users/login`** - Authenticate a user and return a token.
 - **`GET /users/logout`** - Log out a user and invalidate the token.
+- **`GET /users/timeTrack/:month`** - Retrieve time tracking records for a specific month.
+- **`PUT /users/forcedLogout`** - Force logout for users who have not logged out by the end of the day.
+- **`GET /users/timeTrack`** - Retrieve time tracking records for the current user.
 ### Menu Item Routes
 - **`GET /menuItems`** - Retrieve all menu items.
 - **`POST /menuItems`** - Add a new menu item.
