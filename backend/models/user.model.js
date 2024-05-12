@@ -26,6 +26,10 @@ const userModelSchema = new Schema({
     enum: ["waiter", "manager", "admin"],
     default: "waiter",
   },
+  avatar: {
+    type: String,
+    default: "cat.png",
+  },
 });
 
 const UserModel = model("user", userModelSchema);

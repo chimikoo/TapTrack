@@ -10,22 +10,41 @@ import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 */
 const addOrder = asyncHandler(async (req, res) => {
   const userId = req.userId;
-  const { tableNumber, drinks, starter, main, side, dessert, extras } = req.body;
-  console.log(req.body);
+  const { tableNumber, drinks, starter, main, side, dessert, extras } =
+    req.body;
   if (!tableNumber || !drinks || !starter || !main || !side || !dessert) {
     res.status(400);
     throw new Error("Please provide all required fields");
   }
 
-  // Check if the table exists and is not occupied
-  let existingTable = await Table.findOne({ tableNumber, state: { $ne: "occupied" } });
+  // Remove quantity ordered from stock
+  try {
+    await updateStockAfterOrder(drinks, "beverage");
+    await updateStockAfterOrder(starter, "food");
+    await updateStockAfterOrder(main, "food");
+    await updateStockAfterOrder(side, "food");
+    await updateStockAfterOrder(dessert, "food");
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+
+  // Check if the table exists
+  let existingTable = await Table.findOne({ tableNumber });
   if (!existingTable) {
-    // If the table doesn't exist or is occupied, create a new one
+    // If the table doesn't exist, create a new one
     existingTable = await Table.create({
       userId,
       tableNumber,
       state: "occupied",
     });
+  } else if (existingTable.state === "available") {
+    // If the table is available, update the state to occupied
+    existingTable.state = "occupied";
+    await existingTable.save();
+  } else {
+    res.status(400);
+    throw new Error("Table is already occupied/reserved");
   }
 
   // Create the order
@@ -44,19 +63,9 @@ const addOrder = asyncHandler(async (req, res) => {
   existingTable.orderId = newOrder._id;
   await existingTable.save();
 
-  // Remove quantity ordered from stock
-  try {
-    await updateStockAfterOrder(drinks, "beverage");
-    await updateStockAfterOrder(starter, "food");
-    await updateStockAfterOrder(main, "food");
-    await updateStockAfterOrder(side, "food");
-    await updateStockAfterOrder(dessert, "food");
-  } catch (error) {
-    res.status(400);
-    throw new Error(error.message);
-  }
-
-  res.status(201).json({ message: "Order created successfully", data: newOrder });
+  res
+    .status(201)
+    .json({ message: "Order created successfully", data: newOrder });
 });
 
 /* 

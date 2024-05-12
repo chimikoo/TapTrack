@@ -14,6 +14,6 @@ router.post("/", generateEodReport);
 router.get("/", viewEodReport);
 
 // GET /eod/:date
-router.get("/:date", viewEodReportByDate);
+router.get("/date", viewEodReportByDate);
 
 export default router;

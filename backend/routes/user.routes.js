@@ -5,10 +5,12 @@ import {
   logout,
   register,
   updateUser,
-  getTotalHoursWorked,
   forceLogoutUsers,
   timeTrack,
   updateUserRole,
+  getUsersList,
+  getUserById,
+  showAvatar,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import {
@@ -16,6 +18,7 @@ import {
   validate,
 } from "../middlewares/userValidation.js";
 import isAdminOrManager from "../middlewares/isAdminOrManager.js";
+import { upload } from "../utils/storage.js";
 
 const router = Router();
 
@@ -29,21 +32,27 @@ router.post("/login", login);
 router.get("/logout", isAuth, logout);
 
 // PATCH /users
-router.patch("/", isAuth, updateUser);
+router.patch("/", isAuth, upload.single("avatar"), updateUser);
 
-// PATCH /users/:id
-router.patch("/:id", isAuth, updateUserRole);
+// GET /users
+router.get("/", isAuth, getUsersList);
+
+// GET /users/info/:id
+router.get("/info/:id", isAuth, getUserById);
+
+// PATCH /users/role/:id
+router.patch("/role/:id", isAuth, updateUserRole);
 
 // DELETE /users/:id
 router.delete("/:id", isAuth, deleteUser);
 
-// GET /users/total-hours-worked
-router.get("/total-hours-worked", isAuth, getTotalHoursWorked);
-
 // PUT /users/forcedLogout/
 router.put("/forcedLogout", isAuth, isAdminOrManager, forceLogoutUsers);
 
-// POST /users/timeTrack
-router.post("/timeTrack", isAuth, isAdminOrManager, timeTrack);
+// GET /users/timeTrack
+router.get("/timeTrack", isAuth, timeTrack);
+
+// GET /users/:username/avatar
+router.get("/:username/avatar", isAuth, showAvatar);
 
 export default router;

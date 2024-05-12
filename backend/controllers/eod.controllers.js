@@ -48,23 +48,26 @@ const viewEodReport = asyncHandler(async (req, res) => {
 @access Private (Only accessible to admin or manager)
 */
 const viewEodReportByDate = asyncHandler(async (req, res) => {
-  const { date } = req.params;
-  
+  const { day, month, year } = req.query;
+  const date = `${year}-${month < 10 ? `0${month}` : month}-${
+    day < 10 ? `0${day}` : day
+  }`;
+
   // Construct start and end timestamps for the entire day
   const startDate = new Date(date);
   const endDate = new Date(date);
   endDate.setHours(23, 59, 59, 999); // Set end time to 23:59:59.999
-  
+
   // Query EoD report within the date range
   const eodReport = await EodModel.findOne({
-    timestamp: { $gte: startDate, $lte: endDate }
+    timestamp: { $gte: startDate, $lte: endDate },
   });
 
   if (!eodReport) {
     res.status(404);
     throw new Error("No EoD report found for the given date");
   }
-  
+
   res.status(200).json({ message: "EoD report", data: eodReport });
 });
 
