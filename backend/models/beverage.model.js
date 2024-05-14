@@ -40,16 +40,3 @@ const beverageModelSchema = new Schema({
 const BeverageModel = model("beverage", beverageModelSchema);
 
 export default BeverageModel;
-
-// ** This is what a post man request would look like for example **
-// {
-//  "name": "Example Drink",
-//  "description": "This is an example drink",
-//  "category": "beverage",
-//  "type": "Wine",
-//  "extras": ["Extra 1", "Extra 2"],
-//  "sizesPrices": [
-//    {"size": "Small", "price": 5.99},
-//    {"size": "Large", "price": 8.99}
-//  ]
-//}
