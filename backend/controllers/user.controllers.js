@@ -8,6 +8,7 @@ import UserModel from "../models/user.model.js";
 import TimeTrack from "../models/timeTrack.model.js";
 import { endShift, startShift } from "../utils/trackShifts.js";
 import { clearImage } from "../utils/clearImage.js";
+import geolib from 'geolib';
 
 /* 
 @desc     Register a new user
@@ -47,27 +48,49 @@ const register = asyncHandler(async (req, res) => {
 @route    POST /users/login
 @access   Public
 */
+
+// Define the allowed area (e.g., a circle with a center and radius)
+const allowedArea = {
+  latitude: 37.7749, // Center latitude (example: San Francisco)
+  longitude: -122.4194, // Center longitude
+  radius: 1000 // Radius in meters
+};
+
 const login = asyncHandler(async (req, res) => {
-  // check if the user is already logged in
-  // by the presence of a token in the request cookies
+  const { latitude, longitude, username, password } = req.body;
+
+  // Check if the user is already logged in by the presence of a token in the request cookies
   if (req.cookies.token) {
     res.status(400);
     throw new Error("User is already logged in");
   }
 
-  const { username, password } = req.body;
+  // Validate the user's location
+  const isWithinAllowedArea = geolib.isPointWithinRadius(
+    { latitude, longitude },
+    { latitude: allowedArea.latitude, longitude: allowedArea.longitude },
+    allowedArea.radius
+  );
+
+  if (!isWithinAllowedArea) {
+    res.status(403);
+    throw new Error("Access denied: Not within the allowed area");
+  }
+
   // Check if the user exists
   const user = await UserModel.findOne({ username });
   if (!user) {
     res.status(400);
     throw new Error("Invalid credentials");
   }
+
   // Check if the password is correct
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
   if (!isPasswordCorrect) {
     res.status(400);
     throw new Error("Invalid credentials");
   }
+
   // Create a token
   const token = jwt.sign(
     { userId: user._id, userRole: user.role },
@@ -87,6 +110,7 @@ const login = asyncHandler(async (req, res) => {
     expires: new Date(Date.now() + 9000000),
   };
   res.cookie("token", token, cookieOptions);
+
   // Send the response
   res.status(200).json({ message: "User logged in successfully" });
 });

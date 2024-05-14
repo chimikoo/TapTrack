@@ -1,17 +1,3 @@
-/* const hours = {
-  [keyName]: {
-    monthlyTotal: { hours: 0, minutes: 0 },
-    shifts: [
-      {
-        start: "2024-04-01T09:00:00.000Z",
-        end: "2024-04-01T17:00:00.000Z",
-        total: { hours: 8, minutes: 0 },
-        day: 1,
-      },
-    ],
-  },
-}; */
-
 import { Schema, model } from "mongoose";
 
 
