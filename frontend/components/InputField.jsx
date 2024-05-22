@@ -1,16 +1,31 @@
-import { View, TextInput } from "react-native";
-import React from "react";
+import { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 
-const InputField = ({ title }) => {
+import eye from "../assets/icons/eye.png";
+import eyeHide from "../assets/icons/eye-hide.png";
+
+const InputField = ({ title, value, handleChange }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <View className="w-[90%] my-2">
-      <View className="w-full h-[42px] rounded-lg border-2 border-[#152E2B] flex bg-white">
+    <View className="space-y-2 w-[80%] py-2 ">
+      <View className="w-full h-[6vh] px-4 rounded-lg border border-primary-dark flex flex-row items-center justify-between bg-myWhite ">
         <TextInput
+          value={value}
           placeholder={title}
           placeholderTextColor="#8e8e8e"
-          className="flex-1 text-lg text-black px-4"
-          secureTextEntry={title.toLowerCase() === "password"}
+          secureTextEntry={title === "Password" && !showPassword}
+          onChangeText={handleChange}
         />
+        {title === "Password" && (
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <Image
+              source={showPassword ? eyeHide : eye}
+              resizeMode="contain"
+              className="w-6 h-6"
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
