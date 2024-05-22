@@ -1,14 +1,20 @@
-import { StatusBar } from "expo-status-bar";
 import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-
 import logo from "../assets/images/logo.png";
 import InputField from "../components/InputField.jsx";
-import LoginButton from "../components/LoginButton.jsx";
+import CustomButton from "../components/CustomButton.jsx";
+import { useState } from "react";
+import { router } from "expo-router";
+
 
 export default function App() {
   const [form, setForm] = useState({ username: "", password: "" });
+
+  const submit = () => {
+    router.replace("/home");
+  };
+
   return (
     <SafeAreaView className="h-full bg-primary-lighter">
       <View className="w-full flex-1 justify-center items-center">
@@ -31,7 +37,11 @@ export default function App() {
           value={form.password}
           handleChange={(e) => setForm({ ...form, password: e })}
         />
-        <CustomButton />
+        <CustomButton
+          text="Login"
+          containerStyles="w-[80%] mt-4"
+          handlePress={submit}
+        />
       </View>
     </SafeAreaView>
   );
