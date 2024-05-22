@@ -1,11 +1,12 @@
 import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import logo from "../assets/images/taptrack_logo.png";
+import logo from "../assets/images/logo.png";
 import InputField from "../components/InputField.jsx";
 import CustomButton from "../components/CustomButton.jsx";
 import { useState } from "react";
 import { router } from "expo-router";
+
 
 export default function App() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -45,3 +46,4 @@ export default function App() {
     </SafeAreaView>
   );
 }
+
