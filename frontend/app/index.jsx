@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -8,6 +7,8 @@ import CustomButton from "../components/CustomButton.jsx";
 import { useState } from "react";
 
 export default function App() {
+
+
   const [form, setForm] = useState({ username: "", password: "" });
   return (
     <SafeAreaView className="h-full bg-primary-lighter">
