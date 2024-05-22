@@ -11,6 +11,7 @@ import {
   getUsersList,
   getUserById,
   showAvatar,
+  getTables,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import {
@@ -54,5 +55,8 @@ router.get("/timeTrack", isAuth, timeTrack);
 
 // GET /users/:username/avatar
 router.get("/:username/avatar", isAuth, showAvatar);
+
+// GET /users/tables
+router.get("/tables", isAuth, getTables);
 
 export default router;

@@ -8,6 +8,7 @@ import UserModel from "../models/user.model.js";
 import TimeTrack from "../models/timeTrack.model.js";
 import { endShift, startShift } from "../utils/trackShifts.js";
 import { clearImage } from "../utils/clearImage.js";
+import Table from "../models/table.model.js";
 
 /* 
 @desc     Register a new user
@@ -292,6 +293,20 @@ const showAvatar = asyncHandler(async (req, res) => {
   res.sendFile(absolutePath);
 });
 
+/* 
+@desc     Get all tables
+@route    GET /users/tables
+@access   Private
+*/
+const getTables = asyncHandler(async (req, res) => {
+  const tables = await Table.find();
+  if (!tables || tables.length === 0) {
+    res.status(400);
+    throw new Error("No tables found");
+  }
+  res.status(200).json({ tables });
+});
+
 export {
   register,
   login,
@@ -304,4 +319,5 @@ export {
   getUsersList,
   getUserById,
   showAvatar,
+  getTables,
 };
