@@ -1,4 +1,4 @@
-import { Image, Text, View } from "react-native";
+import { Alert, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import logo from "../assets/images/logo.png";
@@ -15,10 +15,10 @@ export default function App() {
     // to be able to access the local host from the emulator
     // run the following command in the terminal:
     // 1. npm install -g localtunnel
-    // 2. lt --port 9000 (port number of the backend server) -> this will give you a url
+    // 2. lt --port 9000 --subdomain <url-name> (port number of the backend server) -> this will give you a url
     try {
       const { data } = await axios.post(
-        "https://late-states-visit.loca.lt/users/login",
+        "https://application-server.loca.lt/users/login",
         form
       );
       console.log("data", data);
@@ -26,7 +26,7 @@ export default function App() {
         router.replace("/home");
       }
     } catch (error) {
-      console.log(error);
+      Alert.alert("Error", error.response.data.message);
     }
   };
 
