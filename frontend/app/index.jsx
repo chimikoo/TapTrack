@@ -6,13 +6,28 @@ import InputField from "../components/InputField.jsx";
 import CustomButton from "../components/CustomButton.jsx";
 import { useState } from "react";
 import { router } from "expo-router";
-
+import axios from "axios";
 
 export default function App() {
   const [form, setForm] = useState({ username: "", password: "" });
 
-  const submit = () => {
-    router.replace("/home");
+  const submit = async () => {
+    // to be able to access the local host from the emulator
+    // run the following command in the terminal:
+    // 1. npm install -g localtunnel
+    // 2. lt --port 9000 (port number of the backend server) -> this will give you a url
+    try {
+      const { data } = await axios.post(
+        "https://late-states-visit.loca.lt/users/login",
+        form
+      );
+      console.log("data", data);
+      if (data.message === "User logged in successfully") {
+        router.replace("/home");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -46,4 +61,3 @@ export default function App() {
     </SafeAreaView>
   );
 }
-
