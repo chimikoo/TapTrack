@@ -1,23 +1,28 @@
-import { View, Text, Alert } from "react-native";
+import { View, Text } from "react-native";
 import React from "react";
-import axios from "axios";
-import { Tabs, router } from "expo-router";
+import CustomButton from "../../components/CustomButton.jsx";
 
-const TabsLayout = () => {
+const Home = () => {
+  const logout = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://application-server.loca.lt/users/logout"
+      );
+      console.log("data", data);
+      router.replace("/");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
+  };
   return (
-    <>
-    <Tabs
-      screenOptions={{
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: "#7CA982",
-        tabBarInactiveTintColor: "#A9827B",
-        tabBarStyle: {
-          backgroundColor: "#F3F3F3",
-          borderTopWidth: 0,
-        },
-      }}
+    <View>
       <Text>Home</Text>
-    <>
+      <CustomButton
+        text="Log Out"
+        containerStyles="w-[80%] mt-4"
+        handlePress={logout}
+      />
+    </View>
   );
 };
 
