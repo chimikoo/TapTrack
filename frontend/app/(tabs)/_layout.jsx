@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 import { Tabs } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
 import menu from "../../assets/icons/menu.png";
 import home from "../../assets/icons/home.png";
 import profile from "../../assets/icons/profile.png";
 import arrowLeft from "../../assets/icons/arrow-left.png";
 import TabIcon from "../../components/TabIcon.jsx";
 
-
-const DropDownMenu = ({ visible, onClose }) => {
+const DropDownMenu = ({ visible, onClose, onLogout, onProfile }) => {
   if (!visible) return null;
 
   const menuItems = [
@@ -23,21 +24,22 @@ const DropDownMenu = ({ visible, onClose }) => {
 
   return (
     <TouchableOpacity
-      className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-90  justify-center items-center z-50"
+      className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-90 justify-center items-center z-50"
       onPress={onClose}
     >
       <View className="w-50 rounded-lg overflow-hidden">
         <View className='items-center'>
-        {menuItems.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            className={`w-full p-4 ${
-              index < menuItems.length ? "border-b border-gray-300" : ""
-            }`}
-          >
-            <Text className="text-center text-white text-2xl font-bold">{item}</Text>
-          </TouchableOpacity>
-        ))}
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              className={`w-full p-4 ${
+                index < menuItems.length - 1 ? "border-b border-gray-300" : ""
+              }`}
+              onPress={item === "Logout" ? onLogout : item === "Profile" ? onProfile : null}
+            >
+              <Text className="text-center text-white text-2xl font-bold">{item}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
     </TouchableOpacity>
@@ -46,9 +48,30 @@ const DropDownMenu = ({ visible, onClose }) => {
 
 const TabsLayout = () => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const navigation = useNavigation();
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get('https://application-server.loca.lt/users/logout');
+      if (response.status === 200) {
+        Alert.alert("Logged out successfully");
+        navigation.navigate('index');
+      } else {
+        Alert.alert("Logout failed, please try again");
+      }
+    } catch (error) {
+      Alert.alert("An error occurred, please try again");
+    }
+    setMenuVisible(false);
+  };
+
+  const handleProfile = () => {
+    setMenuVisible(false);
+    navigation.navigate('profile');
   };
 
   return (
@@ -62,7 +85,7 @@ const TabsLayout = () => {
           />
         </TouchableOpacity>
       </SafeAreaView>
-      <DropDownMenu visible={menuVisible} onClose={toggleMenu} />
+      <DropDownMenu visible={menuVisible} onClose={toggleMenu} onLogout={handleLogout} onProfile={handleProfile} />
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
