@@ -17,7 +17,9 @@ const Home = () => {
           "https://application-server.loca.lt/users/tables"
         );
         console.log("data", data);
-        setTables(data.tables);
+
+        const sortedTables = data.tables.sort((a, b) => a.tableNumber - b.tableNumber);
+        setTables(sortedTables);
       } catch (error) {
         console.log("error", error);
       }
@@ -29,18 +31,6 @@ const Home = () => {
       console.log("cleanup");
     };
   }, []);
-
-  const logout = async () => {
-    try {
-      const { data } = await axios.get(
-        "https://application-server.loca.lt/users/logout"
-      );
-      console.log("data", data);
-      router.replace("/");
-    } catch (error) {
-      Alert.alert("Error", error.message);
-    }
-  };
 
   return (
     <SafeAreaView className="h-full bg-primary-lighter">
