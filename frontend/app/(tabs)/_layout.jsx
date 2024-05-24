@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Tabs } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,7 +23,7 @@ const DropDownMenu = ({ visible, onClose }) => {
 
   return (
     <TouchableOpacity
-      className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-80 justify-center items-center z-50"
+      className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-90  justify-center items-center z-50"
       onPress={onClose}
     >
       <View className="w-50 rounded-lg overflow-hidden">
