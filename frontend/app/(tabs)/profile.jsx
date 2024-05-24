@@ -1,12 +1,15 @@
 import React from "react";
 import { View, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 import avatar from "../../assets/images/avatar.png";
 import CustomButton from "../../components/CustomButton.jsx";
 
-const Profile = ({ navigation }) => {
+const Profile = () => {
+  const navigation = useNavigation();
+
   const handleEditProfile = () => {
-    navigation.navigate("EditProfile");
+    navigation.navigate('editProfile');
   };
 
   return (
