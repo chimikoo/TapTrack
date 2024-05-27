@@ -26,7 +26,7 @@ export default function App() {
         router.replace("/home");
       }
     } catch (error) {
-      if(error.response.data.message === "User already logged in"){
+      if(error.response.data.message === "User is already logged in"){
         router.replace("/home");
       }
       Alert.alert("Error", error.response.data.message);
