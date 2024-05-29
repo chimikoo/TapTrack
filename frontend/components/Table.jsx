@@ -23,9 +23,7 @@ const Table = ({ tableNumber, state }) => {
       : resTable;
 
   return (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("OrderScreen", { tableNumber })}
-    >
+    <TouchableOpacity key={tableNumber}>
       <View
         className={`${stateStyle} w-[20vh] h-[16vh] flex justify-center items-center mb-4 mr-4 ml-4 rounded-lg`}
       >
