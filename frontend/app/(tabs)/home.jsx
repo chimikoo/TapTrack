@@ -16,7 +16,6 @@ const Home = () => {
         const { data } = await axios.get(
           "https://application-server.loca.lt/users/tables"
         );
-        console.log("data", data);
 
         const sortedTables = data.tables.sort((a, b) => a.tableNumber - b.tableNumber);
         setTables(sortedTables);
@@ -38,7 +37,7 @@ const Home = () => {
         <View className="w-full flex flex-row flex-wrap items-center justify-center">
           {tables.map((table) => (
             <Table
-              key={table.id}
+              key={table.tableNumber}
               tableNumber={table.tableNumber}
               state={table.state}
             />
