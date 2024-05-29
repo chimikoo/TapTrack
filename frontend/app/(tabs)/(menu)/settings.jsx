@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Switch, SafeAreaView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import CustomButton from '../components/CustomButton';
+import CustomButton from '../../../components/CustomButton';
 
 const Settings = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);

@@ -5,7 +5,7 @@ import { Link, router } from "expo-router";
 const Menu = () => {
   return (
     <View>
-      <Link href='menuItemSelector'>menuSelector</Link>
+      <Link href="menuItemSelector">menuSelector</Link>
     </View>
   );
 };

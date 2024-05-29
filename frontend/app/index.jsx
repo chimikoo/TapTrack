@@ -53,7 +53,7 @@ export default function App() {
         await SecureStore.setItemAsync("userToken", data.token);
         await SecureStore.setItemAsync("userData", JSON.stringify(userData));
         console.log("User data and token stored successfully");
-        router.replace("/(tabs)/home");
+        router.replace("/(tabs)/(home)");
       } else if (data.message === "User is already logged in") {
         console.log('Entering logout')
         await logout();

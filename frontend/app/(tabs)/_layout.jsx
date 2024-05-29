@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import { Tabs } from "expo-router";
+import { Tabs, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
@@ -42,12 +42,14 @@ const TabsLayout = () => {
 
   const handleProfile = () => {
     setMenuVisible(false);
-    navigation.navigate('profile');
+    // navigation.navigate('profile');
+    router.push("/(profile)");
   };
 
   const handleSettings = () => {
     setMenuVisible(false);
-    navigation.navigate('settings');
+    // navigation.navigate('/(menu)/settings');
+    router.push("/(menu)/settings");
   };
 
   return (
@@ -76,7 +78,7 @@ const TabsLayout = () => {
         }}
       >
         <Tabs.Screen
-          name="menu"
+          name="(menu)"
           options={{
             title: "Menu",
             headerShown: false,
