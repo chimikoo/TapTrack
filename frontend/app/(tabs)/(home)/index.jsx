@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import emptyTable from "../../../assets/icons/empty-table.png";
 import Table from "../../../components/Table.jsx";
+import { router } from "expo-router";
 
 const Home = () => {
   const [tables, setTables] = useState([]);
@@ -14,7 +15,7 @@ const Home = () => {
     const getTables = async () => {
       try {
         const { data } = await axios.get(
-          "https://empty-frog-47.loca.lt/users/tables"
+          "https://application-server.loca.lt/users/tables"
         );
 
         const sortedTables = data.tables.sort((a, b) => a.tableNumber - b.tableNumber);
@@ -31,6 +32,10 @@ const Home = () => {
     };
   }, []);
 
+  const handleOrder = () => {
+    router.push("/(tabs)/(home)/order");
+  };
+
   return (
     <SafeAreaView className="h-full bg-primary-lighter">
       <ScrollView className="w-full mb-4">
@@ -40,6 +45,7 @@ const Home = () => {
               key={table.tableNumber}
               tableNumber={table.tableNumber}
               state={table.state}
+              handleOrder={handleOrder}
             />
           ))}
         </View>
