@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import CustomButton from '../components/CustomButton';
+import CustomButton from '../../../components/CustomButton';
 import axios from 'axios';
 
 const MenuItemSelector = () => {
