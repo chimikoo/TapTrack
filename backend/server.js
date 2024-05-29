@@ -1,5 +1,6 @@
 import express from "express";
 import colors from "colors";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/connectDB.js";
 import { errorHandler, notFound } from "./middlewares/errorHandler.js";
@@ -18,6 +19,7 @@ const app = express();
 await connectDB();
 
 // MIDDLEWARES
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
