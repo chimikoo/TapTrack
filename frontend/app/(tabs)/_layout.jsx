@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { Tabs, router } from "expo-router";
+import { Image, TouchableOpacity, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Tabs, useRootNavigationState, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
@@ -16,6 +16,16 @@ const TabsLayout = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation();
 
+  const router = useRouter();
+  const navigationState = useRootNavigationState();
+  const handleBack = () => {
+    if (navigationState && navigationState.routes.length > 1) {
+      router.back();
+    } else {
+      Alert.alert("No screen to go back to.");
+    }
+  };
+
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
@@ -23,14 +33,17 @@ const TabsLayout = () => {
   const handleLogout = async () => {
     try {
       const token = await SecureStore.getItemAsync("userToken");
-      const response = await axios.get('https://application-server.loca.lt/users/logout', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        "https://application-server.loca.lt/users/logout",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.status === 200) {
         await SecureStore.deleteItemAsync("userToken");
         await SecureStore.deleteItemAsync("userData");
         Alert.alert("Logged out successfully");
-        navigation.navigate('index');
+        navigation.navigate("index");
       } else {
         Alert.alert("Logout failed, please try again");
       }
@@ -55,7 +68,7 @@ const TabsLayout = () => {
   return (
     <>
       <SafeAreaView className="w-full h-[8vh] flex justify-center items-start px-4 mt-8 bg-primary-lighter">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleBack}>
           <Image
             source={arrowLeft}
             resizeMode="contain"
@@ -63,7 +76,13 @@ const TabsLayout = () => {
           />
         </TouchableOpacity>
       </SafeAreaView>
-      <DropDownMenu visible={menuVisible} onClose={toggleMenu} onLogout={handleLogout} onProfile={handleProfile} onSettings={handleSettings} />
+      <DropDownMenu
+        visible={menuVisible}
+        onClose={toggleMenu}
+        onLogout={handleLogout}
+        onProfile={handleProfile}
+        onSettings={handleSettings}
+      />
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
@@ -76,6 +95,7 @@ const TabsLayout = () => {
             height: 84,
           },
         }}
+        initialRouteName="(home)"
       >
         <Tabs.Screen
           name="(menu)"
@@ -93,7 +113,7 @@ const TabsLayout = () => {
               </TouchableOpacity>
             ),
           }}
-          listeners={({ }) => ({
+          listeners={({}) => ({
             tabPress: (e) => {
               e.preventDefault();
               toggleMenu();

@@ -1,10 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ActivityIndicator, Alert, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
-import CustomButton from '../../../components/CustomButton';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import * as SecureStore from "expo-secure-store";
+import CustomButton from "../../../components/CustomButton";
+import { router } from "expo-router";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -15,21 +23,24 @@ const Profile = () => {
     const fetchUser = async () => {
       setLoading(true);
       try {
-        const storedUserData = await SecureStore.getItemAsync('userData');
+        const storedUserData = await SecureStore.getItemAsync("userData");
         const userData = JSON.parse(storedUserData);
 
         if (userData) {
-          console.log('Using stored user data:', userData);
+          console.log("Using stored user data:", userData);
           setUser(userData);
         } else {
-          const token = await SecureStore.getItemAsync('userToken');
-          console.log('Retrieved token:', token);
+          const token = await SecureStore.getItemAsync("userToken");
+          console.log("Retrieved token:", token);
 
-          const response = await axios.get(`https://empty-frog-47.loca.lt/users/info/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const response = await axios.get(
+            `https://empty-frog-47.loca.lt/users/info/${userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
           const fetchedUserData = {
             token: token,
             username: response.data.employee.username,
@@ -39,13 +50,16 @@ const Profile = () => {
             role: response.data.employee.role,
             avatar: response.data.employee.avatar,
           };
-          console.log('Fetched user data:', fetchedUserData);
+          console.log("Fetched user data:", fetchedUserData);
           setUser(fetchedUserData);
-          await SecureStore.setItemAsync('userData', JSON.stringify(fetchedUserData));
+          await SecureStore.setItemAsync(
+            "userData",
+            JSON.stringify(fetchedUserData)
+          );
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
-        Alert.alert('Error', 'Failed to load user data.');
+        console.error("Error fetching user data:", error);
+        Alert.alert("Error", "Failed to load user data.");
       } finally {
         setLoading(false);
       }
@@ -55,7 +69,7 @@ const Profile = () => {
   }, []);
 
   const handleEditProfile = () => {
-    navigation.navigate("editProfile");
+    router.push("/(tabs)/(profile)/editProfile");
   };
 
   return (
