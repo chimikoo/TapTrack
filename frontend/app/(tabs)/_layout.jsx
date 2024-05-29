@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Image, TouchableOpacity, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { Tabs, useRootNavigationState, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
@@ -14,10 +13,10 @@ import DropDownMenu from "../../components/DropDownMenu.jsx";
 
 const TabsLayout = () => {
   const [menuVisible, setMenuVisible] = useState(false);
-  const navigation = useNavigation();
 
   const router = useRouter();
   const navigationState = useRootNavigationState();
+
   const handleBack = () => {
     if (navigationState && navigationState.routes.length > 1) {
       router.back();
@@ -34,7 +33,7 @@ const TabsLayout = () => {
     try {
       const token = await SecureStore.getItemAsync("userToken");
       const response = await axios.get(
-        "https://application-server.loca.lt/users/logout",
+        "https://empty-frog-47.loca.lt/users/logout",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -43,7 +42,7 @@ const TabsLayout = () => {
         await SecureStore.deleteItemAsync("userToken");
         await SecureStore.deleteItemAsync("userData");
         Alert.alert("Logged out successfully");
-        navigation.navigate("index");
+        router.push("/");
       } else {
         Alert.alert("Logout failed, please try again");
       }
@@ -55,13 +54,11 @@ const TabsLayout = () => {
 
   const handleProfile = () => {
     setMenuVisible(false);
-    // navigation.navigate('profile');
     router.push("/(profile)");
   };
 
   const handleSettings = () => {
     setMenuVisible(false);
-    // navigation.navigate('/(menu)/settings');
     router.push("/(menu)/settings");
   };
 
@@ -95,7 +92,6 @@ const TabsLayout = () => {
             height: 84,
           },
         }}
-        initialRouteName="(home)"
       >
         <Tabs.Screen
           name="(menu)"
