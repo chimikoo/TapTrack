@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-import CustomButton from '../../components/CustomButton';
+import CustomButton from '../../../components/CustomButton';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -25,7 +25,7 @@ const Profile = () => {
           const token = await SecureStore.getItemAsync('userToken');
           console.log('Retrieved token:', token);
 
-          const response = await axios.get(`https://application-server.loca.lt/users/info/${userId}`, {
+          const response = await axios.get(`https://empty-frog-47.loca.lt/users/info/${userId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -55,16 +55,8 @@ const Profile = () => {
   }, []);
 
   const handleEditProfile = () => {
-    navigation.navigate('editProfile');
+    navigation.navigate("editProfile");
   };
-
-  if (loading) {
-    return (
-      <SafeAreaView className="flex-1 bg-primary-lighter justify-center items-center">
-        <ActivityIndicator size="large" color="#7CA982" />
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter justify-start items-center pt-16">
@@ -73,10 +65,17 @@ const Profile = () => {
           {user && (
             <>
               <Image
-                source={{ uri: `https://application-server.loca.lt/users/${user.username}/avatar?${Math.random()}`/* Remove math.Random when you find out how to refresh the cache */, headers: { Authorization: `Bearer ${user.token}` } }}
+                source={{
+                  uri: `https://empty-frog-47.loca.lt/users/${
+                    user.username
+                  }/avatar?${Math.random()}` /* Remove math.Random when you find out how to refresh the cache */,
+                  headers: { Authorization: `Bearer ${user.token}` },
+                }}
                 className="w-40 h-40 rounded-full"
                 style={{ width: 160, height: 160 }}
-                onError={(e) => console.log('Image Load Error:', e.nativeEvent.error)}
+                onError={(e) =>
+                  console.log("Image Load Error:", e.nativeEvent.error)
+                }
               />
               <Text className="text-4xl font-bold mt-6">{`${user.firstName} ${user.lastName}`}</Text>
               <Text className="text-lg text-gray-600 mt-4">{user.email}</Text>

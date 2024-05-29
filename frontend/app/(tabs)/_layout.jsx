@@ -99,7 +99,7 @@ const TabsLayout = () => {
           })}
         />
         <Tabs.Screen
-          name="home"
+          name="(home)"
           options={{
             title: "Home",
             headerShown: false,
@@ -114,7 +114,7 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="profile"
+          name="(profile)"
           options={{
             title: "Profile",
             headerShown: false,

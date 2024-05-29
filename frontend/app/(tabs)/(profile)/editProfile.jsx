@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
-import InputField from '../components/InputField';
-import CustomButton from '../components/CustomButton';
+import InputField from '../../../components/InputField';
+import CustomButton from '../../../components/CustomButton';
 
 const EditProfile = () => {
   const [firstName, setFirstName] = useState('Sarah');
