@@ -29,9 +29,6 @@ export default function RoutLayout() {
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="editProfile" options={{ headerShown: false }} />
-      <Stack.Screen name="settings" options={{ headerShown: false }} />
-      <Stack.Screen name="menuItemSelector" options={{ headerShown: false }} />
     </Stack>
   );
 }
