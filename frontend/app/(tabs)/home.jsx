@@ -7,17 +7,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import emptyTable from "../../assets/icons/empty-table.png";
 import Table from "../../components/Table.jsx";
 
+
 const Home = () => {
   const [tables, setTables] = useState([]);
 
   useEffect(() => {
     const getTables = async () => {
       try {
-        const { data } = await axios.get(
-          "https://application-server.loca.lt/users/tables"
-        );
-        console.log("data", data);
-
+        const { data } = await axios.get("https://application-server.loca.lt/users/tables");
         const sortedTables = data.tables.sort((a, b) => a.tableNumber - b.tableNumber);
         setTables(sortedTables);
       } catch (error) {
@@ -50,3 +47,4 @@ const Home = () => {
 };
 
 export default Home;
+
