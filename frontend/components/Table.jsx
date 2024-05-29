@@ -4,7 +4,7 @@ import emptyTable from "../assets/icons/empty-table.png";
 import occTable from "../assets/icons/occ-table.png";
 import resTable from "../assets/icons/res-table.png";
 
-const Table = ({ tableNumber, state }) => {
+const Table = ({ tableNumber, state, handleOrder }) => {
   const stateStyle =
     state === "available"
       ? "bg-primary"
@@ -20,7 +20,7 @@ const Table = ({ tableNumber, state }) => {
       : resTable;
 
   return (
-    <TouchableOpacity key={tableNumber}>
+    <TouchableOpacity key={tableNumber} onPress={handleOrder}>
       <View
         className={`${stateStyle} w-[20vh] h-[16vh] flex justify-center items-center mb-4 mr-4 ml-4 rounded-lg`}
       >
