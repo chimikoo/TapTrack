@@ -1,35 +1,68 @@
-import { Alert, Image, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Alert, View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import logo from "../assets/images/logo.png";
-import InputField from "../components/InputField.jsx";
-import CustomButton from "../components/CustomButton.jsx";
-import { useState } from "react";
-import { router } from "expo-router";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
+import InputField from "../components/InputField";
+import CustomButton from "../components/CustomButton";
+import logo from "../assets/images/logo.png";
+import { useNavigation } from '@react-navigation/native';
+import { Link, router } from "expo-router";
+
+// to be able to access the local host from the emulator
+// run the following command in the terminal:
+// 1. npm install -g localtunnel
+// 2. lt --port 9000 --subdomain <url-name> (port number of the backend server) -> this will give you a url
 
 export default function App() {
   const [form, setForm] = useState({ username: "", password: "" });
+  const navigation = useNavigation();
+
+  const logout = async () => {
+    try {
+      const response = await axios.get('https://application-server.loca.lt/users/logout', {
+        withCredentials: true,
+      });
+      if (response.status === 200) {
+        await SecureStore.deleteItemAsync("userToken");
+        await SecureStore.deleteItemAsync("userData");
+      }
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
+  };
 
   const submit = async () => {
-    // to be able to access the local host from the emulator
-    // run the following command in the terminal:
-    // 1. npm install -g localtunnel
-    // 2. lt --port 9000 --subdomain <url-name> (port number of the backend server) -> this will give you a url
     try {
       const { data } = await axios.post(
         "https://application-server.loca.lt/users/login",
-        form
+        form,
+        { withCredentials: true }
       );
-      console.log("data", data);
+
       if (data.message === "User logged in successfully") {
-        router.replace("/home");
+        const userData = {
+          token: data.token,
+          username: form.username,
+          firstName: data.user.firstName,
+          lastName: data.user.lastName,
+          email: data.user.email,
+          role: data.user.role,
+          avatar: data.user.avatar,
+        };
+        await SecureStore.setItemAsync("userToken", data.token);
+        await SecureStore.setItemAsync("userData", JSON.stringify(userData));
+        console.log("User data and token stored successfully");
+        router.replace("/(tabs)/home");
+      } else if (data.message === "User is already logged in") {
+        console.log('Entering logout')
+        await logout();
+        submit(); // Retry login after logging out
+      } else {
+        Alert.alert("Login Failed", data.message);
       }
     } catch (error) {
-      if(error.response.data.message === "User is already logged in"){
-        router.replace("/home");
-      }
-      Alert.alert("Error", error.response.data.message);
+      Alert.alert("Error", error.response ? error.response.data.message : error.message);
     }
   };
 
@@ -61,6 +94,7 @@ export default function App() {
           handlePress={submit}
         />
       </View>
+      <Link href="menuItemSelector">Go here</Link>
     </SafeAreaView>
   );
 }

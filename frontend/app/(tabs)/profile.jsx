@@ -1,33 +1,95 @@
-import React from "react";
-import { View, Text, Image } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
-import avatar from "../../assets/images/avatar.png";
-import CustomButton from "../../components/CustomButton.jsx";
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, ActivityIndicator, Alert, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
+import CustomButton from '../../components/CustomButton';
 
 const Profile = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      setLoading(true);
+      try {
+        const storedUserData = await SecureStore.getItemAsync('userData');
+        const userData = JSON.parse(storedUserData);
+
+        if (userData) {
+          console.log('Using stored user data:', userData);
+          setUser(userData);
+        } else {
+          const token = await SecureStore.getItemAsync('userToken');
+          console.log('Retrieved token:', token);
+
+          const response = await axios.get(`https://application-server.loca.lt/users/info/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const fetchedUserData = {
+            token: token,
+            username: response.data.employee.username,
+            firstName: response.data.employee.firstName,
+            lastName: response.data.employee.lastName,
+            email: response.data.employee.email,
+            role: response.data.employee.role,
+            avatar: response.data.employee.avatar,
+          };
+          console.log('Fetched user data:', fetchedUserData);
+          setUser(fetchedUserData);
+          await SecureStore.setItemAsync('userData', JSON.stringify(fetchedUserData));
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        Alert.alert('Error', 'Failed to load user data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleEditProfile = () => {
     navigation.navigate('editProfile');
   };
 
+  if (loading) {
+    return (
+      <SafeAreaView className="flex-1 bg-primary-lighter justify-center items-center">
+        <ActivityIndicator size="large" color="#7CA982" />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter justify-start items-center pt-16">
-      <View className="items-center">
-        <Image
-          source={avatar}
-          className="w-40 h-40 rounded-full"
-        />
-        <Text className="text-4xl font-bold mt-6">Sarah Woo</Text>
-        <Text className="text-lg text-gray-600 mt-4">sarah@gmail.com</Text>
-        <Text className="text-lg text-gray-600 mt-2">Waitress</Text>
-        <CustomButton 
-          text="Edit Profile"
-          handlePress={handleEditProfile}
-          containerStyles="mt-10 px-12"
-        />
-      </View>
+      <ScrollView>
+        <View className="items-center">
+          {user && (
+            <>
+              <Image
+                source={{ uri: `https://application-server.loca.lt/users/${user.username}/avatar?${Math.random()}`/* Remove math.Random when you find out how to refresh the cache */, headers: { Authorization: `Bearer ${user.token}` } }}
+                className="w-40 h-40 rounded-full"
+                style={{ width: 160, height: 160 }}
+                onError={(e) => console.log('Image Load Error:', e.nativeEvent.error)}
+              />
+              <Text className="text-4xl font-bold mt-6">{`${user.firstName} ${user.lastName}`}</Text>
+              <Text className="text-lg text-gray-600 mt-4">{user.email}</Text>
+              <Text className="text-lg text-gray-600 mt-2">{user.role}</Text>
+              <CustomButton
+                text="Edit Profile"
+                handlePress={handleEditProfile}
+                containerStyles="mt-10 px-12"
+              />
+            </>
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

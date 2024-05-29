@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
-
+import { View, TextInput, TouchableOpacity, Image } from "react-native";
 import eye from "../assets/icons/eye.png";
 import eyeHide from "../assets/icons/eye-hide.png";
 
@@ -14,10 +13,11 @@ const InputField = ({ title, value, handleChange }) => {
           value={value}
           placeholder={title}
           placeholderTextColor="#8e8e8e"
-          secureTextEntry={title === "Password" && !showPassword}
+          secureTextEntry={(title === "Password" || title === "New Password" || title === "Confirm new password") && !showPassword}
           onChangeText={handleChange}
+          className="flex-1"
         />
-        {title === "Password" && (
+        {(title === "Password" || title === "New Password" || title === "Confirm new password") && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
             <Image
               source={showPassword ? eyeHide : eye}

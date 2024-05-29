@@ -54,7 +54,7 @@ router.put("/forcedLogout", isAuth, isAdminOrManager, forceLogoutUsers);
 router.get("/timeTrack", isAuth, timeTrack);
 
 // GET /users/:username/avatar
-router.get("/:username/avatar", isAuth, showAvatar);
+router.get("/:username/avatar", showAvatar);
 
 // GET /users/tables
 router.get("/tables", isAuth, getTables);

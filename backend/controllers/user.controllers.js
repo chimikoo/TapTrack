@@ -49,27 +49,25 @@ const register = asyncHandler(async (req, res) => {
 @access   Public
 */
 const login = asyncHandler(async (req, res) => {
-  // check if the user is already logged in
-  // by the presence of a token in the request cookies
   if (req.cookies.token) {
-    res.status(400);
-    throw new Error("User is already logged in");
+    res.status(200).json({ message: "User is already logged in" });
+    return;
   }
 
   const { username, password } = req.body;
-  // Check if the user exists
+
   const user = await UserModel.findOne({ username });
   if (!user) {
-    res.status(400);
-    throw new Error("Invalid credentials");
+    res.status(400).json({ message: "Invalid credentials" });
+    return;
   }
-  // Check if the password is correct
+
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
   if (!isPasswordCorrect) {
-    res.status(400);
-    throw new Error("Invalid credentials");
+    res.status(400).json({ message: "Invalid credentials" });
+    return;
   }
-  // Create a token
+
   const token = jwt.sign(
     { userId: user._id, userRole: user.role },
     process.env.JWT_SECRET,
@@ -78,19 +76,28 @@ const login = asyncHandler(async (req, res) => {
     }
   );
 
-  // Add time tracking record
   await startShift(user._id);
 
-  // Set a cookie
   const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production" ? true : false,
     expires: new Date(Date.now() + 9000000),
   };
   res.cookie("token", token, cookieOptions);
-  // Send the response
-  res.status(200).json({ message: "User logged in successfully" });
+
+  res.status(200).json({
+    message: "User logged in successfully",
+    token,
+    user: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+    },
+  });
 });
+
 
 /* 
 @desc     Logout a user
@@ -98,6 +105,7 @@ const login = asyncHandler(async (req, res) => {
 @access   Private
 */
 const logout = asyncHandler(async (req, res) => {
+  console.log('Logging out from Server...')
   const { userId } = req; // Assuming you have middleware to extract user ID from the request
   // Clear the cookie
   res.clearCookie("token");
@@ -249,7 +257,7 @@ const getUsersList = asyncHandler(async (req, res) => {
 
 /* 
 @desc     Get a user by id
-@route    GET /users/:id
+@route    GET /users/info/:id
 @access   Private
 */
 const getUserById = asyncHandler(async (req, res) => {
@@ -270,28 +278,30 @@ const getUserById = asyncHandler(async (req, res) => {
 
 /* 
 @desc     Show user's avatar
-@route    GET /users/avatar
+@route    GET /users/:username/avatar
 @access   Private
 */
 const showAvatar = asyncHandler(async (req, res) => {
   const { username } = req.params;
   const user = await UserModel.findOne({ username });
   if (!user) {
-    res.status(400);
-    throw new Error("User not found");
+    res.status(400).json({ message: "User not found" });
+    return;
   }
   // Check if the user has an avatar
   if (!user.avatar) {
-    res.status(400);
-    throw new Error("Avatar not found");
+    res.status(400).json({ message: "Avatar not found" });
+    return;
   }
   // Get the directory name of the current module
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   // Get the path to the user's avatar
-  const picturePath = "uploads/" + user.avatar;
+  const picturePath = `uploads/${user.avatar}`;
   const absolutePath = path.join(__dirname, "..", picturePath);
   res.sendFile(absolutePath);
 });
+
+
 
 /* 
 @desc     Get all tables
