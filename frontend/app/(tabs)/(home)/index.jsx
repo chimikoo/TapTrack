@@ -1,11 +1,11 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import CustomButton from "../../components/CustomButton.jsx";
+import CustomButton from "../../../components/CustomButton.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import emptyTable from "../../assets/icons/empty-table.png";
-import Table from "../../components/Table.jsx";
+import emptyTable from "../../../assets/icons/empty-table.png";
+import Table from "../../../components/Table.jsx";
 
 const Home = () => {
   const [tables, setTables] = useState([]);
@@ -14,7 +14,7 @@ const Home = () => {
     const getTables = async () => {
       try {
         const { data } = await axios.get(
-          "https://application-server.loca.lt/users/tables"
+          "https://empty-frog-47.loca.lt/users/tables"
         );
 
         const sortedTables = data.tables.sort((a, b) => a.tableNumber - b.tableNumber);
