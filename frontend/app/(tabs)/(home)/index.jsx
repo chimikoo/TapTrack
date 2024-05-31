@@ -12,7 +12,7 @@ const Home = () => {
     const getTables = async () => {
       try {
         const { data } = await axios.get(
-          "https://sour-turtle-53.loca.lt/users/tables"
+          "https://application-server.loca.lt/users/tables"
         );
 
         const sortedTables = data.tables.sort(
@@ -31,8 +31,13 @@ const Home = () => {
     };
   }, []);
 
+
   const handleTablePress = () => {
     router.push("/(tabs)/(home)/menuItemSelector");
+  };
+
+  const handleOrder = () => {
+    router.push("/(tabs)/(home)/order");
   };
 
   return (
