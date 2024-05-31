@@ -131,9 +131,9 @@ const MenuItemSelector = () => {
                     <Text className="w-[20%]">{sp.size}</Text>
                     <Text className="w-[20%]">{sp.price}€</Text>
                     <AddRemove
-                      quantity={quantities[index]}
-                      handleDecrement={() => decrementQuantity(index)}
-                      handleIncrement={() => incrementQuantity(index)}
+                      quantity={quantities[spIndex]}
+                      handleDecrement={() => decrementQuantity(spIndex)}
+                      handleIncrement={() => incrementQuantity(spIndex)}
                     />
                   </View>
                 ))

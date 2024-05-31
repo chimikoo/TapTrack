@@ -15,14 +15,29 @@ import axios from "axios";
 const FoodDetail = () => {
   const { id, category } = useLocalSearchParams();
   const [item, setItem] = useState({});
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState([0]);
   const [extra, setExtra] = useState("");
   const [price, setPrice] = useState("");
   const [extras, setExtras] = useState([]);
 
-  const incrementQuantity = () => setQuantity(quantity + 1);
-  const decrementQuantity = () => setQuantity(quantity > 0 ? quantity - 1 : 0);
+  const incrementQuantity = (index) => {
+    console.log("index: ", index);
+    setQuantity((prevQuantity) => {
+      const newQuantity = [...prevQuantity];
+      newQuantity[index]++;
+      return newQuantity;
+    });
+  };
 
+  const decrementQuantity = (index) => {
+    setQuantity((prevQuantity) => {
+      const newQuantity = [...prevQuantity];
+      if (newQuantity[index] > 0) {
+        newQuantity[index]--;
+      }
+      return newQuantity;
+    });
+  };
   console.log("id and category: ", id, category);
 
   useEffect(() => {
@@ -37,6 +52,12 @@ const FoodDetail = () => {
     };
     fetchItem();
   }, []);
+
+  useEffect(() => {
+    if (item.sizesPrices) {
+      setQuantity(Array(item.sizesPrices.length).fill(0));
+    }
+  }, [item]);
 
   const addItem = () => {
     // Add item logic here
@@ -55,9 +76,9 @@ const FoodDetail = () => {
           </View>
           {category !== "beverage" ? (
             <AddRemove
-              quantity={quantity}
-              handleDecrement={decrementQuantity}
-              handleIncrement={incrementQuantity}
+              quantity={quantity[0]}
+              handleDecrement={() => decrementQuantity(0)}
+              handleIncrement={() => incrementQuantity(0)}
             />
           ) : null}
         </View>
@@ -80,9 +101,9 @@ const FoodDetail = () => {
                     <Text className="w-[20%]">{sp.size}</Text>
                     <Text className="w-[20%]">{sp.price}€</Text>
                     <AddRemove
-                      quantity={quantity}
-                      handleDecrement={decrementQuantity}
-                      handleIncrement={incrementQuantity}
+                      quantity={quantity[spIndex]}
+                      handleDecrement={() => decrementQuantity(spIndex)}
+                      handleIncrement={() => incrementQuantity(spIndex)}
                     />
                   </View>
                 ))}
