@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Alert, View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
@@ -6,8 +6,8 @@ import * as SecureStore from "expo-secure-store";
 import InputField from "../components/InputField";
 import CustomButton from "../components/CustomButton";
 import logo from "../assets/images/logo.png";
-import { useNavigation } from '@react-navigation/native';
 import { Link, router } from "expo-router";
+import { UserContext } from "../contexts/userContext.jsx";
 
 // to be able to access the local host from the emulator
 // run the following command in the terminal:
@@ -16,17 +16,21 @@ import { Link, router } from "expo-router";
 
 export default function App() {
   const [form, setForm] = useState({ username: "", password: "" });
-  const navigation = useNavigation();
+  const { user, dispatch } = useContext(UserContext);
 
   const logout = async () => {
     try {
-      const response = await axios.get('https://sour-turtle-53.loca.lt/users/logout', {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        "https://sour-turtle-53.loca.lt/users/logout",
+        {
+          withCredentials: true,
+        }
+      );
       if (response.status === 200) {
         await SecureStore.deleteItemAsync("userToken");
         await SecureStore.deleteItemAsync("userData");
       }
+      dispatch({ type: "LOGOUT" });
     } catch (error) {
       console.error("Logout Error:", error);
     }
@@ -53,16 +57,20 @@ export default function App() {
         await SecureStore.setItemAsync("userToken", data.token);
         await SecureStore.setItemAsync("userData", JSON.stringify(userData));
         console.log("User data and token stored successfully");
+        dispatch({ type: "LOGIN", payload: userData });
         router.push("/(tabs)/(home)");
       } else if (data.message === "User is already logged in") {
-        console.log('Entering logout')
+        console.log("Entering logout");
         await logout();
         submit(); // Retry login after logging out
       } else {
         Alert.alert("Login Failed", data.message);
       }
     } catch (error) {
-      Alert.alert("Error", error.response ? error.response.data.message : error.message);
+      Alert.alert(
+        "Error",
+        error.response ? error.response.data.message : error.message
+      );
     }
   };
 
