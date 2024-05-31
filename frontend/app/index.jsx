@@ -20,7 +20,7 @@ export default function App() {
 
   const logout = async () => {
     try {
-      const response = await axios.get('https://sour-turtle-53.loca.lt/users/logout', {
+      const response = await axios.get('https://application-server.loca.lt/users/logout', {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -35,7 +35,7 @@ export default function App() {
   const submit = async () => {
     try {
       const { data } = await axios.post(
-        "https://sour-turtle-53.loca.lt/users/login",
+        "https://application-server.loca.lt/users/login",
         form,
         { withCredentials: true }
       );
