@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Table from "../../../components/Table.jsx";
+import { router } from "expo-router";
 
 const Home = () => {
   const [tables, setTables] = useState([]);
@@ -30,6 +31,10 @@ const Home = () => {
     };
   }, []);
 
+  const handleTablePress = () => {
+    router.push("/(tabs)/(home)/menuItemSelector");
+  };
+
   return (
     <SafeAreaView className="h-full bg-primary-lighter">
       <ScrollView className="w-full mb-4">
@@ -39,6 +44,7 @@ const Home = () => {
               key={table.tableNumber}
               tableNumber={table.tableNumber}
               state={table.state}
+              handleTablePress={handleTablePress}
             />
           ))}
         </View>

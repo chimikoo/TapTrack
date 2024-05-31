@@ -12,6 +12,8 @@ import { Picker } from "@react-native-picker/picker";
 import CustomButton from "../../../components/CustomButton";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import AddRemove from "../../../components/AddRemove.jsx";
+import Filters from "../../../components/Filters.jsx";
 
 const MenuItemSelector = () => {
   const [name, setName] = useState("");
@@ -31,7 +33,7 @@ const MenuItemSelector = () => {
       let response;
       if (category === "beverage") {
         response = await axios.get(
-          "https://empty-frog-47.loca.lt/users/menu-items/beverages",
+          "https://sour-turtle-53.loca.lt/users/menu-items/beverages",
           {
             params: {
               name,
@@ -43,7 +45,7 @@ const MenuItemSelector = () => {
         );
       } else {
         response = await axios.get(
-          "https://empty-frog-47.loca.lt/users/menu-items/foods",
+          "https://sour-turtle-53.loca.lt/users/menu-items/foods",
           {
             params: {
               category,
@@ -64,6 +66,12 @@ const MenuItemSelector = () => {
     }
   };
 
+  // Fetch starters on initial render
+  useEffect(() => {
+    fetchMenuItems("starter");
+  }, []);
+
+  // Fetch menu items when filters change
   useEffect(() => {
     if (category) {
       fetchMenuItems(category);
@@ -86,74 +94,32 @@ const MenuItemSelector = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter p-4">
-      <View className="flex flex-row justify-between items-center mb-4">
-        <TouchableOpacity>
-          <Text className="text-2xl">{"HEADER REMOVE LATER"}</Text>
-        </TouchableOpacity>
-      </View>
-      <View className="flex flex-row justify-between items-center mb-4 space-x-2">
-        <TextInput
-          className="w-[30%] h-10 px-2 border bg-[#F5F5F5] border-gray-300 rounded"
-          placeholder="name"
-          value={name}
-          onChangeText={setName}
-        />
-        <TextInput
-          className="w-[30%] h-10 px-2 border bg-[#F5F5F5] border-gray-300 rounded"
-          placeholder="price"
-          value={price}
-          onChangeText={setPrice}
-        />
-        <View className="w-[30%] h-10 bg-[#F5F5F5] rounded-lg border border-gray-300 justify-center">
-          <Picker
-            selectedValue={category}
-            onValueChange={(itemValue) => setCategory(itemValue)}
-            className="w-full h-full"
-          >
-            <Picker.Item label="Select category" value="" />
-            <Picker.Item label="Starters" value="starter" />
-            <Picker.Item label="Drinks" value="beverage" />
-            <Picker.Item label="Main" value="main" />
-            <Picker.Item label="Side" value="side" />
-            <Picker.Item label="Dessert" value="dessert" />
-          </Picker>
-        </View>
-      </View>
-      <View className="flex flex-row justify-between items-center mb-4 space-x-2">
-        <View className="w-[30%] h-10 bg-[#F5F5F5] rounded-lg border border-gray-300 justify-center">
-          <Picker
-            selectedValue={sortBy}
-            onValueChange={(itemValue) => setSortBy(itemValue)}
-            className="w-full h-full"
-          >
-            <Picker.Item label="Sort by" value="" />
-            <Picker.Item label="Name" value="name" />
-            <Picker.Item label="Price" value="price" />
-            <Picker.Item label="Category" value="category" />
-          </Picker>
-        </View>
-        <TextInput
-          className="w-[30%] h-10 bg-[#F5F5F5] px-2 border border-gray-300 rounded"
-          placeholder="limit"
-          value={limit}
-          onChangeText={setLimit}
-        />
-        <CustomButton
-          text="Filter"
-          containerStyles="w-[30%] h-10 ml-2"
-          handlePress={() => {
-            /* Implement filter logic */
-          }}
-        />
-      </View>
+      <Filters
+        name={name}
+        setName={setName}
+        price={price}
+        setPrice={setPrice}
+        category={category}
+        setCategory={setCategory}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        limit={limit}
+        setLimit={setLimit}
+      />
       <ScrollView className="flex-1">
         {loading ? (
           <ActivityIndicator size="large" color="#7CA982" />
         ) : (
           menuItems.map((item, index) => (
-            <View
+            <TouchableOpacity
               key={item._id}
               className="flex flex-col mb-2 border-b border-gray-300 pb-2"
+              onPress={() =>
+                router.push({
+                  pathname: "foodDetail",
+                  params: { id: item._id, category: item.category },
+                })
+              }
             >
               <Text className="w-full font-bold text-md">{item.name}</Text>
               {category === "beverage" && item.sizesPrices ? (
@@ -164,44 +130,24 @@ const MenuItemSelector = () => {
                   >
                     <Text className="w-[20%]">{sp.size}</Text>
                     <Text className="w-[20%]">{sp.price}€</Text>
-                    <View className="w-[30%] flex flex-row justify-between items-center">
-                      <TouchableOpacity
-                        className="w-8 h-8 flex justify-center items-center bg-primary-dark rounded"
-                        onPress={() => decrementQuantity(index)}
-                      >
-                        <Text className="text-xl text-white">-</Text>
-                      </TouchableOpacity>
-                      <Text className="mx-2">{quantities[index]}</Text>
-                      <TouchableOpacity
-                        className="w-8 h-8 flex justify-center items-center bg-primary-dark rounded"
-                        onPress={() => incrementQuantity(index)}
-                      >
-                        <Text className="text-xl text-white">+</Text>
-                      </TouchableOpacity>
-                    </View>
+                    <AddRemove
+                      quantity={quantities[index]}
+                      handleDecrement={() => decrementQuantity(index)}
+                      handleIncrement={() => incrementQuantity(index)}
+                    />
                   </View>
                 ))
               ) : (
                 <View className="flex flex-row justify-between items-center">
                   <Text className="w-[30%] pl-5">{item.price}€</Text>
-                  <View className="w-[30%] flex flex-row justify-between items-center">
-                    <TouchableOpacity
-                      className="w-8 h-8 flex justify-center items-center bg-primary-dark rounded"
-                      onPress={() => decrementQuantity(index)}
-                    >
-                      <Text className="text-xl text-white">-</Text>
-                    </TouchableOpacity>
-                    <Text className="mx-2">{quantities[index]}</Text>
-                    <TouchableOpacity
-                      className="w-8 h-8 flex justify-center items-center bg-primary-dark rounded"
-                      onPress={() => incrementQuantity(index)}
-                    >
-                      <Text className="text-xl text-white">+</Text>
-                    </TouchableOpacity>
-                  </View>
+                  <AddRemove
+                    quantity={quantities[index]}
+                    handleDecrement={() => decrementQuantity(index)}
+                    handleIncrement={() => incrementQuantity(index)}
+                  />
                 </View>
               )}
-            </View>
+            </TouchableOpacity>
           ))
         )}
       </ScrollView>
@@ -210,14 +156,9 @@ const MenuItemSelector = () => {
           text="Add to Order"
           containerStyles="w-full"
           handlePress={() => {
-            router.push("foodDetail");
+            // Add selected items to order
           }}
         />
-      </View>
-      <View className="flex flex-row justify-between items-center mb-4">
-        <TouchableOpacity>
-          <Text className="text-2xl">{"FOOTER REMOVE LATER"}</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

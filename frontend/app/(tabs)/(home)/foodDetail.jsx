@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,8 +9,12 @@ import {
 import AddRemove from "../../../components/AddRemove.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../../components/CustomButton.jsx";
+import { useLocalSearchParams } from "expo-router";
+import axios from "axios";
 
 const FoodDetail = () => {
+  const { id, category } = useLocalSearchParams();
+  const [item, setItem] = useState({});
   const [quantity, setQuantity] = useState(0);
   const [extra, setExtra] = useState("");
   const [price, setPrice] = useState("");
@@ -18,6 +22,21 @@ const FoodDetail = () => {
 
   const incrementQuantity = () => setQuantity(quantity + 1);
   const decrementQuantity = () => setQuantity(quantity > 0 ? quantity - 1 : 0);
+
+  console.log("id and category: ", id, category);
+
+  useEffect(() => {
+    // Fetch item by id
+    const fetchItem = async () => {
+      const url = `https://sour-turtle-53.loca.lt/users/menu-items/${
+        category === "beverage" ? "beverages" : "foods"
+      }/${id}`;
+      const { data } = await axios.get(url);
+      console.log("data: ", data.data);
+      setItem(data.data);
+    };
+    fetchItem();
+  }, []);
 
   const addItem = () => {
     // Add item logic here
@@ -31,19 +50,54 @@ const FoodDetail = () => {
     <SafeAreaView className="flex-1 bg-primary-lighter items-center px-4 pb-4">
       <ScrollView className="w-full bg-gray-200 rounded-lg p-4">
         <View className="flex-row w-full justify-between items-center">
-          <Text className="text-2xl font-bold">Bruschetta</Text>
-          <AddRemove
-            quantity={quantity}
-            handleDecrement={decrementQuantity}
-            handleIncrement={incrementQuantity}
-          />
+          <View className="w-[60%]">
+            <Text className="text-2xl font-bold">{item.name}</Text>
+          </View>
+          {category !== "beverage" ? (
+            <AddRemove
+              quantity={quantity}
+              handleDecrement={decrementQuantity}
+              handleIncrement={incrementQuantity}
+            />
+          ) : null}
         </View>
+        <View
+          className={`${
+            category === "beverage" ? "" : "flex-row"
+          } w-full gap-x-6`}
+        >
+          <Text className="mt-3 text-base font-bold text-primary-dark">
+            Price:
+          </Text>
+          {category === "beverage" ? (
+            <View className="pl-4">
+              {item.sizesPrices &&
+                item.sizesPrices.map((sp, spIndex) => (
+                  <View
+                    key={spIndex}
+                    className="flex flex-row justify-between items-center mt-2"
+                  >
+                    <Text className="w-[20%]">{sp.size}</Text>
+                    <Text className="w-[20%]">{sp.price}€</Text>
+                    <AddRemove
+                      quantity={quantity}
+                      handleDecrement={decrementQuantity}
+                      handleIncrement={incrementQuantity}
+                    />
+                  </View>
+                ))}
+            </View>
+          ) : (
+            <Text className="text-primary-dark text-lg">{item.price}€</Text>
+          )}
+        </View>
+
         <View className="mt-5">
           <Text className="text-base font-bold text-primary-dark">
             Description:
           </Text>
           <Text className="pl-4 text-primary-dark">
-            Some Description ......
+            {item.description || "No description"}
           </Text>
           <Text className="mt-3 text-base font-bold text-primary-dark">
             Ingredients:
