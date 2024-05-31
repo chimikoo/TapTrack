@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, TouchableOpacity, Alert } from "react-native";
+import { TouchableOpacity, Alert } from "react-native";
 import { Tabs, useRootNavigationState, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
@@ -7,9 +7,9 @@ import * as SecureStore from "expo-secure-store";
 import menu from "../../assets/icons/menu.png";
 import home from "../../assets/icons/home.png";
 import profile from "../../assets/icons/profile.png";
-import arrowLeft from "../../assets/icons/arrow-left.png";
 import TabIcon from "../../components/TabIcon.jsx";
 import DropDownMenu from "../../components/DropDownMenu.jsx";
+import Header from "../../components/Header.jsx";
 
 const TabsLayout = () => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -33,7 +33,7 @@ const TabsLayout = () => {
     try {
       const token = await SecureStore.getItemAsync("userToken");
       const response = await axios.get(
-        "https://empty-frog-47.loca.lt/users/logout",
+        "https://sour-turtle-53.loca.lt/users/logout",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -64,15 +64,7 @@ const TabsLayout = () => {
 
   return (
     <>
-      <SafeAreaView className="w-full h-[8vh] flex justify-center items-start px-4 mt-8 bg-primary-lighter">
-        <TouchableOpacity onPress={handleBack}>
-          <Image
-            source={arrowLeft}
-            resizeMode="contain"
-            className="w-10 h-10"
-          />
-        </TouchableOpacity>
-      </SafeAreaView>
+      <Header handleBack={handleBack} />
       <DropDownMenu
         visible={menuVisible}
         onClose={toggleMenu}

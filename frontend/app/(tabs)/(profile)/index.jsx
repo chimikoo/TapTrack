@@ -34,7 +34,7 @@ const Profile = () => {
           console.log("Retrieved token:", token);
 
           const response = await axios.get(
-            `https://empty-frog-47.loca.lt/users/info/${userId}`,
+            `https://sour-turtle-53.loca.lt/users/info/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -80,7 +80,7 @@ const Profile = () => {
             <>
               <Image
                 source={{
-                  uri: `https://empty-frog-47.loca.lt/users/${
+                  uri: `https://sour-turtle-53.loca.lt/users/${
                     user.username
                   }/avatar?${Math.random()}` /* Remove math.Random when you find out how to refresh the cache */,
                   headers: { Authorization: `Bearer ${user.token}` },
