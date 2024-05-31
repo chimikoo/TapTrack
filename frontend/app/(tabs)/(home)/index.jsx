@@ -1,10 +1,7 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import { View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import CustomButton from "../../../components/CustomButton.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import emptyTable from "../../../assets/icons/empty-table.png";
 import Table from "../../../components/Table.jsx";
 import { router } from "expo-router";
 
@@ -18,7 +15,9 @@ const Home = () => {
           "https://application-server.loca.lt/users/tables"
         );
 
-        const sortedTables = data.tables.sort((a, b) => a.tableNumber - b.tableNumber);
+        const sortedTables = data.tables.sort(
+          (a, b) => a.tableNumber - b.tableNumber
+        );
         setTables(sortedTables);
       } catch (error) {
         console.log("error", error);
@@ -31,6 +30,11 @@ const Home = () => {
       console.log("cleanup");
     };
   }, []);
+
+
+  const handleTablePress = () => {
+    router.push("/(tabs)/(home)/menuItemSelector");
+  };
 
   const handleOrder = () => {
     router.push("/(tabs)/(home)/order");
@@ -45,7 +49,7 @@ const Home = () => {
               key={table.tableNumber}
               tableNumber={table.tableNumber}
               state={table.state}
-              handleOrder={handleOrder}
+              handleTablePress={handleTablePress}
             />
           ))}
         </View>
