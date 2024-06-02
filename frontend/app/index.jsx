@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Alert, View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
@@ -8,38 +8,47 @@ import CustomButton from "../components/CustomButton";
 import logo from "../assets/images/logo.png";
 import { Link, router } from "expo-router";
 import { UserContext } from "../contexts/userContext.jsx";
-
-// to be able to access the local host from the emulator
-// run the following command in the terminal:
-// 1. npm install -g localtunnel
-// 2. lt --port 9000 --subdomain <url-name> (port number of the backend server) -> this will give you a url
+import { TAP_TRACK_URL } from "@env";
 
 export default function App() {
   const [form, setForm] = useState({ username: "", password: "" });
   const { user, dispatch } = useContext(UserContext);
 
+  useEffect(() => {
+    console.log("App component mounted");
+    return () => {
+      console.log("App component unmounted");
+    };
+  }, []);
+
   const logout = async () => {
+    console.log("Logout process started");
     try {
-      const response = await axios.get('https://application-server.loca.lt/users/logout', {
+      const response = await axios.get(`${TAP_TRACK_URL}/users/logout`, {
         withCredentials: true,
       });
       if (response.status === 200) {
         await SecureStore.deleteItemAsync("userToken");
         await SecureStore.deleteItemAsync("userData");
+        console.log("User logged out and data cleared");
       }
       dispatch({ type: "LOGOUT" });
     } catch (error) {
       console.error("Logout Error:", error);
     }
+    console.log("Logout process ended");
   };
 
   const submit = async () => {
+    console.log("Submit process started");
     try {
       const { data } = await axios.post(
-        "https://application-server.loca.lt/users/login",
+        `${TAP_TRACK_URL}/users/login`,
         form,
         { withCredentials: true }
       );
+
+      console.log("Server response received", data);
 
       if (data.message === "User logged in successfully") {
         const userData = {
@@ -57,19 +66,23 @@ export default function App() {
         dispatch({ type: "LOGIN", payload: userData });
         router.push("/(tabs)/(home)");
       } else if (data.message === "User is already logged in") {
-        console.log("Entering logout");
+        console.log("User is already logged in, logging out and retrying");
         await logout();
         submit(); // Retry login after logging out
       } else {
         Alert.alert("Login Failed", data.message);
       }
     } catch (error) {
+      console.error("Submit Error:", error);
       Alert.alert(
         "Error",
         error.response ? error.response.data.message : error.message
       );
     }
+    console.log("Submit process ended");
   };
+
+  console.log("Rendering App component");
 
   return (
     <SafeAreaView className="h-full bg-primary-lighter">
@@ -86,17 +99,26 @@ export default function App() {
         <InputField
           title="Username"
           value={form.username}
-          handleChange={(e) => setForm({ ...form, username: e })}
+          handleChange={(e) => {
+            console.log("Username changed:", e);
+            setForm({ ...form, username: e });
+          }}
         />
         <InputField
           title="Password"
           value={form.password}
-          handleChange={(e) => setForm({ ...form, password: e })}
+          handleChange={(e) => {
+            console.log("Password changed:", e);
+            setForm({ ...form, password: e });
+          }}
         />
         <CustomButton
           text="Login"
           containerStyles="w-[80%] mt-4"
-          handlePress={submit}
+          handlePress={() => {
+            console.log("Login button pressed");
+            submit();
+          }}
         />
       </View>
       <Link href="menuItemSelector">Go here</Link>
