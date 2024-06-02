@@ -10,6 +10,7 @@ import profile from "../../assets/icons/profile.png";
 import TabIcon from "../../components/TabIcon.jsx";
 import DropDownMenu from "../../components/DropDownMenu.jsx";
 import Header from "../../components/Header.jsx";
+import { TAP_TRACK_URL } from "@env";
 
 const TabsLayout = () => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -33,7 +34,7 @@ const TabsLayout = () => {
     try {
       const token = await SecureStore.getItemAsync("userToken");
       const response = await axios.get(
-        "https://sour-turtle-53.loca.lt/users/logout",
+        `${TAP_TRACK_URL}/users/logout`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

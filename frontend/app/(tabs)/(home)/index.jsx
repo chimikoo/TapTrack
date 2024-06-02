@@ -4,6 +4,7 @@ import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Table from "../../../components/Table.jsx";
 import { router } from "expo-router";
+import { TAP_TRACK_URL } from "@env";
 
 const Home = () => {
   const [tables, setTables] = useState([]);
@@ -12,7 +13,7 @@ const Home = () => {
     const getTables = async () => {
       try {
         const { data } = await axios.get(
-          "https://application-server.loca.lt/users/tables"
+          `${TAP_TRACK_URL}/users/tables`
         );
 
         const sortedTables = data.tables.sort(

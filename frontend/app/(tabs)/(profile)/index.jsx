@@ -13,6 +13,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import CustomButton from "../../../components/CustomButton";
 import { router } from "expo-router";
+import { TAP_TRACK_URL } from "@env";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -34,7 +35,7 @@ const Profile = () => {
           console.log("Retrieved token:", token);
 
           const response = await axios.get(
-            `https://application-server.loca.lt/users/info/${userId}`,
+            `${TAP_TRACK_URL}/users/info/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -80,7 +81,7 @@ const Profile = () => {
             <>
               <Image
                 source={{
-                  uri: `https://application-server.loca.lt/users/${
+                  uri: `${TAP_TRACK_URL}/users/${
                    user.username
                   }/avatar?${Math.random()}` /* Remove math.Random when you find out how to refresh the cache */,
                   headers: { Authorization: `Bearer ${user.token}` },

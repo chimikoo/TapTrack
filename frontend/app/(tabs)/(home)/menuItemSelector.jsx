@@ -14,6 +14,7 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import AddRemove from "../../../components/AddRemove.jsx";
 import Filters from "../../../components/Filters.jsx";
+import { TAP_TRACK_URL } from "@env";
 
 const MenuItemSelector = () => {
   const [name, setName] = useState("");
@@ -33,7 +34,7 @@ const MenuItemSelector = () => {
       let response;
       if (category === "beverage") {
         response = await axios.get(
-          "https://sour-turtle-53.loca.lt/users/menu-items/beverages",
+          `${TAP_TRACK_URL}/users/menu-items/beverages`,
           {
             params: {
               name,
@@ -45,7 +46,7 @@ const MenuItemSelector = () => {
         );
       } else {
         response = await axios.get(
-          "https://sour-turtle-53.loca.lt/users/menu-items/foods",
+          `${TAP_TRACK_URL}/users/menu-items/foods`,
           {
             params: {
               category,

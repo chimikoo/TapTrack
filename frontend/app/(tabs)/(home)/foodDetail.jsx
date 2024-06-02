@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../../components/CustomButton.jsx";
 import { useLocalSearchParams } from "expo-router";
 import axios from "axios";
+import { TAP_TRACK_URL } from "@env";
 
 const FoodDetail = () => {
   const { id, category } = useLocalSearchParams();
@@ -45,7 +46,7 @@ const FoodDetail = () => {
     // Fetch item by id
     const fetchItem = async () => {
       setLoading(true);
-      const url = `https://sour-turtle-53.loca.lt/users/menu-items/${
+      const url = `${TAP_TRACK_URL}/users/menu-items/${
         category === "beverage" ? "beverages" : "foods"
       }/${id}`;
       const { data } = await axios.get(url);
