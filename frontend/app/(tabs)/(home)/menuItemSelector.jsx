@@ -2,19 +2,18 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import CustomButton from "../../../components/CustomButton";
 import axios from "axios";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import AddRemove from "../../../components/AddRemove.jsx";
 import Filters from "../../../components/Filters.jsx";
+import CustomButton from "../../../components/CustomButton";
 import { TAP_TRACK_URL } from "@env";
+import { useOrder } from "../../../contexts/orderContext";
 
 const MenuItemSelector = () => {
   const [name, setName] = useState("");
@@ -26,7 +25,9 @@ const MenuItemSelector = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const { addItemToOrder } = useOrder();
   const router = useRouter();
+  const params = useLocalSearchParams();
 
   const fetchMenuItems = async (category) => {
     setLoading(true);
@@ -67,12 +68,12 @@ const MenuItemSelector = () => {
     }
   };
 
-  // Fetch starters on initial render
   useEffect(() => {
-    fetchMenuItems("starter");
+    const initialCategory = params.category || "starter";
+    setCategory(initialCategory);
+    fetchMenuItems(initialCategory);
   }, []);
 
-  // Fetch menu items when filters change
   useEffect(() => {
     if (category) {
       fetchMenuItems(category);
@@ -91,6 +92,15 @@ const MenuItemSelector = () => {
       newQuantities[index] -= 1;
     }
     setQuantities(newQuantities);
+  };
+
+  const handleAddToOrder = () => {
+    menuItems.forEach((item, index) => {
+      if (quantities[index] > 0) {
+        addItemToOrder({ ...item, quantity: quantities[index] });
+      }
+    });
+    router.back();
   };
 
   return (
@@ -156,9 +166,7 @@ const MenuItemSelector = () => {
         <CustomButton
           text="Add to Order"
           containerStyles="w-full"
-          handlePress={() => {
-            // Add selected items to order
-          }}
+          handlePress={handleAddToOrder}
         />
       </View>
     </SafeAreaView>
