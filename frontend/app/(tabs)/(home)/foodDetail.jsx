@@ -12,7 +12,7 @@ import CustomButton from "../../../components/CustomButton.jsx";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import axios from "axios";
 import { TAP_TRACK_URL } from "@env";
-import { useOrder } from "../../../contexts/orderContext"; // Import the useOrder hook
+import { useOrder } from "../../../contexts/orderContext";
 
 const FoodDetail = () => {
   const { id, category } = useLocalSearchParams();
@@ -23,8 +23,8 @@ const FoodDetail = () => {
   const [extras, setExtras] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { addItemToOrder } = useOrder(); // Use the context
-  const router = useRouter(); // Use the router for navigation
+  const { addItemToOrder } = useOrder();
+  const router = useRouter();
 
   const incrementQuantity = (index) => {
     setQuantity((prevQuantity) => {
