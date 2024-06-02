@@ -34,12 +34,12 @@ const Home = () => {
 
 
   const handleTablePress = () => {
-    router.push("/(tabs)/(home)/menuItemSelector");
-  };
-
-  const handleOrder = () => {
     router.push("/(tabs)/(home)/order");
   };
+
+/*   const handleOrder = () => {
+    router.push("/(tabs)/(home)/order");
+  }; */
 
   return (
     <SafeAreaView className="h-full bg-primary-lighter">

@@ -121,7 +121,7 @@ export default function App() {
           }}
         />
       </View>
-      <Link href="menuItemSelector">Go here</Link>
+      <Link href="/(tabs)/(home)/order">Go here</Link>
     </SafeAreaView>
   );
 }

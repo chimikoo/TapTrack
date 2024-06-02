@@ -9,9 +9,10 @@ import {
 import AddRemove from "../../../components/AddRemove.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../../components/CustomButton.jsx";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import axios from "axios";
 import { TAP_TRACK_URL } from "@env";
+import { useOrder } from "../../../contexts/orderContext"; // Import the useOrder hook
 
 const FoodDetail = () => {
   const { id, category } = useLocalSearchParams();
@@ -22,8 +23,10 @@ const FoodDetail = () => {
   const [extras, setExtras] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const { addItemToOrder } = useOrder(); // Use the context
+  const router = useRouter(); // Use the router for navigation
+
   const incrementQuantity = (index) => {
-    console.log("index: ", index);
     setQuantity((prevQuantity) => {
       const newQuantity = [...prevQuantity];
       newQuantity[index]++;
@@ -40,7 +43,6 @@ const FoodDetail = () => {
       return newQuantity;
     });
   };
-  console.log("id and category: ", id, category);
 
   useEffect(() => {
     // Fetch item by id
@@ -50,12 +52,11 @@ const FoodDetail = () => {
         category === "beverage" ? "beverages" : "foods"
       }/${id}`;
       const { data } = await axios.get(url);
-      console.log("data: ", data.data);
       setItem(data.data);
       setLoading(false);
     };
     fetchItem();
-  }, []);
+  }, [id, category]);
 
   useEffect(() => {
     if (item.sizesPrices) {
@@ -63,12 +64,27 @@ const FoodDetail = () => {
     }
   }, [item]);
 
-  const addItem = () => {
-    // Add item logic here
-  };
-
   const addToOrder = () => {
-    // Add to order logic here
+    if (category === "beverage" && item.sizesPrices) {
+      item.sizesPrices.forEach((sp, index) => {
+        if (quantity[index] > 0) {
+          addItemToOrder({
+            ...item,
+            name: `${item.name} (${sp.size})`,
+            price: sp.price,
+            quantity: quantity[index],
+          });
+        }
+      });
+    } else {
+      if (quantity[0] > 0) {
+        addItemToOrder({
+          ...item,
+          quantity: quantity[0],
+        });
+      }
+    }
+    router.push("order")
   };
 
   return (
@@ -150,7 +166,7 @@ const FoodDetail = () => {
               </Text>
               <View className="flex gap-1">
                 {extras.map((extra, index) => (
-                  <View className="flex-row items-center justify-between">
+                  <View key={index} className="flex-row items-center justify-between">
                     <Text>
                       {index + 1}. {extra.extra}
                     </Text>
