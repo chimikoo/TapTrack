@@ -69,10 +69,11 @@ const MenuItemSelector = () => {
   };
 
   useEffect(() => {
-    const initialCategory = params.category || "starter";
-    setCategory(initialCategory);
-    fetchMenuItems(initialCategory);
-  }, []);
+    if (params.category) {
+      setCategory(params.category);
+      fetchMenuItems(params.category);
+    }
+  }, [params.category]);
 
   useEffect(() => {
     if (category) {
@@ -80,13 +81,13 @@ const MenuItemSelector = () => {
     }
   }, [category, name, price, sortBy, limit]);
 
-  const incrementQuantity = (index) => {
+  const incrementQuantity = (index, isSizePrice = false) => {
     const newQuantities = [...quantities];
     newQuantities[index] += 1;
     setQuantities(newQuantities);
   };
 
-  const decrementQuantity = (index) => {
+  const decrementQuantity = (index, isSizePrice = false) => {
     const newQuantities = [...quantities];
     if (newQuantities[index] > 0) {
       newQuantities[index] -= 1;
@@ -100,7 +101,7 @@ const MenuItemSelector = () => {
         addItemToOrder({ ...item, quantity: quantities[index] });
       }
     });
-    router.back();
+    router.push("/tabs/home/order");
   };
 
   return (
@@ -122,29 +123,36 @@ const MenuItemSelector = () => {
           <ActivityIndicator size="large" color="#7CA982" />
         ) : (
           menuItems.map((item, index) => (
-            <TouchableOpacity
+            <View
               key={item._id}
               className="flex flex-col mb-2 border-b border-gray-300 pb-2"
-              onPress={() =>
-                router.push({
-                  pathname: "foodDetail",
-                  params: { id: item._id, category: item.category },
-                })
-              }
             >
-              <Text className="w-full font-bold text-md">{item.name}</Text>
+              <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    pathname: "foodDetail",
+                    params: { id: item._id, category: item.category },
+                  })
+                }
+              >
+                <Text className="w-full font-bold text-md">{item.name}</Text>
+              </TouchableOpacity>
               {category === "beverage" && item.sizesPrices ? (
                 item.sizesPrices.map((sp, spIndex) => (
                   <View
-                    key={spIndex}
+                    key={`${item._id}-${spIndex}`}
                     className="flex flex-row justify-between items-center mt-2"
                   >
                     <Text className="w-[20%]">{sp.size}</Text>
                     <Text className="w-[20%]">{sp.price}€</Text>
                     <AddRemove
-                      quantity={quantities[spIndex]}
-                      handleDecrement={() => decrementQuantity(spIndex)}
-                      handleIncrement={() => incrementQuantity(spIndex)}
+                      quantity={quantities[index * item.sizesPrices.length + spIndex]}
+                      handleDecrement={() =>
+                        decrementQuantity(index * item.sizesPrices.length + spIndex, true)
+                      }
+                      handleIncrement={() =>
+                        incrementQuantity(index * item.sizesPrices.length + spIndex, true)
+                      }
                     />
                   </View>
                 ))
@@ -158,7 +166,7 @@ const MenuItemSelector = () => {
                   />
                 </View>
               )}
-            </TouchableOpacity>
+            </View>
           ))
         )}
       </ScrollView>
