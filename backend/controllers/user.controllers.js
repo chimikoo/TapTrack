@@ -129,42 +129,44 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
 
   res.status(200).json({ message: "Users forced to logout successfully" });
 });
-// //
-// @desc     Update user info
-// @route    PATCH /users
-// @access   Private
-// *//
+
+/* 
+@desc     Update user info
+@route    PATCH /users
+@access   Private
+*/
 const updateUser = asyncHandler(async (req, res) => {
   const { userId } = req;
   const { username, password, firstName, lastName, email } = req.body;
-  const avatar = req.file.filename;
-  // hash the updated password if the password is provided
-  const hashedPassword = password ? await bcrypt.hash(password, 12) : password;
+  const avatar = req.file?.filename;
 
-  // get the user's old avatar
-  const user = await UserModel.findById(userId);
-  const oldAvatar = user.avatar;
-  if (oldAvatar) {
-    // check if the path exists and the avatar is not the default avatar
-    if (fs.existsSync(`./uploads/${oldAvatar}`) && oldAvatar !== "cat.png") {
-      // delete the old avatar
-      // fs.unlinkSync(`./uploads/${oldAvatar}`);
-      clearImage(`./uploads/${oldAvatar}`);
+  try {
+    const hashedPassword = password ? await bcrypt.hash(password, 12) : password;
+
+    const user = await UserModel.findById(userId);
+    const oldAvatar = user.avatar;
+    if (oldAvatar && avatar) {
+      if (fs.existsSync(`./uploads/${oldAvatar}`) && oldAvatar !== "cat.png") {
+        clearImage(`./uploads/${oldAvatar}`);
+      }
     }
-  }
-  // Update the user
-  await UserModel.findByIdAndUpdate(userId, {
-    username,
-    password: hashedPassword,
-    firstName,
-    lastName,
-    email,
-    avatar,
-  });
 
-  // Send the response
-  res.status(200).json({ message: "User updated successfully" });
+    await UserModel.findByIdAndUpdate(userId, {
+      username,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      email,
+      avatar: avatar || user.avatar,
+    });
+
+    res.status(200).json({ message: "User updated successfully" });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
 });
+
 
 /* 
 @desc     Update a user's role
@@ -256,24 +258,30 @@ const getUsersList = asyncHandler(async (req, res) => {
 });
 
 /* 
-@desc     Get a user by id
-@route    GET /users/info/:id
+@desc     Get a user by username
+@route    GET /users/info/:username
 @access   Private
 */
-const getUserById = asyncHandler(async (req, res) => {
-  // only admins can get a user by id
-  const { userRole } = req;
-  if (userRole !== "admin") {
-    res.status(401);
-    throw new Error("You are not authorized to perform this action");
-  }
-  const { id } = req.params;
-  const user = await UserModel.findById(id);
+const getUserByUsername = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+
+  // Fetch user data from the database by username, not by ObjectId
+  const user = await UserModel.findOne({ username });
+
   if (!user) {
-    res.status(400);
-    throw new Error("User not found");
+    return res.status(404).json({ message: 'User not found' });
   }
-  res.status(200).json({ employee: user });
+
+  res.status(200).json({
+    employee: {
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+    },
+  });
 });
 
 /* 
@@ -327,7 +335,7 @@ export {
   forceLogoutUsers,
   timeTrack,
   getUsersList,
-  getUserById,
+  getUserByUsername,
   showAvatar,
   getTables,
 };
