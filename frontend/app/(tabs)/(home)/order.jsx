@@ -55,6 +55,7 @@ const Order = () => {
     setOrderItems(newOrderItems);
   };
 
+  console.log("orderItems", orderItems);
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter">
       <View className="flex flex-wrap justify-center flex-row">
@@ -97,10 +98,10 @@ const Order = () => {
                     className="flex flex-col mb-2 border-b border-gray-300 pb-2"
                   >
                     <View className="flex flex-row justify-between items-center">
-                      <Text className="flex-1 font-bold text-md">
-                        {item.name}
+                      <Text className="w-[40%] font-bold text-md">
+                        {item.name}{item.size ? ` (${item.size})` : ""}
                       </Text>
-                      <Text className="flex-1 pl-20">{item.price}€</Text>
+                      <Text className="w-[20%]">{item.price}€</Text>
                       <AddRemove
                         quantity={item.quantity}
                         handleDecrement={() => decrementQuantity(index)}
@@ -134,12 +135,12 @@ const Order = () => {
       <View className="flex-row justify-between px-4">
         <CustomButton
           text="Checkout"
-          containerStyles="flex-1 mr-2"
+          containerStyles="flex-1 mr-2 mb-4"
           handlePress={() => {}}
         />
         <CustomButton
           text="Order"
-          containerStyles="flex-1 ml-2"
+          containerStyles="flex-1 ml-2 mb-4"
           handlePress={() => {}} // Order backend logic
         />
       </View>

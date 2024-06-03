@@ -94,6 +94,20 @@ const MenuItemSelector = () => {
 
   const handleAddToOrder = () => {
     menuItems.forEach((item, index) => {
+      // If the item is a beverage and has sizesPrices, we need to loop through the sizesPrices
+      if (category === "beverage" && item.sizesPrices) {
+        item.sizesPrices.forEach((sp, spIndex) => {
+          if (quantities[index * item.sizesPrices.length + spIndex] > 0) {
+            addItemToOrder({
+              ...item,
+              quantity: quantities[index * item.sizesPrices.length + spIndex],
+              price: sp.price,
+              size: sp.size,
+            });
+          }
+        });
+        return;
+      }
       if (quantities[index] > 0) {
         addItemToOrder({ ...item, quantity: quantities[index] });
       }
