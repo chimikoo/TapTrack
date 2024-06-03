@@ -21,6 +21,10 @@ const extraSchema = new Schema(
       required: true,
       enum: ["food", "beverage"],
     },
+    tableNumber: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,

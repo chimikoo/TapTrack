@@ -16,7 +16,7 @@ import { TAP_TRACK_URL } from "@env";
 import { useOrder } from "../../../contexts/orderContext";
 
 const FoodDetail = () => {
-  const { id, category } = useLocalSearchParams();
+  const { id, category, tableNumber } = useLocalSearchParams();
   const [item, setItem] = useState({});
   const [quantity, setQuantity] = useState([0]);
   const [extra, setExtra] = useState("");
@@ -73,7 +73,13 @@ const FoodDetail = () => {
       }
       const url = `${TAP_TRACK_URL}/users/menu-items/extras`;
       const itemType = category === "beverage" ? "beverage" : "food";
-      await axios.post(url, { extra, price, itemId: id, itemType });
+      await axios.post(url, {
+        extra,
+        price,
+        itemId: id,
+        itemType,
+        tableNumber,
+      });
       setExtras([...extras, { extra, price }]);
       // Clear input fields
       setExtra("");
@@ -103,7 +109,10 @@ const FoodDetail = () => {
         });
       }
     }
-    router.push("order");
+    router.push({
+      pathname: "/(tabs)/(home)/order",
+      params: { tableNumber },
+    });
   };
 
   return (

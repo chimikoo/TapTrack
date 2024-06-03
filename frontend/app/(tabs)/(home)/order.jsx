@@ -2,13 +2,32 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../../components/CustomButton";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import AddRemove from "../../../components/AddRemove";
 import { useOrder } from "../../../contexts/orderContext";
+import { TAP_TRACK_URL } from "@env";
+import axios from "axios";
 
 const Order = () => {
+  const { tableNumber } = useLocalSearchParams();
   const router = useRouter();
   const { orderItems, setOrderItems } = useOrder();
+  const [extras, setExtras] = useState([]);
+
+  useEffect(() => {
+    console.log("tableNumber", tableNumber);
+    const getExtras = async () => {
+      try {
+        const url = `${TAP_TRACK_URL}/users/menu-items/extras/${tableNumber}`;
+        const { data } = await axios.get(url);
+        console.log("data", data.data);
+        setExtras(data.data);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    getExtras();
+  }, []);
 
   const incrementQuantity = (index) => {
     const newOrderItems = [...orderItems];
@@ -44,7 +63,7 @@ const Order = () => {
             onPress={() =>
               router.push({
                 pathname: "menuItemSelector",
-                params: { category: category.type.toLowerCase() },
+                params: { category: category.type.toLowerCase(), tableNumber },
               })
             }
           >
@@ -59,22 +78,43 @@ const Order = () => {
               Order is currently empty
             </Text>
           ) : (
-            orderItems.map((item, index) => (
-              <View
-                key={index}
-                className="flex flex-col mb-2 border-b border-gray-300 pb-2"
-              >
-                <View className="flex flex-row justify-between items-center">
-                  <Text className="flex-1 font-bold text-md">{item.name}</Text>
-                  <Text className="flex-1 pl-20">{item.price}€</Text>
-                  <AddRemove
-                    quantity={item.quantity}
-                    handleDecrement={() => decrementQuantity(index)}
-                    handleIncrement={() => incrementQuantity(index)}
-                  />
+            orderItems.map((item, index) => {
+              return (
+                <View
+                  key={index}
+                  className="flex flex-col mb-2 border-b border-gray-300 pb-2"
+                >
+                  <View className="flex flex-row justify-between items-center">
+                    <Text className="flex-1 font-bold text-md">
+                      {item.name}
+                    </Text>
+                    <Text className="flex-1 pl-20">{item.price}€</Text>
+                    <AddRemove
+                      quantity={item.quantity}
+                      handleDecrement={() => decrementQuantity(index)}
+                      handleIncrement={() => incrementQuantity(index)}
+                    />
+                  </View>
+                  <View className="pl-6">
+                    {extras &&
+                      extras.length > 0 &&
+                      extras.map((extra, index) => {
+                        if (extra.itemId === item._id) {
+                          return (
+                            <View
+                              key={index}
+                              className="flex flex-row justify-between items-center"
+                            >
+                              <Text className="flex-1">{extra.extra}</Text>
+                              <Text className="flex-1">{extra.price}€</Text>
+                            </View>
+                          );
+                        }
+                      })}
+                  </View>
                 </View>
-              </View>
-            ))
+              );
+            })
           )}
         </View>
       </ScrollView>
