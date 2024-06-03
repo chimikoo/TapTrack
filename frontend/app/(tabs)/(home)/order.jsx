@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../../components/CustomButton";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -13,15 +19,18 @@ const Order = () => {
   const router = useRouter();
   const { orderItems, setOrderItems } = useOrder();
   const [extras, setExtras] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     console.log("tableNumber", tableNumber);
     const getExtras = async () => {
       try {
+        setLoading(true);
         const url = `${TAP_TRACK_URL}/users/menu-items/extras/${tableNumber}`;
         const { data } = await axios.get(url);
         console.log("data", data.data);
         setExtras(data.data);
+        setLoading(false);
       } catch (error) {
         console.log("error", error);
       }
@@ -72,51 +81,55 @@ const Order = () => {
         ))}
       </View>
       <ScrollView className="w-full">
-        <View className="mt-8 px-4">
-          {orderItems.length === 0 ? (
-            <Text className="text-center font-bold text-xl text-gray-600">
-              Order is currently empty
-            </Text>
-          ) : (
-            orderItems.map((item, index) => {
-              return (
-                <View
-                  key={index}
-                  className="flex flex-col mb-2 border-b border-gray-300 pb-2"
-                >
-                  <View className="flex flex-row justify-between items-center">
-                    <Text className="flex-1 font-bold text-md">
-                      {item.name}
-                    </Text>
-                    <Text className="flex-1 pl-20">{item.price}€</Text>
-                    <AddRemove
-                      quantity={item.quantity}
-                      handleDecrement={() => decrementQuantity(index)}
-                      handleIncrement={() => incrementQuantity(index)}
-                    />
+        {loading ? (
+          <ActivityIndicator size="large" color="#7CA982" />
+        ) : (
+          <View className="mt-8 px-4">
+            {orderItems.length === 0 ? (
+              <Text className="text-center font-bold text-xl text-gray-600">
+                Order is currently empty
+              </Text>
+            ) : (
+              orderItems.map((item, index) => {
+                return (
+                  <View
+                    key={index}
+                    className="flex flex-col mb-2 border-b border-gray-300 pb-2"
+                  >
+                    <View className="flex flex-row justify-between items-center">
+                      <Text className="flex-1 font-bold text-md">
+                        {item.name}
+                      </Text>
+                      <Text className="flex-1 pl-20">{item.price}€</Text>
+                      <AddRemove
+                        quantity={item.quantity}
+                        handleDecrement={() => decrementQuantity(index)}
+                        handleIncrement={() => incrementQuantity(index)}
+                      />
+                    </View>
+                    <View className="pl-6">
+                      {extras &&
+                        extras.length > 0 &&
+                        extras.map((extra, index) => {
+                          if (extra.itemId === item._id) {
+                            return (
+                              <View
+                                key={index}
+                                className="flex flex-row justify-between items-center"
+                              >
+                                <Text className="flex-1">{extra.extra}</Text>
+                                <Text className="flex-1">{extra.price}€</Text>
+                              </View>
+                            );
+                          }
+                        })}
+                    </View>
                   </View>
-                  <View className="pl-6">
-                    {extras &&
-                      extras.length > 0 &&
-                      extras.map((extra, index) => {
-                        if (extra.itemId === item._id) {
-                          return (
-                            <View
-                              key={index}
-                              className="flex flex-row justify-between items-center"
-                            >
-                              <Text className="flex-1">{extra.extra}</Text>
-                              <Text className="flex-1">{extra.price}€</Text>
-                            </View>
-                          );
-                        }
-                      })}
-                  </View>
-                </View>
-              );
-            })
-          )}
-        </View>
+                );
+              })
+            )}
+          </View>
+        )}
       </ScrollView>
       <View className="flex-row justify-between px-4">
         <CustomButton

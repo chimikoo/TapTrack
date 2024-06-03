@@ -71,6 +71,14 @@ const FoodDetail = () => {
         Alert.alert("Please fill in all fields");
         return;
       }
+      // add extra only if the quantity is greater than 0
+      if (quantity[0] === 0 && category !== "beverage") {
+        Alert.alert("Please add item to order first");
+        return;
+      } else if (item.sizesPrices && quantity.every((q) => q === 0)) {
+        Alert.alert("Please add item to order first");
+        return;
+      }
       const url = `${TAP_TRACK_URL}/users/menu-items/extras`;
       const itemType = category === "beverage" ? "beverage" : "food";
       await axios.post(url, {
