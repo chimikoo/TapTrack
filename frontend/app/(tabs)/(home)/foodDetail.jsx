@@ -5,6 +5,7 @@ import {
   TextInput,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import AddRemove from "../../../components/AddRemove.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,7 +16,7 @@ import { TAP_TRACK_URL } from "@env";
 import { useOrder } from "../../../contexts/orderContext";
 
 const FoodDetail = () => {
-  const { id, category } = useLocalSearchParams();
+  const { id, category, tableNumber } = useLocalSearchParams();
   const [item, setItem] = useState({});
   const [quantity, setQuantity] = useState([0]);
   const [extra, setExtra] = useState("");
@@ -64,6 +65,38 @@ const FoodDetail = () => {
     }
   }, [item]);
 
+  const addExtra = async () => {
+    try {
+      if (!extra || !price) {
+        Alert.alert("Please fill in all fields");
+        return;
+      }
+      // add extra only if the quantity is greater than 0
+      if (quantity[0] === 0 && category !== "beverage") {
+        Alert.alert("Please add item to order first");
+        return;
+      } else if (item.sizesPrices && quantity.every((q) => q === 0)) {
+        Alert.alert("Please add item to order first");
+        return;
+      }
+      const url = `${TAP_TRACK_URL}/users/menu-items/extras`;
+      const itemType = category === "beverage" ? "beverage" : "food";
+      await axios.post(url, {
+        extra,
+        price,
+        itemId: id,
+        itemType,
+        tableNumber,
+      });
+      setExtras([...extras, { extra, price }]);
+      // Clear input fields
+      setExtra("");
+      setPrice("");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const addToOrder = () => {
     if (category === "beverage" && item.sizesPrices) {
       item.sizesPrices.forEach((sp, index) => {
@@ -84,7 +117,10 @@ const FoodDetail = () => {
         });
       }
     }
-    router.push("order")
+    router.push({
+      pathname: "/(tabs)/(home)/order",
+      params: { tableNumber },
+    });
   };
 
   return (
@@ -166,7 +202,10 @@ const FoodDetail = () => {
               </Text>
               <View className="flex gap-1">
                 {extras.map((extra, index) => (
-                  <View key={index} className="flex-row items-center justify-between">
+                  <View
+                    key={index}
+                    className="flex-row items-center justify-between"
+                  >
                     <Text>
                       {index + 1}. {extra.extra}
                     </Text>
@@ -191,12 +230,7 @@ const FoodDetail = () => {
                 <CustomButton
                   text="Add"
                   containerStyles="bg-primary-dark text-white px-4 rounded"
-                  handlePress={() => {
-                    setExtras([...extras, { extra, price }]);
-                    // RESET INPUTS
-                    setExtra("");
-                    setPrice("");
-                  }}
+                  handlePress={addExtra}
                 />
               </View>
             </View>

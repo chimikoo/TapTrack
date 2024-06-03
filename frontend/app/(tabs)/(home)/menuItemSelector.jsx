@@ -46,18 +46,15 @@ const MenuItemSelector = () => {
           }
         );
       } else {
-        response = await axios.get(
-          `${TAP_TRACK_URL}/users/menu-items/foods`,
-          {
-            params: {
-              category,
-              name,
-              price,
-              sort: sortBy,
-              limit,
-            },
-          }
-        );
+        response = await axios.get(`${TAP_TRACK_URL}/users/menu-items/foods`, {
+          params: {
+            category,
+            name,
+            price,
+            sort: sortBy,
+            limit,
+          },
+        });
       }
       setMenuItems(response.data.data);
       setQuantities(Array(response.data.data.length).fill(0));
@@ -97,11 +94,28 @@ const MenuItemSelector = () => {
 
   const handleAddToOrder = () => {
     menuItems.forEach((item, index) => {
+      // If the item is a beverage and has sizesPrices, we need to loop through the sizesPrices
+      if (category === "beverage" && item.sizesPrices) {
+        item.sizesPrices.forEach((sp, spIndex) => {
+          if (quantities[index * item.sizesPrices.length + spIndex] > 0) {
+            addItemToOrder({
+              ...item,
+              quantity: quantities[index * item.sizesPrices.length + spIndex],
+              price: sp.price,
+              size: sp.size,
+            });
+          }
+        });
+        return;
+      }
       if (quantities[index] > 0) {
         addItemToOrder({ ...item, quantity: quantities[index] });
       }
     });
-    router.push("order");
+    router.push({
+      pathname: "/(tabs)/(home)/order",
+      params: { tableNumber: params.tableNumber },
+    });
   };
 
   return (
@@ -131,7 +145,11 @@ const MenuItemSelector = () => {
                 onPress={() =>
                   router.push({
                     pathname: "foodDetail",
-                    params: { id: item._id, category: item.category },
+                    params: {
+                      id: item._id,
+                      category: item.category,
+                      tableNumber: params.tableNumber,
+                    },
                   })
                 }
               >
@@ -146,12 +164,20 @@ const MenuItemSelector = () => {
                     <Text className="w-[20%]">{sp.size}</Text>
                     <Text className="w-[20%]">{sp.price}€</Text>
                     <AddRemove
-                      quantity={quantities[index * item.sizesPrices.length + spIndex]}
+                      quantity={
+                        quantities[index * item.sizesPrices.length + spIndex]
+                      }
                       handleDecrement={() =>
-                        decrementQuantity(index * item.sizesPrices.length + spIndex, true)
+                        decrementQuantity(
+                          index * item.sizesPrices.length + spIndex,
+                          true
+                        )
                       }
                       handleIncrement={() =>
-                        incrementQuantity(index * item.sizesPrices.length + spIndex, true)
+                        incrementQuantity(
+                          index * item.sizesPrices.length + spIndex,
+                          true
+                        )
                       }
                     />
                   </View>

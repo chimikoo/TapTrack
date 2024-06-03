@@ -42,11 +42,9 @@ export default function App() {
   const submit = async () => {
     console.log("Submit process started");
     try {
-      const { data } = await axios.post(
-        `${TAP_TRACK_URL}/users/login`,
-        form,
-        { withCredentials: true }
-      );
+      const { data } = await axios.post(`${TAP_TRACK_URL}/users/login`, form, {
+        withCredentials: true,
+      });
 
       console.log("Server response received", data);
 
@@ -59,6 +57,7 @@ export default function App() {
           email: data.user.email,
           role: data.user.role,
           avatar: data.user.avatar,
+          id: data.user.id,
         };
         await SecureStore.setItemAsync("userToken", data.token);
         await SecureStore.setItemAsync("userData", JSON.stringify(userData));
@@ -121,7 +120,6 @@ export default function App() {
           }}
         />
       </View>
-      <Link href="/(tabs)/(home)/order">Go here</Link>
     </SafeAreaView>
   );
 }

@@ -271,13 +271,37 @@ const deleteBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const addExtra = asyncHandler(async (req, res) => {
-  const { extra, price } = req.body;
+  const { extra, price, itemId, itemType, tableNumber } = req.body;
   if (!extra || !price) {
     res.status(400);
     throw new Error("Please fill in all fields");
   }
-  const newExtra = await ExtraModel.create({ extra, price });
+  const newExtra = await ExtraModel.create({
+    extra,
+    price,
+    itemId,
+    itemType,
+    tableNumber,
+  });
   res.status(201).json({ message: "Extra added", data: newExtra });
+});
+
+/* 
+@desc   Get extras by item id
+@route  GET /users/menu-items/extras/:tableNumber
+@access Private
+*/
+const getExtrasByTable = asyncHandler(async (req, res) => {
+  const extras = await ExtraModel.find({ tableNumber: req.params.tableNumber });
+  if (!extras) {
+    res.status(404);
+    throw new Error("No extras found");
+  }
+  res.status(200).json({
+    message: "Extras",
+    numberExtras: extras.length,
+    data: extras,
+  });
 });
 
 /* 
@@ -326,5 +350,6 @@ export {
   deleteFoodItem,
   deleteBeverageItem,
   addExtra,
+  getExtrasByTable,
   updateItemStock,
 };

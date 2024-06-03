@@ -94,6 +94,7 @@ const login = asyncHandler(async (req, res) => {
       email: user.email,
       role: user.role,
       avatar: user.avatar,
+      id: user._id,
     },
   });
 });
@@ -325,6 +326,21 @@ const getTables = asyncHandler(async (req, res) => {
   res.status(200).json({ tables });
 });
 
+/* 
+@desc     Get a table by number
+@route    GET /users/tables/:number
+@access   Private
+*/
+const getTableByNumber = asyncHandler(async (req, res) => {
+  const { number } = req.params;
+  const table = await Table.findOne({ tableNumber: number });
+  if (!table) {
+    res.status(400);
+    throw new Error("Table not found");
+  }
+  res.status(200).json({ table });
+});
+
 export {
   register,
   login,
@@ -338,4 +354,5 @@ export {
   getUserByUsername,
   showAvatar,
   getTables,
+  getTableByNumber,
 };

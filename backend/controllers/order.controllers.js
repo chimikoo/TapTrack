@@ -5,7 +5,7 @@ import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 
 /* 
 @desc   Add an order
-@route  POST /users/menu/order
+@route  POST /users/menu-orders
 @access Private
 */
 const addOrder = asyncHandler(async (req, res) => {
@@ -31,6 +31,7 @@ const addOrder = asyncHandler(async (req, res) => {
 
   // Check if the table exists
   let existingTable = await Table.findOne({ tableNumber });
+  console.log("existingTable", existingTable);
   if (!existingTable) {
     // If the table doesn't exist, create a new one
     existingTable = await Table.create({
@@ -41,12 +42,18 @@ const addOrder = asyncHandler(async (req, res) => {
   } else if (existingTable.state === "available") {
     // If the table is available, update the state to occupied
     existingTable.state = "occupied";
+    existingTable.userId = userId;
     await existingTable.save();
   } else {
     res.status(400);
     throw new Error("Table is already occupied/reserved");
   }
-
+  console.log("drinks", drinks);
+  console.log("starter", starter);
+  console.log("main", main);
+  console.log("side", side);
+  console.log("dessert", dessert);
+  console.log("extras", extras);
   // Create the order
   const newOrder = await Order.create({
     userId,
@@ -58,6 +65,8 @@ const addOrder = asyncHandler(async (req, res) => {
     dessert,
     extras,
   });
+
+  console.log("newOrder", newOrder);
 
   // Assign the orderId to the table
   existingTable.orderId = newOrder._id;

@@ -12,9 +12,7 @@ const Home = () => {
   useEffect(() => {
     const getTables = async () => {
       try {
-        const { data } = await axios.get(
-          `${TAP_TRACK_URL}/users/tables`
-        );
+        const { data } = await axios.get(`${TAP_TRACK_URL}/users/tables`);
 
         const sortedTables = data.tables.sort(
           (a, b) => a.tableNumber - b.tableNumber
@@ -32,15 +30,6 @@ const Home = () => {
     };
   }, []);
 
-
-  const handleTablePress = () => {
-    router.push("/(tabs)/(home)/order");
-  };
-
-/*   const handleOrder = () => {
-    router.push("/(tabs)/(home)/order");
-  }; */
-
   return (
     <SafeAreaView className="h-full bg-primary-lighter">
       <ScrollView className="w-full mb-4">
@@ -50,7 +39,12 @@ const Home = () => {
               key={table.tableNumber}
               tableNumber={table.tableNumber}
               state={table.state}
-              handleTablePress={handleTablePress}
+              handleTablePress={() =>
+                router.push({
+                  pathname: "/(tabs)/(home)/order",
+                  params: { tableNumber: table.tableNumber},
+                })
+              }
             />
           ))}
         </View>
