@@ -9,7 +9,7 @@ import {
   timeTrack,
   updateUserRole,
   getUsersList,
-  getUserById,
+  getUserByUsername,
   showAvatar,
   getTables,
   getTableByNumber,
@@ -39,8 +39,8 @@ router.patch("/", isAuth, upload.single("avatar"), updateUser);
 // GET /users
 router.get("/", isAuth, getUsersList);
 
-// GET /users/info/:id
-router.get("/info/:id", isAuth, getUserById);
+// GET /users/info/:username
+router.get("/info/:username", isAuth, getUserByUsername);
 
 // PATCH /users/role/:id
 router.patch("/role/:id", isAuth, updateUserRole);

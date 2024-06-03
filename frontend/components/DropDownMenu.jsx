@@ -8,6 +8,7 @@ const DropDownMenu = ({
   onLogout,
   onProfile,
   onSettings,
+  onTimeTrack,
 }) => {
   const { user } = useContext(UserContext);
 
@@ -18,7 +19,7 @@ const DropDownMenu = ({
     { label: "Order" },
     { label: "Settings", action: onSettings },
     { label: "Receipts" },
-    { label: "Time Track" },
+    { label: "Time Track", action: onTimeTrack },
     { label: "Logout", action: onLogout },
   ];
 

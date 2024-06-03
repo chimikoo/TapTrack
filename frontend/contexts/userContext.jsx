@@ -18,7 +18,9 @@ const reducer = (state, action) => {
     case "LOGIN":
       return { ...state, ...action.payload };
     case "LOGOUT":
-      return null;
+      return initialState;
+    case "UPDATE_PROFILE":
+      return { ...state, ...action.payload };
     default:
       return state;
   }

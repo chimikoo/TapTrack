@@ -120,6 +120,8 @@ timeTrackSchema.methods.calculateMonthlyTotal = function (keyName) {
   };
 };
 
+
+
 const TimeTrack = model("TimeTrack", timeTrackSchema);
 
 export default TimeTrack;

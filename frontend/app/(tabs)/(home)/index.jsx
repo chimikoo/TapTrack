@@ -6,6 +6,7 @@ import Table from "../../../components/Table.jsx";
 import { router } from "expo-router";
 import { TAP_TRACK_URL } from "@env";
 
+
 const Home = () => {
   const [tables, setTables] = useState([]);
 
@@ -54,3 +55,4 @@ const Home = () => {
 };
 
 export default Home;
+
