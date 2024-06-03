@@ -21,12 +21,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1_000_000 },
+  limits: { fileSize: 2_000_000 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
 
     const fileSize = parseInt(req.headers["content-length"])
-    if (fileSize > 1_000_000) {
+    if (fileSize > 2_000_000) {
       const error = new Error("File size too large. Max 1MB.");
       error.code = "LIMIT_FILE_SIZE";
       return cb(error, false);
