@@ -58,8 +58,9 @@ const MenuItemSelector = () => {
       }
       const items = response.data.data;
       setMenuItems(items);
-      // Initialize quantities array
-      const newQuantities = items.flatMap((item) =>
+      
+      // Initialize quantities array correctly
+      const newQuantities = items.flatMap(item =>
         item.sizesPrices ? item.sizesPrices.map(() => 0) : [0]
       );
       setQuantities(newQuantities);
@@ -83,13 +84,13 @@ const MenuItemSelector = () => {
     }
   }, [category, name, price, sortBy, limit]);
 
-  const incrementQuantity = (index, isSizePrice = false) => {
+  const incrementQuantity = (index) => {
     const newQuantities = [...quantities];
     newQuantities[index] += 1;
     setQuantities(newQuantities);
   };
 
-  const decrementQuantity = (index, isSizePrice = false) => {
+  const decrementQuantity = (index) => {
     const newQuantities = [...quantities];
     if (newQuantities[index] > 0) {
       newQuantities[index] -= 1;
@@ -99,13 +100,13 @@ const MenuItemSelector = () => {
 
   const handleAddToOrder = () => {
     menuItems.forEach((item, index) => {
-      // If the item is a beverage and has sizesPrices, we need to loop through the sizesPrices
       if (category === "beverage" && item.sizesPrices) {
         item.sizesPrices.forEach((sp, spIndex) => {
-          if (quantities[index * item.sizesPrices.length + spIndex] > 0) {
+          const idx = index * item.sizesPrices.length + spIndex;
+          if (quantities[idx] > 0) {
             addItemToOrder({
               ...item,
-              quantity: quantities[index * item.sizesPrices.length + spIndex],
+              quantity: quantities[idx],
               price: sp.price,
               size: sp.size,
             });
@@ -161,32 +162,23 @@ const MenuItemSelector = () => {
                 <Text className="w-full font-bold text-md">{item.name}</Text>
               </TouchableOpacity>
               {category === "beverage" && item.sizesPrices ? (
-                item.sizesPrices.map((sp, spIndex) => (
-                  <View
-                    key={`${item._id}-${spIndex}`}
-                    className="flex flex-row justify-between items-center mt-2"
-                  >
-                    <Text className="w-[20%]">{sp.size}</Text>
-                    <Text className="w-[20%]">{sp.price}€</Text>
-                    <AddRemove
-                      quantity={
-                        quantities[index * item.sizesPrices.length + spIndex]
-                      }
-                      handleDecrement={() =>
-                        decrementQuantity(
-                          index * item.sizesPrices.length + spIndex,
-                          true
-                        )
-                      }
-                      handleIncrement={() =>
-                        incrementQuantity(
-                          index * item.sizesPrices.length + spIndex,
-                          true
-                        )
-                      }
-                    />
-                  </View>
-                ))
+                item.sizesPrices.map((sp, spIndex) => {
+                  const idx = index * item.sizesPrices.length + spIndex;
+                  return (
+                    <View
+                      key={`${item._id}-${spIndex}`}
+                      className="flex flex-row justify-between items-center mt-2"
+                    >
+                      <Text className="w-[20%]">{sp.size}</Text>
+                      <Text className="w-[20%]">{sp.price}€</Text>
+                      <AddRemove
+                        quantity={quantities[idx]}
+                        handleDecrement={() => decrementQuantity(idx)}
+                        handleIncrement={() => incrementQuantity(idx)}
+                      />
+                    </View>
+                  );
+                })
               ) : (
                 <View className="flex flex-row justify-between items-center">
                   <Text className="w-[30%] pl-5">{item.price}€</Text>

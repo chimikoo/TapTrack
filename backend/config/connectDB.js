@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 import colors from "colors";
-import dotenv from "dotenv";
 
-dotenv.config(); // Load environment variables
 
 const { MONGODB_URI } = process.env;
 
@@ -12,10 +10,7 @@ const connectDB = async () => {
       throw new Error("MONGODB_URI is not defined");
     }
 
-    const conn = await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(MONGODB_URI);
 
     console.log(`MongoDB Connected: ${conn.connection.host}`.yellow.bold);
   } catch (error) {
