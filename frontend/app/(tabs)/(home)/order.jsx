@@ -97,7 +97,8 @@ const Order = () => {
       const { data } = await axios.get(
         `${TAP_TRACK_URL}/users/tables/${tableNumber}`
       );
-      if (data.table.orderId) {
+      console.log("data", data);
+      if (data.table.orderId !== null) {
         // if order exists, update it
         await axios.put(
           `${TAP_TRACK_URL}/users/menu-orders/${data.table.orderId}`,
@@ -108,6 +109,27 @@ const Order = () => {
         // if order doesn't exist, create a new one
         await axios.post(`${TAP_TRACK_URL}/users/menu-orders`, order);
         Alert.alert("Order created successfully");
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const handleCheckout = async () => {
+    console.log("checkout");
+    try {
+      const { data } = await axios.get(
+        `${TAP_TRACK_URL}/users/tables/${tableNumber}`
+      );
+      console.log("data", data);
+      if (data.table.orderId) {
+        await axios.post(`${TAP_TRACK_URL}/users/checkout`, {
+          orderId: data.table.orderId,
+          paymentMethod: "Cash",
+        });
+        Alert.alert("Checkout successful");
+      } else {
+        Alert.alert("No order to checkout");
       }
     } catch (error) {
       console.log("error", error);
@@ -196,7 +218,7 @@ const Order = () => {
         <CustomButton
           text="Checkout"
           containerStyles="flex-1 mr-2 mb-4"
-          handlePress={() => {}}
+          handlePress={handleCheckout}
         />
         <CustomButton
           text="Order"

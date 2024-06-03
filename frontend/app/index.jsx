@@ -42,11 +42,9 @@ export default function App() {
   const submit = async () => {
     console.log("Submit process started");
     try {
-      const { data } = await axios.post(
-        `${TAP_TRACK_URL}/users/login`,
-        form,
-        { withCredentials: true }
-      );
+      const { data } = await axios.post(`${TAP_TRACK_URL}/users/login`, form, {
+        withCredentials: true,
+      });
 
       console.log("Server response received", data);
 
@@ -122,7 +120,6 @@ export default function App() {
           }}
         />
       </View>
-      <Link href="/(tabs)/(home)/order">Go here</Link>
     </SafeAreaView>
   );
 }
