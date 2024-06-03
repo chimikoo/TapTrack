@@ -9,10 +9,17 @@ const TimeTrack = () => {
     // Fetch time track data for a user
     const fetchTimeTrackData = async () => {
       setLoading(true);
-      const url = `${TAP_TRACK_URL}/users/timeTrack/${id}`;
+      const url = `${TAP_TRACK_URL}/users/timeTrack`;
+      const params = {
+        params: {
+          userId: id,
+          month: selectedMonth,
+          year: selectedYear,
+        },
+      };
       try {
-        const { data } = await axios.get(url);
-        setTimeTrackData(data.data);
+        const { data } = await axios.get(url, params);
+        setTimeTrackData(data.monthData);
       } catch (error) {
         console.error("Error fetching time track data:", error);
         setError(error.message);
@@ -20,7 +27,7 @@ const TimeTrack = () => {
       setLoading(false);
     };
     fetchTimeTrackData();
-  }, [id]);
+  }, [id, selectedMonth, selectedYear]);
 
   return (
     <View>
