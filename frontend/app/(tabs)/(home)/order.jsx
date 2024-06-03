@@ -123,11 +123,15 @@ const Order = () => {
       );
       console.log("data", data);
       if (data.table.orderId) {
-        await axios.post(`${TAP_TRACK_URL}/users/checkout`, {
+        const response = await axios.post(`${TAP_TRACK_URL}/users/checkout`, {
           orderId: data.table.orderId,
           paymentMethod: "Cash",
         });
+        console.log("response", response.data);
         Alert.alert("Checkout successful");
+        // clear order items and extras
+        setOrderItems([]);
+        setExtras([]);
       } else {
         Alert.alert("No order to checkout");
       }
