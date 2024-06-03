@@ -57,7 +57,6 @@ const Order = () => {
   };
 
   const handleOrder = async () => {
-    console.log("UserId", user.id);
     const drinks = orderItems
       .filter((item) => item.category === "beverage")
       .map((item) => ({
@@ -72,17 +71,16 @@ const Order = () => {
     const main = orderItems
       .filter((item) => item.category === "main")
       .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
-    console.log("main", main);
+
     const dessert = orderItems
       .filter((item) => item.category === "dessert")
       .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
-    console.log("dessert", dessert);
+
     const side = orderItems
       .filter((item) => item.category === "side")
       .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
-    console.log("side", side);
+
     const extrasArray = extras.map((extra) => extra._id);
-    console.log("extrasArray", extrasArray);
 
     const order = {
       userId: user.id,
@@ -95,14 +93,22 @@ const Order = () => {
       extras: extrasArray,
     };
     try {
-      const { data } = await axios.post(
-        `${TAP_TRACK_URL}/users/menu-orders`,
-        order
+      // check if in this table an order already exists
+      const { data } = await axios.get(
+        `${TAP_TRACK_URL}/users/tables/${tableNumber}`
       );
-      console.log("data", data);
-      Alert.alert(data.message);
-      // Clear order items
-      setOrderItems([]);
+      if (data.table.orderId) {
+        // if order exists, update it
+        await axios.put(
+          `${TAP_TRACK_URL}/users/menu-orders/${data.table.orderId}`,
+          { drinks, starter, main, dessert, side, extras: extrasArray }
+        );
+        Alert.alert("Order updated successfully");
+      } else {
+        // if order doesn't exist, create a new one
+        await axios.post(`${TAP_TRACK_URL}/users/menu-orders`, order);
+        Alert.alert("Order created successfully");
+      }
     } catch (error) {
       console.log("error", error);
     }

@@ -12,6 +12,7 @@ import {
   getUserById,
   showAvatar,
   getTables,
+  getTableByNumber,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import {
@@ -58,5 +59,8 @@ router.get("/:username/avatar", showAvatar);
 
 // GET /users/tables
 router.get("/tables", isAuth, getTables);
+
+// GET /users/tables/:number
+router.get("/tables/:number", isAuth, getTableByNumber);
 
 export default router;
