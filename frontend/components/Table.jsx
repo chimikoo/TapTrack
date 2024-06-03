@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import emptyTable from "../assets/icons/empty-table.png";
 import occTable from "../assets/icons/occ-table.png";
