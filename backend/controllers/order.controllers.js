@@ -5,7 +5,7 @@ import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 
 /* 
 @desc   Add an order
-@route  POST /users/menu/order
+@route  POST /users/menu-orders
 @access Private
 */
 const addOrder = asyncHandler(async (req, res) => {
@@ -41,12 +41,12 @@ const addOrder = asyncHandler(async (req, res) => {
   } else if (existingTable.state === "available") {
     // If the table is available, update the state to occupied
     existingTable.state = "occupied";
+    existingTable.userId = userId;
     await existingTable.save();
   } else {
     res.status(400);
     throw new Error("Table is already occupied/reserved");
   }
-
   // Create the order
   const newOrder = await Order.create({
     userId,

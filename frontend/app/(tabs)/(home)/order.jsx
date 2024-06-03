@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../../components/CustomButton";
@@ -13,22 +14,22 @@ import AddRemove from "../../../components/AddRemove";
 import { useOrder } from "../../../contexts/orderContext";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
+import { UserContext } from "../../../contexts/userContext.jsx";
 
 const Order = () => {
   const { tableNumber } = useLocalSearchParams();
+  const { user } = useContext(UserContext);
   const router = useRouter();
   const { orderItems, setOrderItems } = useOrder();
   const [extras, setExtras] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("tableNumber", tableNumber);
     const getExtras = async () => {
       try {
         setLoading(true);
         const url = `${TAP_TRACK_URL}/users/menu-items/extras/${tableNumber}`;
         const { data } = await axios.get(url);
-        console.log("data", data.data);
         setExtras(data.data);
         setLoading(false);
       } catch (error) {
@@ -55,7 +56,59 @@ const Order = () => {
     setOrderItems(newOrderItems);
   };
 
-  console.log("orderItems", orderItems);
+  const handleOrder = async () => {
+    console.log("UserId", user.id);
+    const drinks = orderItems
+      .filter((item) => item.category === "beverage")
+      .map((item) => ({
+        drinkItem: item._id,
+        quantity: item.quantity,
+        size: item.size,
+      }));
+    const starter = orderItems
+      .filter((item) => item.category === "starter")
+      .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
+
+    const main = orderItems
+      .filter((item) => item.category === "main")
+      .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
+    console.log("main", main);
+    const dessert = orderItems
+      .filter((item) => item.category === "dessert")
+      .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
+    console.log("dessert", dessert);
+    const side = orderItems
+      .filter((item) => item.category === "side")
+      .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
+    console.log("side", side);
+    const extrasArray = extras.map((extra) => extra._id);
+    console.log("extrasArray", extrasArray);
+
+    const order = {
+      userId: user.id,
+      tableNumber,
+      drinks,
+      starter,
+      main,
+      dessert,
+      side,
+      extras: extrasArray,
+    };
+    try {
+      const { data } = await axios.post(
+        `${TAP_TRACK_URL}/users/menu-orders`,
+        order
+      );
+      console.log("data", data);
+      Alert.alert(data.message);
+      // Clear order items
+      setOrderItems([]);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  // console.log("orderItems", orderItems);
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter">
       <View className="flex flex-wrap justify-center flex-row">
@@ -99,7 +152,8 @@ const Order = () => {
                   >
                     <View className="flex flex-row justify-between items-center">
                       <Text className="w-[40%] font-bold text-md">
-                        {item.name}{item.size ? ` (${item.size})` : ""}
+                        {item.name}
+                        {item.size ? ` (${item.size})` : ""}
                       </Text>
                       <Text className="w-[20%]">{item.price}€</Text>
                       <AddRemove
@@ -141,7 +195,7 @@ const Order = () => {
         <CustomButton
           text="Order"
           containerStyles="flex-1 ml-2 mb-4"
-          handlePress={() => {}} // Order backend logic
+          handlePress={handleOrder} // Order backend logic
         />
       </View>
     </SafeAreaView>

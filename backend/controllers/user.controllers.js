@@ -94,6 +94,7 @@ const login = asyncHandler(async (req, res) => {
       email: user.email,
       role: user.role,
       avatar: user.avatar,
+      id: user._id,
     },
   });
 });

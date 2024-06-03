@@ -9,6 +9,7 @@ const initialState = {
   email: null,
   role: null,
   avatar: null,
+  id: null,
 };
 
 // Define the reducer

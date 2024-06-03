@@ -59,6 +59,7 @@ export default function App() {
           email: data.user.email,
           role: data.user.role,
           avatar: data.user.avatar,
+          id: data.user.id,
         };
         await SecureStore.setItemAsync("userToken", data.token);
         await SecureStore.setItemAsync("userData", JSON.stringify(userData));
