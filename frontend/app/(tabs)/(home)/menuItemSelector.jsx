@@ -56,8 +56,13 @@ const MenuItemSelector = () => {
           },
         });
       }
-      setMenuItems(response.data.data);
-      setQuantities(Array(response.data.data.length).fill(0));
+      const items = response.data.data;
+      setMenuItems(items);
+      // Initialize quantities array
+      const newQuantities = items.flatMap((item) =>
+        item.sizesPrices ? item.sizesPrices.map(() => 0) : [0]
+      );
+      setQuantities(newQuantities);
     } catch (error) {
       console.error("Error fetching menu items:", error);
     } finally {
