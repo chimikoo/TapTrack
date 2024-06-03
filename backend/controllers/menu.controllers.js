@@ -271,12 +271,12 @@ const deleteBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const addExtra = asyncHandler(async (req, res) => {
-  const { extra, price } = req.body;
+  const { extra, price, itemId, itemType } = req.body;
   if (!extra || !price) {
     res.status(400);
     throw new Error("Please fill in all fields");
   }
-  const newExtra = await ExtraModel.create({ extra, price });
+  const newExtra = await ExtraModel.create({ extra, price, itemId, itemType });
   res.status(201).json({ message: "Extra added", data: newExtra });
 });
 

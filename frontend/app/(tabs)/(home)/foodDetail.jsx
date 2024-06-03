@@ -5,6 +5,7 @@ import {
   TextInput,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import AddRemove from "../../../components/AddRemove.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -64,6 +65,24 @@ const FoodDetail = () => {
     }
   }, [item]);
 
+  const addExtra = async () => {
+    try {
+      if (!extra || !price) {
+        Alert.alert("Please fill in all fields");
+        return;
+      }
+      const url = `${TAP_TRACK_URL}/users/menu-items/extras`;
+      const itemType = category === "beverage" ? "beverage" : "food";
+      await axios.post(url, { extra, price, itemId: id, itemType });
+      setExtras([...extras, { extra, price }]);
+      // Clear input fields
+      setExtra("");
+      setPrice("");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const addToOrder = () => {
     if (category === "beverage" && item.sizesPrices) {
       item.sizesPrices.forEach((sp, index) => {
@@ -84,7 +103,7 @@ const FoodDetail = () => {
         });
       }
     }
-    router.push("order")
+    router.push("order");
   };
 
   return (
@@ -166,7 +185,10 @@ const FoodDetail = () => {
               </Text>
               <View className="flex gap-1">
                 {extras.map((extra, index) => (
-                  <View key={index} className="flex-row items-center justify-between">
+                  <View
+                    key={index}
+                    className="flex-row items-center justify-between"
+                  >
                     <Text>
                       {index + 1}. {extra.extra}
                     </Text>
@@ -191,12 +213,7 @@ const FoodDetail = () => {
                 <CustomButton
                   text="Add"
                   containerStyles="bg-primary-dark text-white px-4 rounded"
-                  handlePress={() => {
-                    setExtras([...extras, { extra, price }]);
-                    // RESET INPUTS
-                    setExtra("");
-                    setPrice("");
-                  }}
+                  handlePress={addExtra}
                 />
               </View>
             </View>
