@@ -101,7 +101,7 @@ const MenuItemSelector = () => {
         addItemToOrder({ ...item, quantity: quantities[index] });
       }
     });
-    router.push("/tabs/home/order");
+    router.push("order");
   };
 
   return (

@@ -87,7 +87,7 @@ const Order = () => {
         <CustomButton
           text="Order"
           containerStyles="flex-1 ml-2"
-          handlePress={() => {}}
+          handlePress={() => {}} // Order backend logic
         />
       </View>
     </SafeAreaView>
