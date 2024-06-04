@@ -219,24 +219,37 @@ const deleteUser = asyncHandler(async (req, res) => {
 @access   Private
 */
 const timeTrack = asyncHandler(async (req, res) => {
-  const { userId } = req;
-  const { month, year } = req.query;
-  // get the user's time track record
-  const timeTrack = await TimeTrack.findOne({ userId });
-  if (!timeTrack) {
-    res.status(400);
-    throw new Error("Time tracking record not found");
+  console.log('Request Query:', req.query); // Log the request query parameters
+  const { userId } = req.query;
+
+  if (!userId) {
+    console.log('No userId provided');
+    res.status(400).json({ message: "User ID is required" });
+    return;
   }
-  const filedName = `${year}-${month < 10 ? `0${month}` : month}`;
-  // get the object for the given month
-  const monthData = timeTrack.months.get(filedName);
-  if (!monthData) {
-    res.status(400);
-    throw new Error("Month not found");
+
+  try {
+    // Get the user's time track record
+    const timeTrack = await TimeTrack.findOne({ userId });
+    if (!timeTrack) {
+      console.log('Time tracking record not found for userId:', userId);
+      res.status(400).json({ message: "Time tracking record not found" });
+      return;
+    }
+
+    // Log the retrieved time track record
+    console.log('Time track record found:', timeTrack);
+
+    // Return all months' data if no specific month and year are provided
+    res.status(200).json({ monthData: timeTrack.months });
+  } catch (error) {
+    console.error('Server error:', error); // Log server error
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
-  // send the response
-  res.status(200).json({ monthData });
 });
+
+
+
 
 /* 
 @desc     Get a list of all users
