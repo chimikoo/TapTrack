@@ -88,7 +88,7 @@ const Receipt = () => {
         )}
       </ScrollView>
       {isPrinted ? (
-        <View className="w-full flex justify-between">
+        <View className="w-full flex-row justify-between mt-4">
           <CustomButton
             text="Cash"
             containerStyles="w-[40%]"
