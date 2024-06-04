@@ -288,7 +288,7 @@ const addExtra = asyncHandler(async (req, res) => {
 
 /* 
 @desc   Get extras by item id
-@route  GET /users/menu-items/extras/:tableNumber
+@route  GET /users/menu-items/extras/table/:tableNumber
 @access Private
 */
 const getExtrasByTable = asyncHandler(async (req, res) => {
@@ -302,6 +302,20 @@ const getExtrasByTable = asyncHandler(async (req, res) => {
     numberExtras: extras.length,
     data: extras,
   });
+});
+
+/* 
+@desc   Get extra by id
+@route  GET /users/menu-items/extras/:id
+@access Private
+*/
+const getExtraById = asyncHandler(async (req, res) => {
+  const extra = await ExtraModel.findById(req.params.id);
+  if (!extra) {
+    res.status(404);
+    throw new Error("Extra not found");
+  }
+  res.status(200).json({ extra });
 });
 
 /* 
@@ -351,5 +365,6 @@ export {
   deleteBeverageItem,
   addExtra,
   getExtrasByTable,
+  getExtraById,
   updateItemStock,
 };
