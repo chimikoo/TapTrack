@@ -24,6 +24,12 @@ const Order = () => {
   const [extras, setExtras] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Get order items for the specific table number
+  const currentOrder = orderItems.find(
+    (order) => order.tableNumber === tableNumber
+  );
+  const items = currentOrder ? currentOrder.items : [];
+
   useEffect(() => {
     const getExtras = async () => {
       try {
@@ -39,44 +45,75 @@ const Order = () => {
     getExtras();
   }, []);
 
-  const incrementQuantity = (index) => {
-    const newOrderItems = [...orderItems];
-    newOrderItems[index].quantity += 1;
-    setOrderItems(newOrderItems);
+  const incrementQuantity = (tableNumber, itemId, size) => {
+    setOrderItems((prevOrderItems) => {
+      return prevOrderItems.map((order) => {
+        if (order.tableNumber !== tableNumber) return order;
+        return {
+          ...order,
+          items: order.items.map((item) => {
+            if (item._id !== itemId) return item;
+            if (item.category === "beverage" && item.size === size) {
+              return { ...item, quantity: item.quantity + 1 };
+            }
+            if (item.category !== "beverage") {
+              return { ...item, quantity: item.quantity + 1 };
+            }
+            return item;
+          }),
+        };
+      });
+    });
   };
 
-  const decrementQuantity = (index) => {
-    const newOrderItems = [...orderItems];
-    if (newOrderItems[index].quantity > 0) {
-      newOrderItems[index].quantity -= 1;
-    }
-    if (newOrderItems[index].quantity === 0) {
-      newOrderItems.splice(index, 1);
-    }
-    setOrderItems(newOrderItems);
+  const decrementQuantity = (tableNumber, itemId, size) => {
+    setOrderItems((prevOrderItems) => {
+      return prevOrderItems.map((order) => {
+        if (order.tableNumber !== tableNumber) return order;
+        return {
+          ...order,
+          items: order.items.reduce((acc, item) => {
+            if (item._id !== itemId) {
+              acc.push(item);
+            } else {
+              if (item.category === "beverage" && item.size === size) {
+                if (item.quantity > 1) {
+                  acc.push({ ...item, quantity: item.quantity - 1 });
+                }
+              } else if (item.category !== "beverage") {
+                if (item.quantity > 1) {
+                  acc.push({ ...item, quantity: item.quantity - 1 });
+                }
+              }
+            }
+            return acc;
+          }, []),
+        };
+      });
+    });
   };
 
   const handleOrder = async () => {
-    const drinks = orderItems
+    const drinks = items
       .filter((item) => item.category === "beverage")
       .map((item) => ({
         drinkItem: item._id,
         quantity: item.quantity,
         size: item.size,
       }));
-    const starter = orderItems
+    const starter = items
       .filter((item) => item.category === "starter")
       .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
 
-    const main = orderItems
+    const main = items
       .filter((item) => item.category === "main")
       .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
 
-    const dessert = orderItems
+    const dessert = items
       .filter((item) => item.category === "dessert")
       .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
 
-    const side = orderItems
+    const side = items
       .filter((item) => item.category === "side")
       .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
 
@@ -171,12 +208,12 @@ const Order = () => {
           <ActivityIndicator size="large" color="#7CA982" />
         ) : (
           <View className="mt-8 px-4">
-            {orderItems.length === 0 ? (
+            {items.length === 0 ? (
               <Text className="text-center font-bold text-xl text-gray-600">
                 Order is currently empty
               </Text>
             ) : (
-              orderItems.map((item, index) => {
+              items.map((item, index) => {
                 return (
                   <View
                     key={index}
@@ -190,8 +227,12 @@ const Order = () => {
                       <Text className="w-[20%]">{item.price}€</Text>
                       <AddRemove
                         quantity={item.quantity}
-                        handleDecrement={() => decrementQuantity(index)}
-                        handleIncrement={() => incrementQuantity(index)}
+                        handleDecrement={() =>
+                          decrementQuantity(tableNumber, item._id, item.size)
+                        }
+                        handleIncrement={() =>
+                          incrementQuantity(tableNumber, item._id, item.size)
+                        }
                       />
                     </View>
                     <View className="pl-6">

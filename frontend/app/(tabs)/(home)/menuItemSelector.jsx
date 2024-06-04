@@ -58,9 +58,9 @@ const MenuItemSelector = () => {
       }
       const items = response.data.data;
       setMenuItems(items);
-      
+
       // Initialize quantities array correctly
-      const newQuantities = items.flatMap(item =>
+      const newQuantities = items.flatMap((item) =>
         item.sizesPrices ? item.sizesPrices.map(() => 0) : [0]
       );
       setQuantities(newQuantities);
@@ -104,7 +104,7 @@ const MenuItemSelector = () => {
         item.sizesPrices.forEach((sp, spIndex) => {
           const idx = index * item.sizesPrices.length + spIndex;
           if (quantities[idx] > 0) {
-            addItemToOrder({
+            addItemToOrder(params.tableNumber, {
               ...item,
               quantity: quantities[idx],
               price: sp.price,
@@ -115,7 +115,10 @@ const MenuItemSelector = () => {
         return;
       }
       if (quantities[index] > 0) {
-        addItemToOrder({ ...item, quantity: quantities[index] });
+        addItemToOrder(params.tableNumber, {
+          ...item,
+          quantity: quantities[index],
+        });
       }
     });
     router.push({
