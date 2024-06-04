@@ -159,6 +159,7 @@ const Order = () => {
         `${TAP_TRACK_URL}/users/tables/${tableNumber}`
       );
       if (data.table.orderId) {
+        console.log("helloooo inside checkout");
         const response = await axios.post(`${TAP_TRACK_URL}/users/checkout`, {
           orderId: data.table.orderId,
           paymentMethod: "Cash",

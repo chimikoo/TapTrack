@@ -60,11 +60,6 @@ const createReceipt = asyncHandler(async (req, res) => {
   // Calculate total amount of the order
   const totalAmount = await calculateTotalAmount(order);
 
-  console.log("orderID", orderId);
-  console.log("items", items);
-  console.log("totalAmount", totalAmount);
-  console.log("paymentMethod", paymentMethod);
-  console.log("notes", notes);
   // Create the receipt object with the populated items array
   const newReceipt = await Receipt.create({
     orderId,
@@ -73,11 +68,6 @@ const createReceipt = asyncHandler(async (req, res) => {
     notes,
     items,
   });
-
-  console.log("newReceipt", newReceipt);
-  // Mark the order as paid
-  order.isPaid = true;
-  await order.save();
 
   // Retrieve the associated table
   const table = await Table.findOne({ orderId });
