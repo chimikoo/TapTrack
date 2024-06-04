@@ -10,7 +10,7 @@ const Receipt = () => {
   const { receiptId } = useLocalSearchParams();
   const [receipt, setReceipt] = useState({});
   const [loading, setLoading] = useState(false);
-  console.log("receiptId", receiptId);
+  const [isPrinted, setIsPrinted] = useState(false);
 
   useEffect(() => {
     const getReceipt = async () => {
@@ -29,6 +29,7 @@ const Receipt = () => {
   }, []);
 
   console.log("items", receipt);
+  console.log("isPrinted", isPrinted);
 
   const items = receipt.items || [];
   const order = receipt.orderId || {};
@@ -86,13 +87,28 @@ const Receipt = () => {
           </>
         )}
       </ScrollView>
-      <View className="w-full flex items-end mt-4">
-        <CustomButton
-          text="Print"
-          containerStyles="w-[40%]"
-          handlePress={() => console.log("Print button pressed")}
-        />
-      </View>
+      {isPrinted ? (
+        <View className="w-full flex justify-between">
+          <CustomButton
+            text="Cash"
+            containerStyles="w-[40%]"
+            handlePress={() => console.log("Cash")}
+          />
+          <CustomButton
+            text="Card"
+            containerStyles="w-[40%]"
+            handlePress={() => console.log("Card")}
+          />
+        </View>
+      ) : (
+        <View className="w-full flex items-end mt-4">
+          <CustomButton
+            text="Print"
+            containerStyles="w-[40%]"
+            handlePress={() => setIsPrinted((prevIsPrinted) => !prevIsPrinted)}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
