@@ -1,4 +1,3 @@
-// app/(tabs)/(home)/order.jsx
 import React, { useEffect, useState, useContext } from "react";
 import {
   View,
@@ -258,45 +257,12 @@ const Order = () => {
                               </View>
                             );
                           }
+                          return null; // Ensure a return here to avoid any undefined return issues
                         })}
                     </View>
-              orderItems.map((item, index) => (
-                <View
-                  key={index}
-                  className="flex flex-col mb-2 border-b border-gray-300 pb-2"
-                >
-                  <View className="flex flex-row justify-between items-center">
-                    <Text className="w-[40%] font-bold text-md">
-                      {item.name}
-                      {item.size ? ` (${item.size})` : ""}
-                    </Text>
-                    <Text className="w-[20%]">{item.price}€</Text>
-                    <AddRemove
-                      quantity={item.quantity}
-                      handleDecrement={() => decrementQuantity(index)}
-                      handleIncrement={() => incrementQuantity(index)}
-                    />
                   </View>
-                  <View className="pl-6">
-                    {extras &&
-                      extras.length > 0 &&
-                      extras.map((extra, extraIndex) => {
-                        if (extra.itemId === item._id) {
-                          return (
-                            <View
-                              key={extraIndex}
-                              className="flex flex-row justify-between items-center"
-                            >
-                              <Text className="flex-1">{extra.extra}</Text>
-                              <Text className="flex-1">{extra.price}€</Text>
-                            </View>
-                          );
-                        }
-                        return null;
-                      })}
-                  </View>
-                </View>
-              ))
+                );
+              })
             )}
           </View>
         )}
