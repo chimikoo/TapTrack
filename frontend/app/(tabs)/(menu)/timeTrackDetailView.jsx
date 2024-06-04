@@ -1,12 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, ScrollView } from "react-native";
-import { useLocalSearchParams } from 'expo-router';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import CustomButton from "../../../components/CustomButton";
 
 // Function to convert date to day of the week
 const getDayOfWeek = (dateString) => {
   const date = new Date(dateString);
-  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
   return days[date.getDay()];
 };
 
@@ -15,15 +26,15 @@ const mergeShifts = (shifts) => {
   const mergedShifts = {};
 
   shifts.forEach((shift) => {
-    const day = new Date(shift.start).toISOString().split('T')[0];
+    const day = new Date(shift.start).toISOString().split("T")[0];
     if (!mergedShifts[day]) {
-      mergedShifts[day] = { 
-        hours: 0, 
-        minutes: 0, 
-        start: shift.start, 
+      mergedShifts[day] = {
+        hours: 0,
+        minutes: 0,
+        start: shift.start,
         end: shift.end,
         earliestLogin: shift.start,
-        latestLogout: shift.end
+        latestLogout: shift.end,
       };
     }
     mergedShifts[day].hours += shift.total.hours;
@@ -51,6 +62,8 @@ const mergeShifts = (shifts) => {
 
 const DailyView = () => {
   const [firstName, setFirstName] = useState("");
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const scrollViewRef = useRef(null);
   const params = useLocalSearchParams();
   const { monthKey, monthData } = params || {};
 
@@ -72,30 +85,76 @@ const DailyView = () => {
   const parsedMonthData = JSON.parse(decodeURIComponent(monthData));
   const mergedShifts = mergeShifts(parsedMonthData.shifts);
 
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    const selectedDate = date.toLocaleDateString('en-CA'); // Ensure date format is consistent
+    console.log("Selected Date:", selectedDate);
+    console.log("Merged Shifts Dates:", mergedShifts.map((shift) => shift.day));
+    const index = mergedShifts.findIndex((shift) => shift.day === selectedDate);
+    console.log("Index:", index);
+    if (index !== -1) {
+      console.log("Scrolling to index:", index);
+      scrollViewRef.current.scrollTo({ y: index * 100, animated: true });
+    }
+    hideDatePicker();
+  };
+
   return (
-    <View className="p-5 bg-primary-lighter">
-      <View className="flex items-center">
-        <Text className="text-2xl font-bold mb-5 text-center border-b border-gray-300 pb-2 w-[75%]">
-          {firstName} Hour Log
-        </Text>
-      </View>
-      {mergedShifts.length > 0 ? (
-        <ScrollView className="bg-grayBG">
-          {mergedShifts.map((shift, index) => (
-            <View key={index} className="bg-primary p-1 rounded-lg mb-3">
-              <Text className="text-lg font-bold text-center">{shift.day} - {getDayOfWeek(shift.day)}</Text>
-              <Text className="text-base text-center pt-1">Time: {shift.total.hours}h {shift.total.minutes}m</Text>
-              <View className="flex flex-column items-center p-3">
-                <Text className="text-sm">Login: {new Date(shift.total.earliestLogin).toLocaleTimeString()}</Text>
-                <Text className="text-sm">Logout: {new Date(shift.total.latestLogout).toLocaleTimeString()}</Text>
+    <SafeAreaView className="flex-1 bg-primary-lighter">
+      <View className="p-5 bg-primary-lighter flex-1">
+        <View className="flex items-center">
+          <Text className="text-2xl font-bold mb-5 text-center border-b border-gray-300 pb-2 w-[75%]">
+            {firstName} Hour Log
+          </Text>
+        </View>
+        {mergedShifts.length > 0 ? (
+          <ScrollView ref={scrollViewRef} className="bg-grayBG">
+            {mergedShifts.map((shift, index) => (
+              <View key={index} className="bg-primary p-1 rounded-lg mb-3">
+                <Text className="text-lg font-bold text-center">
+                  {shift.day} - {getDayOfWeek(shift.day)}
+                </Text>
+                <Text className="text-base text-center pt-1">
+                  Time: {shift.total.hours}h {shift.total.minutes}m
+                </Text>
+                <View className="flex flex-column items-center p-3">
+                  <Text className="text-sm">
+                    Login:{" "}
+                    {new Date(shift.total.earliestLogin).toLocaleTimeString()}
+                  </Text>
+                  <Text className="text-sm">
+                    Logout:{" "}
+                    {new Date(shift.total.latestLogout).toLocaleTimeString()}
+                  </Text>
+                </View>
               </View>
-            </View>
-          ))}
-        </ScrollView>
-      ) : (
-        <Text>No shifts data available.</Text>
-      )}
-    </View>
+            ))}
+          </ScrollView>
+        ) : (
+          <Text>No shifts data available.</Text>
+        )}
+        <View className="w-full flex items-center mt-4">
+          <CustomButton
+            text="Pick Date"
+            containerStyles="w-[50%] mt-5"
+            handlePress={showDatePicker}
+          />
+        </View>
+      </View>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
+    </SafeAreaView>
   );
 };
 
