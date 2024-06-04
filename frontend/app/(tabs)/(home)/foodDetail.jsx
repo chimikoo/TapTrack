@@ -101,7 +101,7 @@ const FoodDetail = () => {
     if (category === "beverage" && item.sizesPrices) {
       item.sizesPrices.forEach((sp, index) => {
         if (quantity[index] > 0) {
-          addItemToOrder({
+          addItemToOrder(tableNumber, {
             ...item,
             name: `${item.name} (${sp.size})`,
             price: sp.price,
@@ -111,7 +111,7 @@ const FoodDetail = () => {
       });
     } else {
       if (quantity[0] > 0) {
-        addItemToOrder({
+        addItemToOrder(tableNumber, {
           ...item,
           quantity: quantity[0],
         });

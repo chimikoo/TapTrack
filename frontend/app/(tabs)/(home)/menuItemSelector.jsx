@@ -25,6 +25,49 @@ const MenuItemSelector = () => {
   const { addItemToOrder } = useOrder();
   const router = useRouter();
   const params = useLocalSearchParams();
+
+  const fetchMenuItems = async (category) => {
+    setLoading(true);
+    try {
+      let response;
+      if (category === "beverage") {
+        response = await axios.get(
+          `${TAP_TRACK_URL}/users/menu-items/beverages`,
+          {
+            params: {
+              name,
+              price,
+              sort: sortBy,
+              limit,
+            },
+          }
+        );
+      } else {
+        response = await axios.get(`${TAP_TRACK_URL}/users/menu-items/foods`, {
+          params: {
+            category,
+            name,
+            price,
+            sort: sortBy,
+            limit,
+          },
+        });
+      }
+      const items = response.data.data;
+      setMenuItems(items);
+
+      // Initialize quantities array correctly
+      const newQuantities = items.flatMap((item) =>
+        item.sizesPrices ? item.sizesPrices.map(() => 0) : [0]
+      );
+      setQuantities(newQuantities);
+    } catch (error) {
+      console.error("Error fetching menu items:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   const { menuItems, loading } = useMenu(); // Use the custom hook to access menu items
 
   useEffect(() => {
@@ -69,7 +112,7 @@ const MenuItemSelector = () => {
         item.sizesPrices.forEach((sp, spIndex) => {
           const idx = index * item.sizesPrices.length + spIndex;
           if (quantities[idx] > 0) {
-            addItemToOrder({
+            addItemToOrder(params.tableNumber, {
               ...item,
               quantity: quantities[idx],
               price: sp.price,
@@ -80,7 +123,10 @@ const MenuItemSelector = () => {
         return;
       }
       if (quantities[index] > 0) {
-        addItemToOrder({ ...item, quantity: quantities[index] });
+        addItemToOrder(params.tableNumber, {
+          ...item,
+          quantity: quantities[index],
+        });
       }
     });
     router.push({

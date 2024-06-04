@@ -36,7 +36,7 @@ const getAllReceipts = asyncHandler(async (req, res) => {
 */
 const createReceipt = asyncHandler(async (req, res) => {
   const { orderId, paymentMethod, notes } = req.body;
-  if (!orderId || !paymentMethod) {
+  if (!orderId) {
     res.status(400);
     throw new Error("Please provide all required fields");
   }
@@ -60,19 +60,6 @@ const createReceipt = asyncHandler(async (req, res) => {
   // Calculate total amount of the order
   const totalAmount = await calculateTotalAmount(order);
 
-  // Create the receipt object with the populated items array
-  const newReceipt = await Receipt.create({
-    orderId,
-    totalAmount,
-    paymentMethod,
-    notes,
-    items,
-  });
-
-  // Mark the order as paid
-  order.isPaid = true;
-  await order.save();
-
   // Retrieve the associated table
   const table = await Table.findOne({ orderId });
   if (!table) {
@@ -82,8 +69,19 @@ const createReceipt = asyncHandler(async (req, res) => {
 
   // Update table state to available and remove orderId
   table.state = "available";
-  table.orderId = undefined;
+  table.orderId = null;
+  table.userId = null;
   await table.save();
+
+  // Create the receipt object with the populated items array
+  const newReceipt = await Receipt.create({
+    orderId,
+    totalAmount,
+    paymentMethod,
+    notes,
+    items,
+    tableNumber: table.tableNumber,
+  });
 
   res.status(201).json({ message: "Receipt created", receipt: newReceipt });
 });

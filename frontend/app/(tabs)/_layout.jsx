@@ -33,12 +33,9 @@ const TabsLayout = () => {
   const handleLogout = async () => {
     try {
       const token = await SecureStore.getItemAsync("userToken");
-      const response = await axios.get(
-        `${TAP_TRACK_URL}/users/logout`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await axios.get(`${TAP_TRACK_URL}/users/logout`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (response.status === 200) {
         await SecureStore.deleteItemAsync("userToken");
         await SecureStore.deleteItemAsync("userData");
@@ -122,6 +119,11 @@ const TabsLayout = () => {
                 focused={focused}
               />
             ),
+          }}
+          listeners={{
+            tabPress: () => {
+              router.push("(home)");
+            },
           }}
         />
         <Tabs.Screen
