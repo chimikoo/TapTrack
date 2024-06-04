@@ -33,10 +33,19 @@ const Receipt = () => {
 
   const items = receipt.items || [];
   const order = receipt.orderId || {};
+  const extras = order.extras || [];
   const transactionDate = receipt.transactionDate || "";
 
-  console.log("paymentMethod", paymentMethod);
-  console.log("tipAmount", tipAmount);
+
+  const getExtraById = async (id) => {
+    try {
+      const url = `${TAP_TRACK_URL}/users/menu-items/extras/${id}`;
+      const { data } = await axios.get(url);
+      return data.extra;
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   const handlePayment = async () => {
     try {
@@ -96,12 +105,42 @@ const Receipt = () => {
                   );
                 })}
             </View>
+            {extras && extras.length > 0 && (
+              <View>
+                <Text className="text-center mt-4">
+                  --------------------------
+                </Text>
+                <Text>Extras:</Text>
+                {extras.map(async (ext, index) => {
+                  const extra = await getExtraById(ext);
+                  return (
+                    <View
+                      key={index}
+                      className="flex flex-row justify-between pt-4"
+                    >
+                      <Text className="w-[40%]">{extra.extra}</Text>
+                      <Text className="text-right">{extra.price}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
             <Text className="text-center mt-4">--------------------------</Text>
-            <View className="flex-row justify-between items-center pt-4 mb-10">
-              <Text className="text-lg font-bold">Total</Text>
-              <Text className="text-lg font-bold">
-                {receipt?.totalAmount?.toFixed(2)}€
-              </Text>
+            <View className="mb-10">
+              <View className="flex-row justify-between items-center pt-4">
+                <Text className="text-lg font-bold">Total</Text>
+                <Text className="text-lg font-bold">
+                  {receipt?.totalAmount?.toFixed(2)}€
+                </Text>
+              </View>
+              {tipAmount > 0 && (
+                <View className="flex-row justify-between items-center pt-4">
+                  <Text className="text-base font-bold">Tip</Text>
+                  <Text className="text-base font-bold">
+                    {tipAmount.toFixed(2)}€
+                  </Text>
+                </View>
+              )}
             </View>
           </>
         )}

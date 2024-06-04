@@ -37,7 +37,7 @@ const Order = () => {
   useEffect(() => {
     const getExtras = async () => {
       try {
-        const url = `${TAP_TRACK_URL}/users/menu-items/extras/${tableNumber}`;
+        const url = `${TAP_TRACK_URL}/users/menu-items/extras/table/${tableNumber}`;
         const { data } = await axios.get(url);
         setExtras(data.data);
         setLoading(false);

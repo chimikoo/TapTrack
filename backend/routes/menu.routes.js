@@ -15,6 +15,7 @@ import {
   updateFoodItem,
   updateItemStock,
   getExtrasByTable,
+  getExtraById,
 } from "../controllers/menu.controllers.js";
 import isAdminOrManager from "../middlewares/isAdminOrManager.js";
 
@@ -49,8 +50,10 @@ router
 
 // POST /users/menu-items/extras
 router.post("/extras", addExtra);
-// GET /users/menu-items/extras/:tableNumber
-router.get("/extras/:tableNumber", getExtrasByTable);
+// GET /users/menu-items/extras/table/:tableNumber
+router.get("/extras/table/:tableNumber", getExtrasByTable);
+// GET /users/menu-items/extras/:id
+router.get("/extras/:id", getExtraById);
 
 // PUT /users/menu-items/stock/:type/:id
 router.put("/stock/:type/:id", isAdminOrManager, updateItemStock);
