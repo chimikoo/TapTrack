@@ -94,7 +94,7 @@ const DailyView = () => {
   };
 
   const handleConfirm = (date) => {
-    const selectedDate = date.toLocaleDateString('en-CA'); // Ensure date format is consistent
+    const selectedDate = date.toLocaleDateString('en-CA');
     console.log("Selected Date:", selectedDate);
     console.log("Merged Shifts Dates:", mergedShifts.map((shift) => shift.day));
     const index = mergedShifts.findIndex((shift) => shift.day === selectedDate);
@@ -105,6 +105,11 @@ const DailyView = () => {
     }
     hideDatePicker();
   };
+
+    // Calculate the minimum and maximum dates for the current month
+    const [year, month] = monthKey.split("-");
+    const minDate = new Date(year, month - 1, 1);
+    const maxDate = new Date(year, month, 0); // Last day of the month
 
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter">
@@ -153,6 +158,8 @@ const DailyView = () => {
         mode="date"
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
+        minimumDate={minDate}
+        maximumDate={maxDate}
       />
     </SafeAreaView>
   );

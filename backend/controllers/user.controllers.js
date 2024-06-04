@@ -249,7 +249,38 @@ const timeTrack = asyncHandler(async (req, res) => {
 });
 
 
+/* 
+@desc     Get time tracking record for a specific user by ID
+@route    GET /users/timeTrack/user/:userId
+@access   Private (Admin or Manager)
+*/
+const getUserTimeTrack = asyncHandler(async (req, res) => {
+  const { userRole } = req;
+  const { userId } = req.params;
 
+  if (userRole !== "admin" && userRole !== "manager") {
+    res.status(401);
+    throw new Error("You are not authorized to perform this action");
+  }
+
+  if (!userId) {
+    res.status(400).json({ message: "User ID is required" });
+    return;
+  }
+
+  try {
+    const timeTrack = await TimeTrack.findOne({ userId });
+    if (!timeTrack) {
+      res.status(400).json({ message: "Time tracking record not found" });
+      return;
+    }
+
+    res.status(200).json({ monthData: timeTrack.months });
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+});
 
 /* 
 @desc     Get a list of all users
@@ -363,6 +394,7 @@ export {
   deleteUser,
   forceLogoutUsers,
   timeTrack,
+  getUserTimeTrack,
   getUsersList,
   getUserByUsername,
   showAvatar,

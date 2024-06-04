@@ -7,6 +7,7 @@ import {
   updateUser,
   forceLogoutUsers,
   timeTrack,
+  getUserTimeTrack,
   updateUserRole,
   getUsersList,
   getUserByUsername,
@@ -15,11 +16,11 @@ import {
   getTableByNumber,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
+import isAdminOrManager from "../middlewares/isAdminOrManager.js";
 import {
   userValidationRules,
   validate,
 } from "../middlewares/userValidation.js";
-import isAdminOrManager from "../middlewares/isAdminOrManager.js";
 import { upload } from "../utils/storage.js";
 
 const router = Router();
@@ -53,6 +54,9 @@ router.put("/forcedLogout", isAuth, isAdminOrManager, forceLogoutUsers);
 
 // GET /users/timeTrack
 router.get("/timeTrack", isAuth, timeTrack);
+
+// GET /users/timeTrack/user/:userId
+router.get("/timeTrack/user/:userId", isAuth, isAdminOrManager, getUserTimeTrack);
 
 // GET /users/:username/avatar
 router.get("/:username/avatar", showAvatar);
