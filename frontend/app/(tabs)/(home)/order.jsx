@@ -158,7 +158,6 @@ const Order = () => {
       const { data } = await axios.get(
         `${TAP_TRACK_URL}/users/tables/${tableNumber}`
       );
-      console.log("data", data);
       if (data.table.orderId) {
         const response = await axios.post(`${TAP_TRACK_URL}/users/checkout`, {
           orderId: data.table.orderId,
@@ -166,9 +165,14 @@ const Order = () => {
         });
         console.log("response", response.data);
         Alert.alert("Checkout successful");
-        // clear order items and extras
-        setOrderItems([]);
-        setExtras([]);
+        // clear order items and extras from the current table
+        setOrderItems((prevOrderItems) =>
+          prevOrderItems.filter((order) => order.tableNumber !== tableNumber)
+        );
+        setExtras((prevExtras) =>
+          prevExtras.filter((extra) => extra.tableNumber !== tableNumber)
+        );
+        router.push({ pathname: "receipt" });
       } else {
         Alert.alert("No order to checkout");
       }
