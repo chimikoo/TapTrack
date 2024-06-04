@@ -1,33 +1,42 @@
-// This file is the starting point of the frontend application.
-// It is the first file that is loaded when the application is started.
-// It is responsible for rendering the application layout and routing the application to the correct page based on the URL.
 import { Stack } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import * as NavigationBar from "expo-navigation-bar";
-import { UserProvider } from "../contexts/userContext.jsx";
+import { UserProvider, UserContext } from "../contexts/userContext.jsx";
+import * as SecureStore from "expo-secure-store";
 
-export default function RoutLayout() {
+const AppInitializer = () => {
+  const { dispatch } = useContext(UserContext);
+
   useEffect(() => {
-    // Function to hide the navigation bar
+    const loadUserData = async () => {
+      const storedUserData = await SecureStore.getItemAsync("userData");
+      if (storedUserData) {
+        dispatch({ type: "LOGIN", payload: JSON.parse(storedUserData) });
+      }
+    };
+
     const hideNavigationBar = async () => {
       await NavigationBar.setVisibilityAsync("hidden");
       await NavigationBar.setBehaviorAsync("inset-swipe");
     };
 
-    // Initially hide the navigation bar
+    loadUserData();
     hideNavigationBar();
 
-    // Set a timer to hide the navigation bar every 2 seconds
     const interval = setInterval(() => {
       hideNavigationBar();
     }, 2000);
 
-    // Cleanup the interval on component unmount
     return () => clearInterval(interval);
-  }, []);
+  }, [dispatch]);
 
+  return null; // This component does not render anything itself
+};
+
+export default function RoutLayout() {
   return (
     <UserProvider>
+      <AppInitializer />
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
