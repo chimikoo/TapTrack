@@ -1,3 +1,4 @@
+// app/(tabs)/(home)/menuItemSelector.jsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -7,24 +8,20 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import axios from "axios";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import AddRemove from "../../../components/AddRemove.jsx";
 import Filters from "../../../components/Filters.jsx";
 import CustomButton from "../../../components/CustomButton";
-import { TAP_TRACK_URL } from "@env";
 import { useOrder } from "../../../contexts/orderContext";
+import { useMenu } from "../../../contexts/menuContext"; // Import the custom hook
 
 const MenuItemSelector = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [limit, setLimit] = useState("");
   const [quantities, setQuantities] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
-  const [loading, setLoading] = useState(false);
-
+  const [category, setCategory] = useState(""); // Add category state
   const { addItemToOrder } = useOrder();
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -70,19 +67,27 @@ const MenuItemSelector = () => {
       setLoading(false);
     }
   };
+  
+  const { menuItems, loading } = useMenu(); // Use the custom hook to access menu items
 
   useEffect(() => {
+    // Ensure category is set from params if available
     if (params.category) {
       setCategory(params.category);
-      fetchMenuItems(params.category);
     }
   }, [params.category]);
 
   useEffect(() => {
     if (category) {
-      fetchMenuItems(category);
+      const items = category === "beverage" 
+        ? menuItems.beverages 
+        : menuItems.foods.filter(item => item.category === category);
+      const newQuantities = items.flatMap(item =>
+        item.sizesPrices ? item.sizesPrices.map(() => 0) : [0]
+      );
+      setQuantities(newQuantities);
     }
-  }, [category, name, price, sortBy, limit]);
+  }, [category, menuItems]);
 
   const incrementQuantity = (index) => {
     const newQuantities = [...quantities];
@@ -99,7 +104,10 @@ const MenuItemSelector = () => {
   };
 
   const handleAddToOrder = () => {
-    menuItems.forEach((item, index) => {
+    const items = category === "beverage" 
+      ? menuItems.beverages 
+      : menuItems.foods.filter(item => item.category === category);
+    items.forEach((item, index) => {
       if (category === "beverage" && item.sizesPrices) {
         item.sizesPrices.forEach((sp, spIndex) => {
           const idx = index * item.sizesPrices.length + spIndex;
@@ -134,8 +142,8 @@ const MenuItemSelector = () => {
         setName={setName}
         price={price}
         setPrice={setPrice}
-        category={category}
-        setCategory={setCategory}
+        category={category} // Pass category
+        setCategory={setCategory} // Pass setCategory
         sortBy={sortBy}
         setSortBy={setSortBy}
         limit={limit}
@@ -145,7 +153,9 @@ const MenuItemSelector = () => {
         {loading ? (
           <ActivityIndicator size="large" color="#7CA982" />
         ) : (
-          menuItems.map((item, index) => (
+          (category === "beverage" 
+            ? menuItems.beverages 
+            : menuItems.foods.filter(item => item.category === category)).map((item, index) => (
             <View
               key={item._id}
               className="flex flex-col mb-2 border-b border-gray-300 pb-2"

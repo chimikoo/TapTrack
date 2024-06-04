@@ -52,7 +52,7 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
 
   // Pagination
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const limit = parseInt(req.query.limit) || 100; // Increase the limit to ensure all items are fetched
   const startIndex = (page - 1) * limit;
   foodQuery = foodQuery.limit(limit).skip(startIndex);
 

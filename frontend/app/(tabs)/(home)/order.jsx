@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+// app/(tabs)/(home)/order.jsx
+import React, { useEffect, useState, useContext } from "react";
 import {
   View,
   Text,
@@ -16,14 +17,17 @@ import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
 import { UserContext } from "../../../contexts/userContext.jsx";
 import Receipt from "./receipt.jsx";
+import { useMenu } from "../../../contexts/menuContext"; // Import the custom hook
+
 
 const Order = () => {
   const { tableNumber } = useLocalSearchParams();
   const { user } = useContext(UserContext);
   const router = useRouter();
   const { orderItems, setOrderItems } = useOrder();
+  const { menuItems, loading: menuLoading } = useMenu(); // Use the custom hook to access menu items
   const [extras, setExtras] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Define the loading state
 
   // Get order items for the specific table number
   const currentOrder = orderItems.find(
@@ -34,17 +38,17 @@ const Order = () => {
   useEffect(() => {
     const getExtras = async () => {
       try {
-        setLoading(true);
         const url = `${TAP_TRACK_URL}/users/menu-items/extras/${tableNumber}`;
         const { data } = await axios.get(url);
         setExtras(data.data);
         setLoading(false);
       } catch (error) {
         console.log("error", error);
+        setLoading(false); // Ensure loading is set to false in case of error
       }
     };
     getExtras();
-  }, []);
+  }, [tableNumber]);
 
   const incrementQuantity = (tableNumber, itemId, size) => {
     setOrderItems((prevOrderItems) => {
@@ -131,19 +135,16 @@ const Order = () => {
       extras: extrasArray,
     };
     try {
-      // check if in this table an order already exists
       const { data } = await axios.get(
         `${TAP_TRACK_URL}/users/tables/${tableNumber}`
       );
       if (data.table.orderId !== null) {
-        // if order exists, update it
         await axios.put(
           `${TAP_TRACK_URL}/users/menu-orders/${data.table.orderId}`,
           { drinks, starter, main, dessert, side, extras: extrasArray }
         );
         Alert.alert("Order updated successfully");
       } else {
-        // if order doesn't exist, create a new one
         await axios.post(`${TAP_TRACK_URL}/users/menu-orders`, order);
         Alert.alert("Order created successfully");
       }
@@ -185,7 +186,6 @@ const Order = () => {
     }
   };
 
-  // console.log("orderItems", orderItems);
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter">
       <View className="flex flex-wrap justify-center flex-row">
@@ -212,7 +212,7 @@ const Order = () => {
         ))}
       </View>
       <ScrollView className="w-full">
-        {loading ? (
+        {loading || menuLoading ? (
           <ActivityIndicator size="large" color="#7CA982" />
         ) : (
           <View className="mt-8 px-4">
@@ -260,9 +260,43 @@ const Order = () => {
                           }
                         })}
                     </View>
+              orderItems.map((item, index) => (
+                <View
+                  key={index}
+                  className="flex flex-col mb-2 border-b border-gray-300 pb-2"
+                >
+                  <View className="flex flex-row justify-between items-center">
+                    <Text className="w-[40%] font-bold text-md">
+                      {item.name}
+                      {item.size ? ` (${item.size})` : ""}
+                    </Text>
+                    <Text className="w-[20%]">{item.price}€</Text>
+                    <AddRemove
+                      quantity={item.quantity}
+                      handleDecrement={() => decrementQuantity(index)}
+                      handleIncrement={() => incrementQuantity(index)}
+                    />
                   </View>
-                );
-              })
+                  <View className="pl-6">
+                    {extras &&
+                      extras.length > 0 &&
+                      extras.map((extra, extraIndex) => {
+                        if (extra.itemId === item._id) {
+                          return (
+                            <View
+                              key={extraIndex}
+                              className="flex flex-row justify-between items-center"
+                            >
+                              <Text className="flex-1">{extra.extra}</Text>
+                              <Text className="flex-1">{extra.price}€</Text>
+                            </View>
+                          );
+                        }
+                        return null;
+                      })}
+                  </View>
+                </View>
+              ))
             )}
           </View>
         )}
@@ -276,7 +310,7 @@ const Order = () => {
         <CustomButton
           text="Order"
           containerStyles="flex-1 ml-2 mb-4"
-          handlePress={handleOrder} // Order backend logic
+          handlePress={handleOrder}
         />
       </View>
     </SafeAreaView>
