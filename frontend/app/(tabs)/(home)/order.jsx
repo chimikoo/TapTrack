@@ -15,6 +15,7 @@ import { useOrder } from "../../../contexts/orderContext";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
 import { UserContext } from "../../../contexts/userContext.jsx";
+import Receipt from "./receipt.jsx";
 
 const Order = () => {
   const { tableNumber } = useLocalSearchParams();
@@ -134,7 +135,6 @@ const Order = () => {
       const { data } = await axios.get(
         `${TAP_TRACK_URL}/users/tables/${tableNumber}`
       );
-      console.log("data", data);
       if (data.table.orderId !== null) {
         // if order exists, update it
         await axios.put(
@@ -164,7 +164,7 @@ const Order = () => {
           orderId: data.table.orderId,
           paymentMethod: "Cash",
         });
-        console.log("response", response.data);
+
         Alert.alert("Checkout successful");
         // clear order items and extras from the current table
         setOrderItems((prevOrderItems) =>
@@ -173,7 +173,10 @@ const Order = () => {
         setExtras((prevExtras) =>
           prevExtras.filter((extra) => extra.tableNumber !== tableNumber)
         );
-        router.push({ pathname: "receipt" });
+        router.push({
+          pathname: "receipt",
+          params: { receiptId: response.data.receipt._id },
+        });
       } else {
         Alert.alert("No order to checkout");
       }
