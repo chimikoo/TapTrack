@@ -18,7 +18,6 @@ const Receipt = () => {
         setLoading(true);
         const url = `${TAP_TRACK_URL}/users/checkout/${receiptId}`;
         const { data } = await axios.get(url);
-        console.log("data", data);
         setReceipt(data.data);
         setLoading(false);
       } catch (error) {
@@ -27,9 +26,6 @@ const Receipt = () => {
     };
     getReceipt();
   }, []);
-
-  console.log("items", receipt);
-  console.log("isPrinted", isPrinted);
 
   const items = receipt.items || [];
   const order = receipt.orderId || {};
