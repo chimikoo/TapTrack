@@ -28,9 +28,11 @@ const Receipt = () => {
     getReceipt();
   }, []);
 
-  console.log("items", receipt.orderId.userId.firstName);
+  console.log("items", receipt);
 
   const items = receipt.items || [];
+  const order = receipt.orderId || {};
+  const transactionDate = receipt.transactionDate || "";
 
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter items-center px-4 pb-4">
@@ -42,19 +44,18 @@ const Receipt = () => {
             <Text className="text-2xl font-bold text-center">Lagoon Plaza</Text>
             <Text className="text-center mt-6">--------------------------</Text>
             <View className="flex-row justify-between items-center pt-4">
-              <Text>Order: {"102"}</Text>
-              <Text>A95512</Text>
-              <Text>{receipt ? receipt.transactionDate.slice(0, 10) : ""}</Text>
-              <Text>
-                {receipt ? receipt.transactionDate.slice(11, 16) : ""}
-              </Text>
+              <Text>Order: </Text>
+              <Text>{order?._id ?? ""}</Text>
+            </View>
+            <View className="flex-row justify-between items-center pt-4">
+              <Text>Date:</Text>
+              <Text>{transactionDate.slice(0, 10)}</Text>
+              <Text>{transactionDate.slice(11, 16)}</Text>
             </View>
             <Text className="text-center mt-4">--------------------------</Text>
             <View className="flex-row justify-between items-center pt-4">
-              <Text>
-                Host: {receipt ? receipt.orderId.userId.firstName : ""}
-              </Text>
-              <Text>Table No: {"103"}</Text>
+              <Text>Host: {order?.userId?.firstName ?? "Default Name"}</Text>
+              <Text>Table No: {receipt.tableNumber}</Text>
             </View>
             <Text className="text-center mt-4">--------------------------</Text>
             <View>
@@ -79,7 +80,7 @@ const Receipt = () => {
             <View className="flex-row justify-between items-center pt-4 mb-10">
               <Text className="text-lg font-bold">Total</Text>
               <Text className="text-lg font-bold">
-                {receipt ? receipt.totalAmount : "0.00"}
+                {receipt ? receipt.totalAmount : "0.00"}€
               </Text>
             </View>
           </>

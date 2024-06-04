@@ -60,15 +60,6 @@ const createReceipt = asyncHandler(async (req, res) => {
   // Calculate total amount of the order
   const totalAmount = await calculateTotalAmount(order);
 
-  // Create the receipt object with the populated items array
-  const newReceipt = await Receipt.create({
-    orderId,
-    totalAmount,
-    paymentMethod,
-    notes,
-    items,
-  });
-
   // Retrieve the associated table
   const table = await Table.findOne({ orderId });
   if (!table) {
@@ -81,6 +72,16 @@ const createReceipt = asyncHandler(async (req, res) => {
   table.orderId = null;
   table.userId = null;
   await table.save();
+
+  // Create the receipt object with the populated items array
+  const newReceipt = await Receipt.create({
+    orderId,
+    totalAmount,
+    paymentMethod,
+    notes,
+    items,
+    tableNumber: table.tableNumber,
+  });
 
   res.status(201).json({ message: "Receipt created", receipt: newReceipt });
 });

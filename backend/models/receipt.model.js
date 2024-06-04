@@ -2,9 +2,9 @@ import { Schema, model } from "mongoose";
 
 const eodReceiptSchema = new Schema(
   {
-    itemName: { type: String, required: true, default: 'Unnamed Item' },
+    itemName: { type: String, required: true, default: "Unnamed Item" },
     quantity: { type: Number, required: true },
-    price: { type: Number, required: true, default: 0},
+    price: { type: Number, required: true, default: 0 },
     category: { type: String, required: true },
   },
   { _id: false }
@@ -13,6 +13,7 @@ const eodReceiptSchema = new Schema(
 const receiptSchema = new Schema({
   orderId: { type: Schema.Types.ObjectId, ref: "order", required: true }, // Reference to the order
   totalAmount: { type: Number },
+  tableNumber: { type: Number },
   paymentMethod: {
     type: String,
     required: true,
