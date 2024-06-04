@@ -5,12 +5,16 @@ import CustomButton from "../../../components/CustomButton.jsx";
 import { useEffect, useState } from "react";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
+import PaymentModal from "../../../components/PaymentModal.jsx";
 
 const Receipt = () => {
   const { receiptId } = useLocalSearchParams();
   const [receipt, setReceipt] = useState({});
   const [loading, setLoading] = useState(false);
   const [isPrinted, setIsPrinted] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [tipAmount, setTipAmount] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState("");
 
   useEffect(() => {
     const getReceipt = async () => {
@@ -30,6 +34,25 @@ const Receipt = () => {
   const items = receipt.items || [];
   const order = receipt.orderId || {};
   const transactionDate = receipt.transactionDate || "";
+
+  console.log("paymentMethod", paymentMethod);
+  console.log("tipAmount", tipAmount);
+
+  const handlePayment = async () => {
+    try {
+      const url = `${TAP_TRACK_URL}/users/checkout/${receiptId}`;
+      const data = {
+        paymentMethod,
+        notes: tipAmount,
+        isPaid: true,
+      };
+      const response = await axios.patch(url, data);
+      console.log("response", response);
+      setModalVisible((prevModalVisible) => !prevModalVisible);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter items-center px-4 pb-4">
@@ -77,7 +100,7 @@ const Receipt = () => {
             <View className="flex-row justify-between items-center pt-4 mb-10">
               <Text className="text-lg font-bold">Total</Text>
               <Text className="text-lg font-bold">
-                {receipt ? receipt.totalAmount : "0.00"}€
+                {receipt?.totalAmount?.toFixed(2)}€
               </Text>
             </View>
           </>
@@ -88,12 +111,18 @@ const Receipt = () => {
           <CustomButton
             text="Cash"
             containerStyles="w-[40%]"
-            handlePress={() => console.log("Cash")}
+            handlePress={() => {
+              setModalVisible((prevModalVisible) => !prevModalVisible);
+              setPaymentMethod("Cash");
+            }}
           />
           <CustomButton
             text="Card"
             containerStyles="w-[40%]"
-            handlePress={() => console.log("Card")}
+            handlePress={() => {
+              setModalVisible((prevModalVisible) => !prevModalVisible);
+              setPaymentMethod("Credit Card");
+            }}
           />
         </View>
       ) : (
@@ -105,6 +134,13 @@ const Receipt = () => {
           />
         </View>
       )}
+      <PaymentModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        tipAmount={tipAmount}
+        setTipAmount={setTipAmount}
+        handlePayment={handlePayment}
+      />
     </SafeAreaView>
   );
 };
