@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../../components/CustomButton.jsx";
@@ -36,7 +36,6 @@ const Receipt = () => {
   const extras = order.extras || [];
   const transactionDate = receipt.transactionDate || "";
 
-
   const getExtraById = async (id) => {
     try {
       const url = `${TAP_TRACK_URL}/users/menu-items/extras/${id}`;
@@ -56,8 +55,12 @@ const Receipt = () => {
         isPaid: true,
       };
       const response = await axios.patch(url, data);
-      console.log("response", response);
+      // delete extras from the database
+      const deleteExtrasUrl = `${TAP_TRACK_URL}/users/menu-items/extras/table/${receipt.tableNumber}`;
+      await axios.delete(deleteExtrasUrl);
       setModalVisible((prevModalVisible) => !prevModalVisible);
+      // navigate to the home screen
+      router.push("/(tabs)/(home)");
     } catch (error) {
       console.log("error", error);
     }
@@ -111,15 +114,15 @@ const Receipt = () => {
                   --------------------------
                 </Text>
                 <Text>Extras:</Text>
-                {extras.map(async (ext, index) => {
+                {extras && extras.map(async (ext, index) => {
                   const extra = await getExtraById(ext);
                   return (
                     <View
                       key={index}
                       className="flex flex-row justify-between pt-4"
                     >
-                      <Text className="w-[40%]">{extra.extra}</Text>
-                      <Text className="text-right">{extra.price}</Text>
+                      <Text className="w-[40%]">{extra?.extra}</Text>
+                      <Text className="text-right">{extra?.price}</Text>
                     </View>
                   );
                 })}

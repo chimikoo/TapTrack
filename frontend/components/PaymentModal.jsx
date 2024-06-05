@@ -18,7 +18,7 @@ const PaymentModal = ({
       }}
     >
       <View className="w-full h-full bg-black opacity-50 absolute top-0 left-0"></View>
-      <View className="w-[70%] h-[20%] p-4 border border-primary-dark rounded-lg flex justify-center items-center absolute top-[40%] left-[15%] bg-myWhite">
+      <View className="w-[70%] h-[200px] p-4 border border-primary-dark rounded-lg flex justify-center items-center absolute top-[40%] left-[15%] bg-myWhite">
         <View className="flex-row gap-2 items-center">
           <Text>Add Tip</Text>
           <TextInput
