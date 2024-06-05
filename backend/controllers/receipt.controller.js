@@ -106,6 +106,36 @@ const getReceiptById = asyncHandler(async (req, res) => {
 });
 
 /* 
+@desc    Get a receipt by user ID
+@route   GET /users/checkout/user/:id
+@access  Private
+*/
+const getReceiptByUserId = asyncHandler(async (req, res) => {
+  const receipts = await Receipt.find().populate({
+    path: "orderId",
+    populate: {
+      path: "userId drinks.drinkItem starter.dishItem main.dishItem side.dishItem dessert.dishItem",
+    },
+  });
+  if (receipts.length === 0 || !receipts) {
+    res.status(404);
+    throw new Error("No receipts found");
+  }
+  // Filter receipts based on the user ID
+  const userReceipts = receipts.filter((receipt) => {
+    const userId = receipt.orderId?.userId?._id.toString();
+    return userId === req.params.id;
+  });
+
+  console.log("userReceipts", userReceipts);
+  res.status(200).json({
+    message: "All receipts",
+    numberOfReceipts: userReceipts.length,
+    data: userReceipts,
+  });
+});
+
+/* 
 @desc    Update a receipt by ID
 @route   PUT /users/checkout/:id
 @access  Private
@@ -125,4 +155,10 @@ const updateReceipt = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Receipt updated", data: receipt });
 });
 
-export { getAllReceipts, createReceipt, getReceiptById, updateReceipt };
+export {
+  getAllReceipts,
+  createReceipt,
+  getReceiptById,
+  getReceiptByUserId,
+  updateReceipt,
+};

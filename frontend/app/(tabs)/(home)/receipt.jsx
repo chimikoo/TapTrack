@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
 import PaymentModal from "../../../components/PaymentModal.jsx";
-import Receipt from "../../../components/Receipt.jsx";
+import ReceiptComponent from "../../../components/ReceiptComponent.jsx";
 
 const Receipt = () => {
   const { receiptId } = useLocalSearchParams();
@@ -54,7 +54,7 @@ const Receipt = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter items-center px-4 pb-4">
-      <Receipt receipt={receipt} loading={loading} tipAmount={tipAmount} />
+      <ReceiptComponent receipt={receipt} loading={loading} tipAmount={tipAmount} />
       {isPrinted ? (
         <View className="w-full flex-row justify-between mt-4">
           <CustomButton

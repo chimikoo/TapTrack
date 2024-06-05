@@ -2,7 +2,7 @@ import axios from "axios";
 import { TAP_TRACK_URL } from "@env";
 import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 
-const Receipt = ({ receipt, loading, tipAmount }) => {
+const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
   const items = receipt.items || [];
   const order = receipt.orderId || {};
   const extras = order.extras || [];
@@ -103,4 +103,4 @@ const Receipt = ({ receipt, loading, tipAmount }) => {
   );
 };
 
-export default Receipt;
+export default ReceiptComponent;
