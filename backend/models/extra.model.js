@@ -11,6 +11,10 @@ const extraSchema = new Schema(
       type: Number,
       required: true,
     },
+    itemName: {
+      type: String,
+      required: true,
+    },
     itemId: {
       type: Schema.Types.ObjectId,
       required: true,
@@ -31,6 +35,13 @@ const extraSchema = new Schema(
   }
 );
 
+const oldExtraSchema = new Schema({
+  oldExtra: { type: extraSchema, _id: false },
+  extraId: { type: Schema.Types.ObjectId, required: true },
+});
+
 const ExtraModel = model("extra", extraSchema);
+const OldExtraModel = model("oldextra", oldExtraSchema);
 
 export default ExtraModel;
+export { OldExtraModel };

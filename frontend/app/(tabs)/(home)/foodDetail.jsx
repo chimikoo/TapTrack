@@ -79,6 +79,8 @@ const FoodDetail = () => {
         Alert.alert("Please add item to order first");
         return;
       }
+
+      // Add extra
       const url = `${TAP_TRACK_URL}/users/menu-items/extras`;
       const itemType = category === "beverage" ? "beverage" : "food";
       await axios.post(url, {
@@ -87,6 +89,7 @@ const FoodDetail = () => {
         itemId: id,
         itemType,
         tableNumber,
+        itemName: item.name,
       });
       setExtras([...extras, { extra, price }]);
       // Clear input fields
