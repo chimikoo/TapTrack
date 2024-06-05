@@ -9,6 +9,7 @@ const DropDownMenu = ({
   onProfile,
   onSettings,
   onTimeTrack,
+  onAdminPanel
 }) => {
   const { user } = useContext(UserContext);
 
@@ -27,7 +28,7 @@ const DropDownMenu = ({
     menuItems.splice(
       5,
       0,
-      { label: "Admin" },
+      { label: "Admin", action: onAdminPanel },
     );
   }
 
