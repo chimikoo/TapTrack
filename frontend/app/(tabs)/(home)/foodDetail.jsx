@@ -89,6 +89,7 @@ const FoodDetail = () => {
         itemId: id,
         itemType,
         tableNumber,
+        itemName: item.name,
       });
       setExtras([...extras, { extra, price }]);
       // Clear input fields

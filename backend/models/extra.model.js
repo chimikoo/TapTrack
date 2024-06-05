@@ -11,6 +11,10 @@ const extraSchema = new Schema(
       type: Number,
       required: true,
     },
+    itemName: {
+      type: String,
+      required: true,
+    },
     itemId: {
       type: Schema.Types.ObjectId,
       required: true,

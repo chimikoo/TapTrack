@@ -271,17 +271,19 @@ const deleteBeverageItem = asyncHandler(async (req, res) => {
 @access Private
 */
 const addExtra = asyncHandler(async (req, res) => {
-  const { extra, price, itemId, itemType, tableNumber } = req.body;
+  const { extra, price, itemId, itemType, tableNumber, itemName } = req.body;
   if (!extra || !price) {
     res.status(400);
     throw new Error("Please fill in all fields");
   }
+
   const extraItem = {
     extra,
     price,
     itemId,
     itemType,
     tableNumber,
+    itemName,
   };
 
   const newExtra = await ExtraModel.create(extraItem);
