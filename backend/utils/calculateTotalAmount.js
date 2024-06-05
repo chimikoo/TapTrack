@@ -27,11 +27,9 @@ const calculateTotalAmount = async (order) => {
     );
     // Calculate the total amount for all the extras
     const extrasIds = order.extras;
-    const extrasSubtotal = extrasIds.reduce(async (acc, extraId) => {
-      const extra = await ExtraModel.findById(extraId);
-      return acc + Number(extra.price);
-    }, 0);
-    console.log("extrasSubtotal", extrasSubtotal);
+    const extras = await ExtraModel.find({ _id: { $in: extrasIds } });
+    const extrasSubtotal = extras.reduce((acc, extra) => acc + extra.price, 0);
+    
     // Calculate the total amount by summing up all subtotals
     const totalAmount =
       foodSubtotals.reduce((acc, curr) => acc + curr, 0) +
