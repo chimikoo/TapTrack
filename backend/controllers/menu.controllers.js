@@ -1,7 +1,7 @@
 import asyncHandler from "../config/asyncHandler.js";
 import FoodModel from "../models/food.model.js";
 import BeverageModel from "../models/beverage.model.js";
-import ExtraModel from "../models/extra.model.js";
+import ExtraModel, { OldExtraModel } from "../models/extra.model.js";
 
 /* 
 @desc   Get all menu items
@@ -276,12 +276,19 @@ const addExtra = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Please fill in all fields");
   }
-  const newExtra = await ExtraModel.create({
+  const extraItem = {
     extra,
     price,
     itemId,
     itemType,
     tableNumber,
+  };
+
+  const newExtra = await ExtraModel.create(extraItem);
+  console.log("newExtra", newExtra);
+  const oldExtra = await OldExtraModel.create({
+    oldExtra: extraItem,
+    extraId: newExtra._id,
   });
   res.status(201).json({ message: "Extra added", data: newExtra });
 });
@@ -310,7 +317,7 @@ const getExtrasByTable = asyncHandler(async (req, res) => {
 @access Private
 */
 const getExtraById = asyncHandler(async (req, res) => {
-  const extra = await ExtraModel.findById(req.params.id);
+  const extra = await OldExtraModel.find({ extraId: req.params.id });
   if (!extra) {
     res.status(404);
     throw new Error("Extra not found");

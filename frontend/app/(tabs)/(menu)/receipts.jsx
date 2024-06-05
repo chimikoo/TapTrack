@@ -9,7 +9,6 @@ import { router } from "expo-router";
 const Receipts = () => {
   const { user } = useContext(UserContext);
   const [receipts, setReceipts] = useState([]);
-  console.log("user", user);
 
   useEffect(() => {
     const getReceipts = async () => {

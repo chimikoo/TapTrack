@@ -12,6 +12,8 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
     try {
       const url = `${TAP_TRACK_URL}/users/menu-items/extras/${id}`;
       const { data } = await axios.get(url);
+      const oldExtra = data.extra[0] && data.extra[0].oldExtra;
+      console.log("oldExtra", oldExtra);
       return data.extra;
     } catch (error) {
       console.log("error", error);
@@ -68,13 +70,16 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
               {extras &&
                 extras.map(async (ext, index) => {
                   const extra = await getExtraById(ext);
+                  console.log("extra", extra);
                   return (
                     <View
                       key={index}
                       className="flex flex-row justify-between pt-4"
                     >
-                      <Text className="w-[40%]">{extra?.extra}</Text>
-                      <Text className="text-right">{extra?.price}</Text>
+                      <Text className="w-[40%]">{extra?.oldExtra?.extra}</Text>
+                      <Text className="text-right">
+                        {extra?.oldExtra?.price}
+                      </Text>
                     </View>
                   );
                 })}
