@@ -1,3 +1,4 @@
+import ExtraModel from "../models/extra.model.js";
 import Order from "../models/order.model.js";
 
 const calculateTotalAmount = async (order) => {
@@ -24,10 +25,18 @@ const calculateTotalAmount = async (order) => {
     const beverageSubtotals = order.drinks.map((beverage) =>
       calculateBeverageSubtotal(beverage)
     );
+    // Calculate the total amount for all the extras
+    const extrasIds = order.extras;
+    const extrasSubtotal = extrasIds.reduce(async (acc, extraId) => {
+      const extra = await ExtraModel.findById(extraId);
+      return acc + Number(extra.price);
+    }, 0);
+    console.log("extrasSubtotal", extrasSubtotal);
     // Calculate the total amount by summing up all subtotals
     const totalAmount =
       foodSubtotals.reduce((acc, curr) => acc + curr, 0) +
-      beverageSubtotals.reduce((acc, curr) => acc + curr, 0);
+      beverageSubtotals.reduce((acc, curr) => acc + curr, 0) +
+      extrasSubtotal;
 
     return totalAmount;
   } catch (error) {
