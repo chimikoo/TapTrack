@@ -319,6 +319,16 @@ const getExtraById = asyncHandler(async (req, res) => {
 });
 
 /* 
+@desc   Delete extras by table
+@route  DELETE /users/menu-items/extras/table/:tableNumber
+@access Private
+*/
+const deleteExtrasByTable = asyncHandler(async (req, res) => {
+  await ExtraModel.deleteMany({ tableNumber: req.params.tableNumber });
+  res.status(200).json({ message: "Extras deleted" });
+});
+
+/* 
 @desc   Update item stock
 @route  PUT /users/menu-items/stock/:type/:id
 @access Private
@@ -366,5 +376,6 @@ export {
   addExtra,
   getExtrasByTable,
   getExtraById,
+  deleteExtrasByTable,
   updateItemStock,
 };
