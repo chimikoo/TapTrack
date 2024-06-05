@@ -4,6 +4,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import ReceiptComponent from "../../../components/ReceiptComponent.jsx";
+import CustomButton from "../../../components/CustomButton.jsx";
 
 const ReceiptDetail = () => {
   const { receiptId } = useLocalSearchParams();
@@ -25,6 +26,8 @@ const ReceiptDetail = () => {
     getReceipt();
   }, []);
 
+  console.log("receipt", receipt.isPaid);
+
   return (
     <View className="h-full">
       <View className="h-[83%] m-4">
@@ -32,6 +35,29 @@ const ReceiptDetail = () => {
           receipt={receipt}
           loading={loading}
           tipAmount={receipt.notes}
+        />
+      </View>
+      <View className="flex-row justify-between items-center p-4">
+        <View className="flex-row w-[50%] justify-between">
+          {!receipt.isPaid && (
+            <>
+              <CustomButton
+                text="Card"
+                handlePress={() => console.log("Print receipt")}
+                containerStyles="w-[45%]"
+              />
+              <CustomButton
+                text="Cash"
+                handlePress={() => console.log("Print receipt")}
+                containerStyles="w-[45%]"
+              />
+            </>
+          )}
+        </View>
+        <CustomButton
+          text="Print"
+          handlePress={() => console.log("Print receipt")}
+          containerStyles="w-[30%]"
         />
       </View>
     </View>
