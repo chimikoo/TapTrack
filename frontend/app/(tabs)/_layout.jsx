@@ -65,9 +65,15 @@ const TabsLayout = () => {
     router.push("/(menu)/timeTrack");
   }
 
+
   const handleReceipts = () => {
     setMenuVisible(false);
     router.push("/(menu)/receipts");
+  }
+  
+  const handleAdminPanel = () => {
+    setMenuVisible(false);
+    router.push("/(menu)/adminPanel");
   }
 
   return (
@@ -81,6 +87,7 @@ const TabsLayout = () => {
         onSettings={handleSettings}
         onTimeTrack={handleTimeTrack}
         onReceipts={handleReceipts}
+        onAdminPanel={handleAdminPanel}
       />
       <Tabs
         screenOptions={{
