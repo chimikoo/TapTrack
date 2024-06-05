@@ -18,7 +18,6 @@ import { UserContext } from "../../../contexts/userContext.jsx";
 import Receipt from "./receipt.jsx";
 import { useMenu } from "../../../contexts/menuContext"; // Import the custom hook
 
-
 const Order = () => {
   const { tableNumber } = useLocalSearchParams();
   const { user } = useContext(UserContext);
@@ -148,18 +147,16 @@ const Order = () => {
         Alert.alert("Order created successfully");
       }
     } catch (error) {
-      console.log("error", error);
+      Alert.alert("Error creating order", error.message);
     }
   };
 
   const handleCheckout = async () => {
-    console.log("checkout");
     try {
       const { data } = await axios.get(
         `${TAP_TRACK_URL}/users/tables/${tableNumber}`
       );
       if (data.table.orderId) {
-        console.log("helloooo inside checkout");
         const response = await axios.post(`${TAP_TRACK_URL}/users/checkout`, {
           orderId: data.table.orderId,
           paymentMethod: "Cash",
@@ -173,6 +170,7 @@ const Order = () => {
         setExtras((prevExtras) =>
           prevExtras.filter((extra) => extra.tableNumber !== tableNumber)
         );
+        // navigate to receipt page
         router.push({
           pathname: "receipt",
           params: { receiptId: response.data.receipt._id },
@@ -181,7 +179,7 @@ const Order = () => {
         Alert.alert("No order to checkout");
       }
     } catch (error) {
-      console.log("error", error);
+      Alert.alert("Error checking out", error.message);
     }
   };
 
