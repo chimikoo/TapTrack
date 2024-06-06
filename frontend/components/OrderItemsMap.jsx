@@ -17,14 +17,33 @@ const OrderItemsMap = ({ title, items }) => {
             item.drinkItem?.sizesPrices.find((price) => price.size === itemSize)
               .price;
           return (
-            <View key={index} className="flex-row justify-between w-full pl-8">
-              <Text className="text-myWhite">{item.quantity}</Text>
-              <Text className="text-myWhite w-[50%]">
-                {itemName}
-                {itemSize && ` (${itemSize})`}
-              </Text>
-              <Text className="text-myWhite">{itemPrice}€</Text>
-            </View>
+            <>
+              {" "}
+              <View
+                key={index}
+                className="flex-row justify-between w-full pl-8"
+              >
+                <Text className="text-myWhite">{item.quantity}</Text>
+                <Text className="text-myWhite w-[50%]">
+                  {itemName}
+                  {itemSize && ` (${itemSize})`}
+                </Text>
+                <Text className="text-myWhite">{itemPrice}€</Text>
+              </View>
+              {item.extras &&
+                items.extras?.length > 0 &&
+                items.extras.map((extra, index) => {
+                  return (
+                    <View
+                      key={index}
+                      className="flex-row justify-between w-full pl-12"
+                    >
+                      <Text className="text-myWhite">+{extra.extra}</Text>
+                      <Text className="text-myWhite">{extra.price}€</Text>
+                    </View>
+                  );
+                })}
+            </>
           );
         })}
       </View>

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  FlatList,
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,6 +18,7 @@ const OrderDetail = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("rendering...");
     const getOrder = async () => {
       try {
         const url = `${TAP_TRACK_URL}/users/menu-orders/${orderId}`;

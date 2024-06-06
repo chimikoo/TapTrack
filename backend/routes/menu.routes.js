@@ -11,12 +11,8 @@ import {
   getOneBeverageItem,
   getOneFoodItem,
   updateBeverageItem,
-  addExtra,
   updateFoodItem,
   updateItemStock,
-  getExtrasByTable,
-  getExtraById,
-  deleteExtrasByTable,
 } from "../controllers/menu.controllers.js";
 import isAdminOrManager from "../middlewares/isAdminOrManager.js";
 
@@ -48,15 +44,6 @@ router
   .get(getOneBeverageItem) // GET /users/menu-items/beverages/:id
   .put(isAdminOrManager, updateBeverageItem) // PUT /users/menu-items/beverages/:id
   .delete(isAdminOrManager, deleteBeverageItem); // DELETE /users/menu-items/beverages/:id
-
-// POST /users/menu-items/extras
-router.post("/extras", addExtra);
-// GET /users/menu-items/extras/table/:tableNumber
-router.get("/extras/table/:tableNumber", getExtrasByTable);
-// DELETE /users/menu-items/extras/table/:tableNumber
-router.delete("/extras/table/:tableNumber", deleteExtrasByTable);
-// GET /users/menu-items/extras/:id
-router.get("/extras/:id", getExtraById);
 
 // PUT /users/menu-items/stock/:type/:id
 router.put("/stock/:type/:id", isAdminOrManager, updateItemStock);
