@@ -26,9 +26,7 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
       });
     };
     getExtras();
-  }, []);
-
-
+  }, [order]);
 
   return (
     <ScrollView className="w-full flex-1 bg-gray-200 rounded-lg p-8">
