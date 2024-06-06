@@ -53,6 +53,7 @@ const orderSchema = new Schema({
   side: [sideSchema],
   dessert: [dessertSchema],
   extras: [{ type: Schema.Types.ObjectId, ref: "extra" }],
+  isCheckout: { type: Boolean, default: false },
 });
 
 // Create and export the Mongoose model

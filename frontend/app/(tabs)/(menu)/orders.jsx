@@ -59,7 +59,9 @@ const Orders = () => {
             keyExtractor={(item) => item._id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
-                className="flex-row justify-between items-center p-4 bg-primary mb-4 rounded-lg w-full"
+                className={`flex-row justify-between items-center p-4 mb-4 rounded-lg w-full ${
+                  item.isCheckout ? "bg-primary" : "bg-secondary"
+                }`}
                 onPress={() => {
                   router.push({
                     pathname: "/orderDetail",

@@ -40,7 +40,11 @@ const OrderDetail = () => {
         <ActivityIndicator size="large" color="#7CA982" />
       ) : (
         <>
-          <ScrollView className="w-[90%] m-auto bg-primary rounded-lg p-6 mb-4">
+          <ScrollView
+            className={`w-[90%] m-auto rounded-lg p-6 mb-4 ${
+              order.isCheckout ? "bg-primary" : "bg-secondary"
+            }`}
+          >
             <View className="flex-row justify-between items-center border-b border-myWhite py-2">
               <Text className="text-myWhite text-xl">Order ID</Text>
               <Text className="text-myWhite text-xs">{orderId}</Text>
@@ -65,13 +69,15 @@ const OrderDetail = () => {
               </Text>
             </View>
           </ScrollView>
-          <CustomButton
-            text="Checkout"
-            containerStyles="w-[50%] m-auto mb-4"
-            handlePress={() => {
-              console.log("Pay button pressed");
-            }}
-          />
+          {!order.isCheckout && (
+            <CustomButton
+              text="Checkout"
+              containerStyles="w-[50%] m-auto mb-4"
+              handlePress={() => {
+                console.log("Pay button pressed");
+              }}
+            />
+          )}
         </>
       )}
     </SafeAreaView>
