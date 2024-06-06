@@ -3,8 +3,8 @@ import {
   View,
   Text,
   ScrollView,
+  FlatList,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import OrderItemsMap from "../../../components/OrderItemsMap.jsx";
@@ -16,18 +16,17 @@ import axios from "axios";
 const OrderDetail = () => {
   const { orderId } = useLocalSearchParams();
   const [order, setOrder] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("rendering...");
     const getOrder = async () => {
       try {
         const url = `${TAP_TRACK_URL}/users/menu-orders/${orderId}`;
         const { data } = await axios.get(url);
         setOrder(data.data);
-        // setLoading(false);
+        setLoading(false);
       } catch (error) {
-        Alert.alert("Error", error.message);
+        console.error("error", error);
       }
     };
     getOrder();

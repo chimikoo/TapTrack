@@ -30,7 +30,7 @@ const OrderItemsMap = ({ title, items }) => {
                 </Text>
                 <Text className="text-myWhite">{itemPrice}€</Text>
               </View>
-              {item.extras &&
+              {/* {item.extras &&
                 items.extras?.length > 0 &&
                 items.extras.map((extra, index) => {
                   return (
@@ -42,7 +42,7 @@ const OrderItemsMap = ({ title, items }) => {
                       <Text className="text-myWhite">{extra.price}€</Text>
                     </View>
                   );
-                })}
+                })} */}
             </>
           );
         })}
