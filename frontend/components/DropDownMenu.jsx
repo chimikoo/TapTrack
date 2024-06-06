@@ -10,6 +10,8 @@ const DropDownMenu = ({
   onSettings,
   onTimeTrack,
   onReceipts,
+  onAdminPanel,
+
 }) => {
   const { user } = useContext(UserContext);
 
@@ -28,12 +30,7 @@ const DropDownMenu = ({
     menuItems.splice(
       5,
       0,
-      { label: "Edit menu" },
-      { label: "All Orders" },
-      { label: "Old Receipts" },
-      { label: "Dashboard" },
-      { label: "Employees" },
-      { label: "Eod" }
+      { label: "Admin", action: onAdminPanel },
     );
   }
 
