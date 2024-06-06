@@ -15,8 +15,11 @@ import { useOrder } from "../../../contexts/orderContext";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
 import { UserContext } from "../../../contexts/userContext.jsx";
-import Receipt from "./receipt.jsx";
-import { useMenu } from "../../../contexts/menuContext"; // Import the custom hook
+import { useMenu } from "../../../contexts/menuContext";
+import {
+  decrementQuantity,
+  incrementQuantity,
+} from "../../../utils/handleQuantity.js";
 
 const Order = () => {
   const { tableNumber } = useLocalSearchParams();
@@ -24,7 +27,6 @@ const Order = () => {
   const router = useRouter();
   const { orderItems, setOrderItems } = useOrder();
   const { menuItems, loading: menuLoading } = useMenu(); // Use the custom hook to access menu items
-  const [extras, setExtras] = useState([]);
   const [loading, setLoading] = useState(true); // Define the loading state
 
   // Get order items for the specific table number
@@ -34,67 +36,9 @@ const Order = () => {
   const items = currentOrder ? currentOrder.items : [];
 
   useEffect(() => {
-    const getExtras = async () => {
-      try {
-        const url = `${TAP_TRACK_URL}/users/menu-items/extras/table/${tableNumber}`;
-        const { data } = await axios.get(url);
-        setExtras(data.data);
-        setLoading(false);
-      } catch (error) {
-        console.log("error", error);
-        setLoading(false); // Ensure loading is set to false in case of error
-      }
-    };
-    getExtras();
-  }, [tableNumber]);
-
-  const incrementQuantity = (tableNumber, itemId, size) => {
-    setOrderItems((prevOrderItems) => {
-      return prevOrderItems.map((order) => {
-        if (order.tableNumber !== tableNumber) return order;
-        return {
-          ...order,
-          items: order.items.map((item) => {
-            if (item._id !== itemId) return item;
-            if (item.category === "beverage" && item.size === size) {
-              return { ...item, quantity: item.quantity + 1 };
-            }
-            if (item.category !== "beverage") {
-              return { ...item, quantity: item.quantity + 1 };
-            }
-            return item;
-          }),
-        };
-      });
-    });
-  };
-
-  const decrementQuantity = (tableNumber, itemId, size) => {
-    setOrderItems((prevOrderItems) => {
-      return prevOrderItems.map((order) => {
-        if (order.tableNumber !== tableNumber) return order;
-        return {
-          ...order,
-          items: order.items.reduce((acc, item) => {
-            if (item._id !== itemId) {
-              acc.push(item);
-            } else {
-              if (item.category === "beverage" && item.size === size) {
-                if (item.quantity > 1) {
-                  acc.push({ ...item, quantity: item.quantity - 1 });
-                }
-              } else if (item.category !== "beverage") {
-                if (item.quantity > 1) {
-                  acc.push({ ...item, quantity: item.quantity - 1 });
-                }
-              }
-            }
-            return acc;
-          }, []),
-        };
-      });
-    });
-  };
+    // Assume loading is done after the first render
+    setLoading(false);
+  }, []);
 
   const handleOrder = async () => {
     const drinks = items
@@ -103,24 +47,39 @@ const Order = () => {
         drinkItem: item._id,
         quantity: item.quantity,
         size: item.size,
+        extras: item.extras,
       }));
     const starter = items
       .filter((item) => item.category === "starter")
-      .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
+      .map((item) => ({
+        dishItem: item._id,
+        quantity: item.quantity,
+        extras: item.extras,
+      }));
 
     const main = items
       .filter((item) => item.category === "main")
-      .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
+      .map((item) => ({
+        dishItem: item._id,
+        quantity: item.quantity,
+        extras: item.extras,
+      }));
 
     const dessert = items
       .filter((item) => item.category === "dessert")
-      .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
+      .map((item) => ({
+        dishItem: item._id,
+        quantity: item.quantity,
+        extras: item.extras,
+      }));
 
     const side = items
       .filter((item) => item.category === "side")
-      .map((item) => ({ dishItem: item._id, quantity: item.quantity }));
-
-    const extrasArray = extras.map((extra) => extra._id);
+      .map((item) => ({
+        dishItem: item._id,
+        quantity: item.quantity,
+        extras: item.extras,
+      }));
 
     const order = {
       userId: user.id,
@@ -130,8 +89,8 @@ const Order = () => {
       main,
       dessert,
       side,
-      extras: extrasArray,
     };
+
     try {
       const { data } = await axios.get(
         `${TAP_TRACK_URL}/users/tables/${tableNumber}`
@@ -139,7 +98,7 @@ const Order = () => {
       if (data.table.orderId !== null) {
         await axios.put(
           `${TAP_TRACK_URL}/users/menu-orders/${data.table.orderId}`,
-          { drinks, starter, main, dessert, side, extras: extrasArray }
+          order
         );
         Alert.alert("Order updated successfully");
       } else {
@@ -163,12 +122,9 @@ const Order = () => {
         });
 
         Alert.alert("Checkout successful");
-        // clear order items and extras from the current table
+        // clear order items from the current table
         setOrderItems((prevOrderItems) =>
           prevOrderItems.filter((order) => order.tableNumber !== tableNumber)
-        );
-        setExtras((prevExtras) =>
-          prevExtras.filter((extra) => extra.tableNumber !== tableNumber)
         );
         // navigate to receipt page
         router.push({
@@ -233,30 +189,36 @@ const Order = () => {
                       <AddRemove
                         quantity={item.quantity}
                         handleDecrement={() =>
-                          decrementQuantity(tableNumber, item._id, item.size)
+                          decrementQuantity(
+                            tableNumber,
+                            item._id,
+                            item.size,
+                            item.extras,
+                            setOrderItems
+                          )
                         }
                         handleIncrement={() =>
-                          incrementQuantity(tableNumber, item._id, item.size)
+                          incrementQuantity(
+                            tableNumber,
+                            item._id,
+                            item.size,
+                            item.extras,
+                            setOrderItems
+                          )
                         }
                       />
                     </View>
-                    <View className="pl-6">
-                      {extras &&
-                        extras.length > 0 &&
-                        extras.map((extra, index) => {
-                          if (extra.itemId === item._id) {
-                            return (
-                              <View
-                                key={index}
-                                className="flex flex-row justify-between items-center"
-                              >
-                                <Text className="flex-1">{extra.extra}</Text>
-                                <Text className="flex-1">{extra.price}€</Text>
-                              </View>
-                            );
-                          }
-                          return null; // Ensure a return here to avoid any undefined return issues
-                        })}
+                    <View className="pl-6 w-[55%]">
+                      {item.extras &&
+                        item.extras.map((extra, index) => (
+                          <View
+                            key={index}
+                            className="flex-row justify-between"
+                          >
+                            <Text className="text-sm">+{extra.extra}</Text>
+                            <Text>{extra.price}€</Text>
+                          </View>
+                        ))}
                     </View>
                   </View>
                 );

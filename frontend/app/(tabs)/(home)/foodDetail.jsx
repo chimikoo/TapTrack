@@ -80,18 +80,9 @@ const FoodDetail = () => {
         return;
       }
 
-      // Add extra
-      const url = `${TAP_TRACK_URL}/users/menu-items/extras`;
-      const itemType = category === "beverage" ? "beverage" : "food";
-      await axios.post(url, {
-        extra,
-        price,
-        itemId: id,
-        itemType,
-        tableNumber,
-        itemName: item.name,
-      });
+      // Add extra to extras array
       setExtras([...extras, { extra, price }]);
+
       // Clear input fields
       setExtra("");
       setPrice("");
@@ -109,6 +100,7 @@ const FoodDetail = () => {
             name: `${item.name} (${sp.size})`,
             price: sp.price,
             quantity: quantity[index],
+            extras,
           });
         }
       });
@@ -117,6 +109,7 @@ const FoodDetail = () => {
         addItemToOrder(tableNumber, {
           ...item,
           quantity: quantity[0],
+          extras,
         });
       }
     }
