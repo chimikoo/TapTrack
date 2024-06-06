@@ -45,7 +45,7 @@ const drinkSchema = new Schema(
 // Define the main schema for the order
 const orderSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
-  tableNumber: { type: Schema.Types.ObjectId, ref: "table", required: true },
+  tableNumber: { type: Number, required: true },
   timestamp: { type: Date, default: Date.now },
   drinks: [drinkSchema],
   starter: [starterSchema],
@@ -53,6 +53,7 @@ const orderSchema = new Schema({
   side: [sideSchema],
   dessert: [dessertSchema],
   extras: [{ type: Schema.Types.ObjectId, ref: "extra" }],
+  isCheckout: { type: Boolean, default: false },
 });
 
 // Create and export the Mongoose model

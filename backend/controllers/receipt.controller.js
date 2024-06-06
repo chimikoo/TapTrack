@@ -73,6 +73,10 @@ const createReceipt = asyncHandler(async (req, res) => {
   table.userId = null;
   await table.save();
 
+  // Update the order to be checked out
+  order.isCheckout = true;
+  await order.save();
+
   // Create the receipt object with the populated items array
   const newReceipt = await Receipt.create({
     orderId,
@@ -126,7 +130,7 @@ const getReceiptByUserId = asyncHandler(async (req, res) => {
     const userId = receipt.orderId?.userId?._id.toString();
     return userId === req.params.id;
   });
-  
+
   if (userReceipts.length === 0) {
     res.status(404);
     throw new Error("No receipts found for this user");

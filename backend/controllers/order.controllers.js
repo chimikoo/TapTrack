@@ -48,16 +48,12 @@ const addOrder = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Table is already occupied/reserved");
   }
-  console.log("drinks", drinks);
-  console.log("starter", starter);
-  console.log("main", main);
-  console.log("side", side);
-  console.log("dessert", dessert);
-  console.log("extras", extras);
+
+  console.log("existingTable", existingTable.tableNumber);
   // Create the order
   const newOrder = await Order.create({
     userId,
-    tableNumber: existingTable._id,
+    tableNumber: existingTable.tableNumber,
     drinks,
     starter,
     main,

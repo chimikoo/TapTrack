@@ -288,12 +288,12 @@ const getUserTimeTrack = asyncHandler(async (req, res) => {
 @access   Private
 */
 const getUsersList = asyncHandler(async (req, res) => {
-  // only admins can get the list of users
+/*   // only admins can get the list of users
   const { userRole } = req;
   if (userRole !== "admin") {
     res.status(401);
     throw new Error("You are not authorized to perform this action");
-  }
+  } */
   const users = await UserModel.find();
   if (!users || users.length === 0) {
     res.status(400);
