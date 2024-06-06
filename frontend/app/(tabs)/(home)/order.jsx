@@ -111,6 +111,7 @@ const Order = () => {
   };
 
   const handleCheckout = async () => {
+    console.log("checkout");
     try {
       const { data } = await axios.get(
         `${TAP_TRACK_URL}/users/tables/${tableNumber}`
@@ -120,7 +121,6 @@ const Order = () => {
           orderId: data.table.orderId,
           paymentMethod: "Cash",
         });
-
         Alert.alert("Checkout successful");
         // clear order items from the current table
         setOrderItems((prevOrderItems) =>
