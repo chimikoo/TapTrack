@@ -1,7 +1,6 @@
 import asyncHandler from "../config/asyncHandler.js";
 import FoodModel from "../models/food.model.js";
 import BeverageModel from "../models/beverage.model.js";
-import ExtraModel, { OldExtraModel } from "../models/extra.model.js";
 
 /* 
 @desc   Get all menu items

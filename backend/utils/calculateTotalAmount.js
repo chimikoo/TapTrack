@@ -1,6 +1,3 @@
-import ExtraModel from "../models/extra.model.js";
-import Order from "../models/order.model.js";
-
 const calculateTotalAmount = async (order) => {
   try {
     // Calculate the subtotal for each food item (starter, main, side, dessert)
