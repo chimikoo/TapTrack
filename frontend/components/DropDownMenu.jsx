@@ -10,8 +10,8 @@ const DropDownMenu = ({
   onSettings,
   onTimeTrack,
   onReceipts,
+  onOrders,
   onAdminPanel,
-
 }) => {
   const { user } = useContext(UserContext);
 
@@ -19,7 +19,7 @@ const DropDownMenu = ({
 
   const menuItems = [
     { label: "Profile", action: onProfile },
-    { label: "Order" },
+    { label: "Orders", action: onOrders },
     { label: "Settings", action: onSettings },
     { label: "Receipts", action: onReceipts },
     { label: "Time Track", action: onTimeTrack },
@@ -27,11 +27,7 @@ const DropDownMenu = ({
   ];
 
   if (user.role === "admin") {
-    menuItems.splice(
-      5,
-      0,
-      { label: "Admin", action: onAdminPanel },
-    );
+    menuItems.splice(5, 0, { label: "Admin", action: onAdminPanel });
   }
 
   return (
