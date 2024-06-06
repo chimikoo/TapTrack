@@ -10,34 +10,23 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
   const extras = order.extras || [];
   const transactionDate = receipt.transactionDate || "";
 
-  console.log("order", order);
-
   useEffect(() => {
-    const getExtras = async () => {
-      const extrasArray = extras.map(async (ext) => {
-        const extra = await getExtraById(ext);
-        return extra;
+    console.log("rendering...");
+    const getExtras = () => {
+      extras.map(async (ext) => {
+        try {
+          const url = `${TAP_TRACK_URL}/users/menu-items/extras/${ext}`;
+          const { data } = await axios.get(url);
+          const oldExtra = data.extra[0] && data.extra[0].oldExtra;
+          console.log("oldExtra", oldExtra);
+          setOldExtras((oldExtras) => [...oldExtras, oldExtra]);
+        } catch (error) {
+          console.log("error", error);
+        }
       });
-      const extrasList = await Promise.all(extrasArray);
-      setOldExtras(extrasList);
     };
     getExtras();
-  }, []);
-
-  console.log("oldExtras", oldExtras);
-
-  const getExtraById = async (id) => {
-    try {
-      const url = `${TAP_TRACK_URL}/users/menu-items/extras/${id}`;
-      const { data } = await axios.get(url);
-      const oldExtra = data.extra[0] && data.extra[0].oldExtra;
-      return oldExtra;
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
-
-  console.log("items", items);
+  }, [order]);
 
   return (
     <ScrollView className="w-full flex-1 bg-gray-200 rounded-lg p-8">
@@ -61,11 +50,8 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
             <Text>Host: {order?.userId?.firstName ?? "Default Name"}</Text>
             <Text>Table No: {receipt.tableNumber}</Text>
           </View>
-          <View className="border-b-2 border-dashed ">
+          <View className="border-b-2 border-dashed">
             {items &&
-              items.length > 0 &&
-              oldExtras &&
-              oldExtras.length > 0 &&
               items.map((item, index) => {
                 const connectedExtra = oldExtras?.find(
                   (ext) => ext.itemName === item.itemName
@@ -100,15 +86,13 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
             <View className="flex-row justify-between items-center pt-4">
               <Text className="text-lg font-bold">Total</Text>
               <Text className="text-lg font-bold">
-                {receipt?.totalAmount?.toFixed(2)}€
+                {receipt?.totalAmount}€
               </Text>
             </View>
             {tipAmount > 0 && (
               <View className="flex-row justify-between items-center pt-4">
                 <Text className="text-base font-bold">Tip</Text>
-                <Text className="text-base font-bold">
-                  {tipAmount.toFixed(2)}€
-                </Text>
+                <Text className="text-base font-bold">{tipAmount}€</Text>
               </View>
             )}
           </View>

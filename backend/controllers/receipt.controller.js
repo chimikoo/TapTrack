@@ -126,8 +126,12 @@ const getReceiptByUserId = asyncHandler(async (req, res) => {
     const userId = receipt.orderId?.userId?._id.toString();
     return userId === req.params.id;
   });
+  
+  if (userReceipts.length === 0) {
+    res.status(404);
+    throw new Error("No receipts found for this user");
+  }
 
-  console.log("userReceipts", userReceipts);
   res.status(200).json({
     message: "All receipts",
     numberOfReceipts: userReceipts.length,
