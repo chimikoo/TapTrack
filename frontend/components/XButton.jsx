@@ -1,10 +1,11 @@
 import { View, Text, TouchableOpacity } from "react-native";
 
-const Xbutton = () => {
+const Xbutton = ({ handlePress }) => {
   return (
     <View className="flex flex-row justify-between items-center mr-2">
       <TouchableOpacity
-        className="w-6 h-6 flex justify-center items-center bg-primary-dark rounded"
+        onPress={handlePress}
+        className="w-6 h-6 flex justify-center items-center bg-secondary rounded"
       >
         <Text className="text-[] text-white -mt-[2px]">X</Text>
       </TouchableOpacity>
