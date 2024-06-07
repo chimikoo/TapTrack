@@ -85,6 +85,10 @@ const login = asyncHandler(async (req, res) => {
   };
   res.cookie("token", token, cookieOptions);
 
+  // Set user as online
+  user.isOnline = true;
+  await user.save();
+
   res.status(200).json({
     message: "User logged in successfully",
     token,
@@ -95,6 +99,7 @@ const login = asyncHandler(async (req, res) => {
       role: user.role,
       avatar: user.avatar,
       id: user._id,
+      isOnline: user.isOnline,
     },
   });
 });
@@ -107,15 +112,22 @@ const login = asyncHandler(async (req, res) => {
 */
 const logout = asyncHandler(async (req, res) => {
   console.log('Logging out from Server...')
-  const { userId } = req; // Assuming you have middleware to extract user ID from the request
+  const { userId } = req;
+
   // Clear the cookie
   res.clearCookie("token");
 
-  // record the end time of the last shift
+  // Record the end time of the last shift
   const timeTrack = await endShift(userId);
+
+  // Set user as offline
+  const user = await UserModel.findById(userId);
+  user.isOnline = false;
+  await user.save();
 
   res.status(200).json({ message: "User logged out successfully", timeTrack });
 });
+
 
 /* 
 @desc     Force logout users who haven't logged out by end of day

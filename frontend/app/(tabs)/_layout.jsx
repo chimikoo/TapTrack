@@ -62,8 +62,8 @@ const TabsLayout = () => {
 
   const handleTimeTrack = () => {
     setMenuVisible(false);
-    router.push("/(menu)/timeTrack");
-  };
+    router.push("/(menu)/monthlyView");
+  }
 
   const handleReceipts = () => {
     setMenuVisible(false);

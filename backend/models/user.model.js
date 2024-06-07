@@ -30,6 +30,10 @@ const userModelSchema = new Schema({
     type: String,
     default: "cat.png",
   },
+  isOnline: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const UserModel = model("user", userModelSchema);
