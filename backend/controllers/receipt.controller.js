@@ -40,7 +40,6 @@ const createReceipt = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Please provide all required fields");
   }
-
   // Retrieve the order to get the items
   const order = await Order.findById(orderId).populate([
     "drinks.drinkItem",
@@ -53,7 +52,6 @@ const createReceipt = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Order not found");
   }
-
   // Extract the items from the order
   const items = extractItemsFromOrder(order);
 
@@ -86,6 +84,8 @@ const createReceipt = asyncHandler(async (req, res) => {
     items,
     tableNumber: table.tableNumber,
   });
+
+  // console.log("Receipt created", newReceipt);
 
   res.status(201).json({ message: "Receipt created", receipt: newReceipt });
 });

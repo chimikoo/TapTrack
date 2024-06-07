@@ -41,9 +41,6 @@ const Receipt = () => {
         isPaid: true,
       };
       const response = await axios.patch(url, data);
-      // delete extras from the database
-      const deleteExtrasUrl = `${TAP_TRACK_URL}/users/menu-items/extras/table/${receipt.tableNumber}`;
-      await axios.delete(deleteExtrasUrl);
       setModalVisible((prevModalVisible) => !prevModalVisible);
       // navigate to the home screen
       router.push("/(tabs)/(home)");

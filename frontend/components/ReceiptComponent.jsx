@@ -1,32 +1,9 @@
-import axios from "axios";
-import { TAP_TRACK_URL } from "@env";
 import { View, Text, ScrollView, ActivityIndicator } from "react-native";
-import { useEffect, useState } from "react";
 
 const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
-  const [oldExtras, setOldExtras] = useState([]);
   const items = receipt.items || [];
   const order = receipt.orderId || {};
-  const extras = order.extras || [];
   const transactionDate = receipt.transactionDate || "";
-
-  useEffect(() => {
-    console.log("rendering...");
-    const getExtras = () => {
-      extras.map(async (ext) => {
-        try {
-          const url = `${TAP_TRACK_URL}/users/menu-items/extras/${ext}`;
-          const { data } = await axios.get(url);
-          const oldExtra = data.extra[0] && data.extra[0].oldExtra;
-          console.log("oldExtra", oldExtra);
-          setOldExtras((oldExtras) => [...oldExtras, oldExtra]);
-        } catch (error) {
-          console.log("error", error);
-        }
-      });
-    };
-    getExtras();
-  }, [order]);
 
   return (
     <ScrollView className="w-full flex-1 bg-gray-200 rounded-lg p-8">
@@ -53,10 +30,8 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
           <View className="border-b-2 border-dashed">
             {items &&
               items.map((item, index) => {
-                const connectedExtra = oldExtras?.find(
-                  (ext) => ext.itemName === item.itemName
-                );
-                console.log("connectedExtra", connectedExtra);
+                console.log("extras", item.extras);
+
                 return (
                   <View key={index} className="border-b border-gray-300 pb-2">
                     <View className="flex flex-row justify-between pt-4">
@@ -67,17 +42,19 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
                         {item.price * item.quantity}
                       </Text>
                     </View>
-                    {connectedExtra && (
-                      <View className="flex flex-row justify-between pt-4">
-                        <Text className=""></Text>
-                        <Text className="w-[50%]">
-                          +{connectedExtra?.extra}
-                        </Text>
-                        <Text className="text-right">
-                          {connectedExtra?.price}
-                        </Text>
-                      </View>
-                    )}
+                    {item.extras &&
+                      item.extras.map((extra, index) => (
+                        <View
+                          className="flex flex-row justify-between pt-4"
+                          key={index}
+                        >
+                          <Text className=""></Text>
+                          <Text className="w-[50%]">+{extra?.extraName}</Text>
+                          <Text className="text-right">
+                            {extra?.extraPrice}
+                          </Text>
+                        </View>
+                      ))}
                   </View>
                 );
               })}
@@ -85,9 +62,7 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
           <View className="mb-10">
             <View className="flex-row justify-between items-center pt-4">
               <Text className="text-lg font-bold">Total</Text>
-              <Text className="text-lg font-bold">
-                {receipt?.totalAmount}€
-              </Text>
+              <Text className="text-lg font-bold">{receipt?.totalAmount}€</Text>
             </View>
             {tipAmount > 0 && (
               <View className="flex-row justify-between items-center pt-4">

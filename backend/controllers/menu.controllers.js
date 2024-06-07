@@ -1,7 +1,6 @@
 import asyncHandler from "../config/asyncHandler.js";
 import FoodModel from "../models/food.model.js";
 import BeverageModel from "../models/beverage.model.js";
-import ExtraModel, { OldExtraModel } from "../models/extra.model.js";
 
 /* 
 @desc   Get all menu items
@@ -266,78 +265,6 @@ const deleteBeverageItem = asyncHandler(async (req, res) => {
 });
 
 /* 
-@desc   ADD extras
-@route  POST /users/menu-items/extras
-@access Private
-*/
-const addExtra = asyncHandler(async (req, res) => {
-  const { extra, price, itemId, itemType, tableNumber, itemName } = req.body;
-  if (!extra || !price) {
-    res.status(400);
-    throw new Error("Please fill in all fields");
-  }
-
-  const extraItem = {
-    extra,
-    price,
-    itemId,
-    itemType,
-    tableNumber,
-    itemName,
-  };
-
-  const newExtra = await ExtraModel.create(extraItem);
-  console.log("newExtra", newExtra);
-  const oldExtra = await OldExtraModel.create({
-    oldExtra: extraItem,
-    extraId: newExtra._id,
-  });
-  res.status(201).json({ message: "Extra added", data: newExtra });
-});
-
-/* 
-@desc   Get extras by item id
-@route  GET /users/menu-items/extras/table/:tableNumber
-@access Private
-*/
-const getExtrasByTable = asyncHandler(async (req, res) => {
-  const extras = await ExtraModel.find({ tableNumber: req.params.tableNumber });
-  if (!extras) {
-    res.status(404);
-    throw new Error("No extras found");
-  }
-  res.status(200).json({
-    message: "Extras",
-    numberExtras: extras.length,
-    data: extras,
-  });
-});
-
-/* 
-@desc   Get extra by id
-@route  GET /users/menu-items/extras/:id
-@access Private
-*/
-const getExtraById = asyncHandler(async (req, res) => {
-  const extra = await OldExtraModel.find({ extraId: req.params.id });
-  if (!extra) {
-    res.status(404);
-    throw new Error("Extra not found");
-  }
-  res.status(200).json({ extra });
-});
-
-/* 
-@desc   Delete extras by table
-@route  DELETE /users/menu-items/extras/table/:tableNumber
-@access Private
-*/
-const deleteExtrasByTable = asyncHandler(async (req, res) => {
-  await ExtraModel.deleteMany({ tableNumber: req.params.tableNumber });
-  res.status(200).json({ message: "Extras deleted" });
-});
-
-/* 
 @desc   Update item stock
 @route  PUT /users/menu-items/stock/:type/:id
 @access Private
@@ -382,9 +309,5 @@ export {
   updateBeverageItem,
   deleteFoodItem,
   deleteBeverageItem,
-  addExtra,
-  getExtrasByTable,
-  getExtraById,
-  deleteExtrasByTable,
   updateItemStock,
 };

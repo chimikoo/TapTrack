@@ -19,8 +19,8 @@ const DropDownMenu = ({
 
   const menuItems = [
     { label: "Profile", action: onProfile },
-    { label: "Orders", action: onOrders },
     { label: "Settings", action: onSettings },
+    { label: "Orders", action: onOrders },
     { label: "Receipts", action: onReceipts },
     { label: "Time Track", action: onTimeTrack },
     { label: "Logout", action: onLogout },

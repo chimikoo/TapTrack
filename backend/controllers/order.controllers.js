@@ -10,8 +10,7 @@ import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 */
 const addOrder = asyncHandler(async (req, res) => {
   const userId = req.userId;
-  const { tableNumber, drinks, starter, main, side, dessert, extras } =
-    req.body;
+  const { tableNumber, drinks, starter, main, side, dessert } = req.body;
   if (!tableNumber || !drinks || !starter || !main || !side || !dessert) {
     res.status(400);
     throw new Error("Please provide all required fields");
@@ -59,7 +58,6 @@ const addOrder = asyncHandler(async (req, res) => {
     main,
     side,
     dessert,
-    extras,
   });
 
   console.log("newOrder", newOrder);
@@ -91,7 +89,6 @@ const getAllOrders = asyncHandler(async (req, res) => {
     "side.dishItem",
     "dessert.dishItem",
     "drinks.drinkItem",
-    "extras",
   ]);
   if (orders.length === 0 || !orders) {
     res.status(404);
@@ -117,7 +114,6 @@ const getOrderById = asyncHandler(async (req, res) => {
     "side.dishItem",
     "dessert.dishItem",
     "drinks.drinkItem",
-    "extras",
   ]);
   if (!order) {
     res.status(404);
