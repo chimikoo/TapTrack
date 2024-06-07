@@ -14,6 +14,7 @@ import {
   showAvatar,
   getTables,
   getTableByNumber,
+  getUserById,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import isAdminOrManager from "../middlewares/isAdminOrManager.js";
@@ -40,8 +41,8 @@ router.patch("/", isAuth, upload.single("avatar"), updateUser);
 // GET /users
 router.get("/", isAuth, getUsersList);
 
-// GET /users/info/:username
-router.get("/info/:username", isAuth, getUserByUsername);
+// GET /users/info/:id
+router.get("/info/:id", isAuth, getUserById);
 
 // PATCH /users/role/:id
 router.patch("/role/:id", isAuth, updateUserRole);
