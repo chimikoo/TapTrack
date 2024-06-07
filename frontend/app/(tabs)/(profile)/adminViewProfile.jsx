@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -13,10 +13,9 @@ import {
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { UserContext } from "../../../contexts/userContext.jsx";
 import { TAP_TRACK_URL } from "@env";
 import CustomButton from "../../../components/CustomButton";
-import TimeTrackComp from "../../../components/TimeTrack.jsx";
+import AdminUserTimeTrack from "../../../components/AdminUserTimeTrack"; // Import the custom time track component
 import { Picker } from "@react-native-picker/picker";
 import edit_icon from "../../../assets/icons/edit_icon.png";
 
@@ -74,7 +73,7 @@ const AdminProfile = () => {
     try {
       const token = await SecureStore.getItemAsync("userToken");
       const response = await axios.patch(
-        `${TAP_TRACK_URL}/users/role/${user._id}`,
+        `${TAP_TRACK_URL}/users/role/${userId}`,
         { role: newRole },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -136,7 +135,7 @@ const AdminProfile = () => {
             </>
           )}
         </View>
-        <TimeTrackComp />
+        <AdminUserTimeTrack userId={userId} />
       </ScrollView>
 
       <Modal

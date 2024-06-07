@@ -144,6 +144,29 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
 });
 
 /* 
+@desc     Logout a specific user by ID
+@route    POST /users/logout/:userId
+@access   Private (Admin or Manager)
+*/
+const logoutUserById = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  // Record the end time of the last shift
+  const timeTrack = await endShift(userId);
+
+  // Set user as offline
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+  user.isOnline = false;
+  await user.save();
+
+  res.status(200).json({ message: "User logged out successfully", timeTrack });
+});
+
+/* 
 @desc     Update user info
 @route    PATCH /users
 @access   Private
@@ -413,4 +436,5 @@ export {
   showAvatar,
   getTables,
   getTableByNumber,
+  logoutUserById,
 };

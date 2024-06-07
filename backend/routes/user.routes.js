@@ -13,6 +13,7 @@ import {
   showAvatar,
   getTables,
   getTableByNumber,
+  logoutUserById,
   getUserById,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
@@ -49,8 +50,11 @@ router.patch("/role/:userId", isAuth, updateUserRole);
 // DELETE /users/:userId
 router.delete("/:userId", isAuth, deleteUser);
 
-// PUT /users/forcedLogout/
+// PUT /users/forcedLogout/ (all users)
 router.put("/forcedLogout", isAuth, isAdminOrManager, forceLogoutUsers);
+
+// PUT /users/forcedLogout/:userId
+router.put("/forcedLogout/:userId", isAuth, isAdminOrManager, logoutUserById);
 
 // GET /users/timeTrack
 router.get("/timeTrack", isAuth, timeTrack);
