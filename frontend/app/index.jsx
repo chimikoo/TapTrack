@@ -64,6 +64,7 @@ export default function App() {
           role: data.user.role,
           avatar: data.user.avatar,
           id: data.user.id,
+          isOnline: data.user.isOnline,
         };
         await SecureStore.setItemAsync("userToken", data.token);
         await SecureStore.setItemAsync("userData", JSON.stringify(userData));
