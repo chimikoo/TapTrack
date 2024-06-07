@@ -10,7 +10,6 @@ import {
   getUserTimeTrack,
   updateUserRole,
   getUsersList,
-  getUserById,
   showAvatar,
   getTables,
   getTableByNumber,
