@@ -1,107 +1,197 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useCallback, useContext, useState, useEffect } from "react";
 import {
-  SafeAreaView,
   View,
   Text,
-  TouchableOpacity,
   Image,
-  FlatList,
   ActivityIndicator,
   Alert,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
-import Xbutton from "../../../components/XButton";
+import * as SecureStore from "expo-secure-store";
 import CustomButton from "../../../components/CustomButton";
-import { TAP_TRACK_URL } from "@env"; // Ensure this is defined in your .env file
 import { UserContext } from "../../../contexts/userContext.jsx";
+import { TAP_TRACK_URL } from "@env";
+import TimeTrackComp from "../../../components/TimeTrack.jsx";
+import edit_icon from "../../../assets/icons/edit_icon.png";
+import { Picker } from "@react-native-picker/picker";
+import { useRouter, useSearchParams } from "expo-router";
 
-const EmployeeScreen = () => {
+const AdminProfile = () => {
   const { dispatch } = useContext(UserContext);
-  const [employees, setEmployees] = useState([]);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true); // Track if more data is available
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("");
   const router = useRouter();
+  const { userId } = useSearchParams(); // Use useSearchParams to get userId
 
   useEffect(() => {
-    fetchEmployees(1); // Fetch the first page of employees
-  }, []);
+    console.log("UserId from params:", userId);
+    if (userId) {
+      fetchUser(userId);
+    }
+  }, [userId]);
 
-  const fetchEmployees = async (pageNumber) => {
+  const fetchUser = async (userId) => {
+    setLoading(true);
     try {
-      const response = await axios.get(`${TAP_TRACK_URL}/users`, {
-        params: { page: pageNumber, limit: 10 },
-      });
-      const newEmployees = response.data.employees;
+      const token = await SecureStore.getItemAsync("userToken");
+      if (!token) {
+        throw new Error("No token found in SecureStore");
+      }
+      console.log("Retrieved token from SecureStore:", token);
 
-      if (newEmployees.length > 0) {
-        setEmployees((prevEmployees) =>
-          pageNumber === 1 ? newEmployees : [...prevEmployees, ...newEmployees]
-        );
-        setPage(pageNumber);
-        setHasMore(newEmployees.length === 10); // Check if there might be more data
+      const response = await axios.get(
+        `${TAP_TRACK_URL}/users/info/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      console.log("API response:", response);
+
+      if (response.status === 200) {
+        const fetchedUserData = response.data.employee;
+        if (!fetchedUserData) {
+          throw new Error("No employee data found in response");
+        }
+        setUser(fetchedUserData);
+        setSelectedRole(fetchedUserData.role);
+        console.log("Fetched user data:", fetchedUserData);
       } else {
-        setHasMore(false); // No more data available
+        throw new Error(`Unexpected response code: ${response.status}`);
       }
     } catch (error) {
-      console.error("Error fetching employees:", error);
-      Alert.alert("Error", "Failed to load employees");
+      console.error("Error fetching user data:", error);
+      Alert.alert(
+        "Error",
+        `Failed to load user data. ${error.response?.data?.message || error.message}`
+      );
     } finally {
       setLoading(false);
-      setLoadingMore(false);
     }
   };
 
-  const loadMoreEmployees = () => {
-    if (!loadingMore && hasMore) {
-      setLoadingMore(true);
-      fetchEmployees(page + 1);
+  const updateRole = async (newRole) => {
+    try {
+      const token = await SecureStore.getItemAsync("userToken");
+      const response = await axios.patch(
+        `${TAP_TRACK_URL}/users/role/${user._id}`,
+        { role: newRole },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        setUser({ ...user, role: newRole });
+        setSelectedRole(newRole);
+        Alert.alert("Success", "Role updated successfully");
+      } else {
+        throw new Error(`Unexpected response code: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      Alert.alert(
+        "Error",
+        `Failed to update user role. ${error.response?.data?.message || error.message}`
+      );
     }
   };
 
-  const getItemBackgroundColor = (isOnline) => {
-    return isOnline ? "bg-green-500" : "bg-red-500";
+  const handleRoleUpdate = () => {
+    updateRole(selectedRole);
+    setModalVisible(false);
   };
 
   return (
-    <SafeAreaView className="flex-1 mt-4 bg-primary-lighter">
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <FlatList
-          data={employees}
-          keyExtractor={(item) => item._id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              className={`flex-row items-center p-2 my-2 mx-4 rounded-lg ${getItemBackgroundColor(item.isOnline)}`}
-              onPress={() => router.push("/(tabs)/(profile)/adminViewProfile")}
-            >
-              <Image
-                source={{ uri: item.avatar || "https://example.com/user-avatar.png" }}
-                className="w-10 h-10 rounded-full mr-2"
-              />
-              <Text className="flex-1 text-white">{`${item.firstName} ${item.lastName}`}</Text>
-              {item.role !== "Manager" && <Xbutton />}
-            </TouchableOpacity>
+    <SafeAreaView className="flex-1 bg-primary-lighter justify-start items-center">
+      <ScrollView>
+        <View className="items-center">
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            user && (
+              <>
+                <Image
+                  source={{
+                    uri: `${TAP_TRACK_URL}/users/${user.username}/avatar?${Math.random()}`,
+                    headers: { Authorization: `Bearer ${user.token}` },
+                  }}
+                  className="w-30 h-30 rounded-full"
+                  style={{ width: 160, height: 160 }}
+                  onError={(e) =>
+                    console.log("Image Load Error:", e.nativeEvent.error)
+                  }
+                />
+                <View className="flex-row items-center mt-6">
+                  <Text className="text-4xl font-bold">
+                    {`${user.firstName} ${user.lastName}`}
+                  </Text>
+                </View>
+                <Text className="text-lg text-gray-600 mt-4">{user.email}</Text>
+                <View className="flex-row items-center mt-2">
+                  <Text className="text-lg text-gray-600">{user.role}</Text>
+                  <TouchableOpacity className='' onPress={() => setModalVisible(true)}>
+                    <Image
+                      source={edit_icon}
+                      className="w-6 h-6 ml-2"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </>
+            )
           )}
-          onEndReached={loadMoreEmployees}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={
-            loadingMore && <ActivityIndicator size="small" color="#0000ff" />
-          }
-        />
-      )}
-      <View className="flex items-center bg-primary-lighter">
-        <CustomButton
-          text="Register Employee"
-          containerStyles="w-[75%] mt-2 mb-2"
-          handlePress={() => router.push("registerUser")}
-        />
-      </View>
+        </View>
+        <TimeTrackComp />
+      </ScrollView>
+
+      {/* Modal for role selection */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View className="w-full h-full bg-black opacity-50 absolute top-0 left-0"></View>
+        <View className="w-[70%] h-[200px] p-4 border border-primary-dark rounded-lg flex justify-center items-center absolute top-[40%] left-[15%] bg-myWhite">
+          <Picker
+            selectedValue={selectedRole}
+            onValueChange={(itemValue) => setSelectedRole(itemValue)}
+            style={{ width: "100%", marginBottom: 20 }}
+          >
+            <Picker.Item label="Admin" value="admin" />
+            <Picker.Item label="Manager" value="manager" />
+            <Picker.Item label="Chef" value="chef" />
+            <Picker.Item label="Waiter" value="waiter" />
+            <Picker.Item label="Bartender" value="bartender" />
+          </Picker>
+          <View className="flex-row justify-between w-full">
+            <CustomButton
+              text="Cancel"
+              containerStyles="w-[40%]"
+              handlePress={() => setModalVisible(false)}
+            />
+            <CustomButton
+              text="Save"
+              containerStyles="w-[40%]"
+              handlePress={handleRoleUpdate}
+            />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
 
-export default EmployeeScreen;
+export default AdminProfile;

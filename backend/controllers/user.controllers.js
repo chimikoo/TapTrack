@@ -315,20 +315,17 @@ const getUsersList = asyncHandler(async (req, res) => {
 });
 
 /* 
-@desc     Get a user by username
-@route    GET /users/info/:username
+@desc     Get a user by ID
+@route    GET /users/info/:userId
 @access   Private
 */
-const getUserByUsername = asyncHandler(async (req, res) => {
-  const { username } = req.params;
-
-  // Fetch user data from the database by username, not by ObjectId
-  const user = await UserModel.findOne({ username });
-
+const getUserById = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = await UserModel.findById(userId);
   if (!user) {
-    return res.status(404).json({ message: 'User not found' });
+    res.status(404).json({ message: "User not found" });
+    return;
   }
-
   res.status(200).json({
     employee: {
       username: user.username,
@@ -337,6 +334,7 @@ const getUserByUsername = asyncHandler(async (req, res) => {
       email: user.email,
       role: user.role,
       avatar: user.avatar,
+      userId: user._id,
     },
   });
 });
@@ -408,7 +406,7 @@ export {
   timeTrack,
   getUserTimeTrack,
   getUsersList,
-  getUserByUsername,
+  getUserById,
   showAvatar,
   getTables,
   getTableByNumber,

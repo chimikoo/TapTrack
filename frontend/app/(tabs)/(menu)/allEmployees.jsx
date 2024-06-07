@@ -61,6 +61,9 @@ const EmployeeScreen = () => {
     }
   };
 
+  const getItemBackgroundColor = (isOnline) => {
+    return isOnline ? "bg-green-500" : "bg-red-500";
+  };
 
   return (
     <SafeAreaView className="flex-1 mt-4 bg-primary-lighter">
@@ -72,10 +75,11 @@ const EmployeeScreen = () => {
           keyExtractor={(item) => item._id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity
-              className={`flex-row items-center p-2 my-2 mx-4 rounded-lg ${
-                item.role === "Manager" ? "bg-secondary" : "bg-primary"
-              }`}
-              onPress={() => router.push("/(tabs)/(profile)/adminViewProfile")}
+              className={`flex-row items-center p-2 my-2 mx-4 rounded-lg ${getItemBackgroundColor(item.isOnline)}`}
+              onPress={() => router.push({
+                pathname: "/(tabs)/(profile)/adminViewProfile",
+                params: { userId: item._id },
+              })}
             >
               <Image
                 source={{ uri: item.avatar || "https://example.com/user-avatar.png" }}
