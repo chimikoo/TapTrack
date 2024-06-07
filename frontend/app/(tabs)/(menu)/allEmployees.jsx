@@ -70,7 +70,9 @@ const EmployeeScreen = () => {
   };
 
   const getAvatarUrl = (username, avatar) => {
-    return avatar ? `${TAP_TRACK_URL}/users/${username}/avatar` : "https://example.com/user-avatar.png";
+    return avatar
+      ? `${TAP_TRACK_URL}/users/${username}/avatar?${Math.random()}`
+      : "https://example.com/user-avatar.png";
   };
 
   const handleLogoutUser = async () => {
@@ -78,10 +80,14 @@ const EmployeeScreen = () => {
 
     try {
       const token = await SecureStore.getItemAsync("userToken");
-      const response = await axios.put(`${TAP_TRACK_URL}/users/forcedLogout/${selectedUser._id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
+      const response = await axios.put(
+        `${TAP_TRACK_URL}/users/forcedLogout/${selectedUser._id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        }
+      );
 
       if (response.status === 200) {
         Alert.alert("Success", "User logged out successfully");
@@ -96,7 +102,12 @@ const EmployeeScreen = () => {
       }
     } catch (error) {
       console.error("Error logging out user:", error);
-      Alert.alert("Error", `Failed to log out user. ${error.response?.data?.message || error.message}`);
+      Alert.alert(
+        "Error",
+        `Failed to log out user. ${
+          error.response?.data?.message || error.message
+        }`
+      );
     } finally {
       setModalVisible(false);
       setSelectedUser(null);
@@ -113,7 +124,9 @@ const EmployeeScreen = () => {
           keyExtractor={(item) => item._id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity
-              className={`flex-row items-center my-2 mx-4 rounded-lg rounded-tl-[33px] rounded-bl-[33px] ${getItemBackgroundColor(item.isOnline)}`}
+              className={`flex-row items-center my-2 mx-4 rounded-lg rounded-tl-[33px] rounded-bl-[33px] ${getItemBackgroundColor(
+                item.isOnline
+              )}`}
               onPress={() => {
                 console.log(`Navigating to profile of user: ${item._id}`);
                 router.push(`/adminViewProfile?userId=${item._id}`);
@@ -125,11 +138,13 @@ const EmployeeScreen = () => {
               />
               <Text className="flex-1 text-white pl-5 text-lg">{`${item.firstName} ${item.lastName}`}</Text>
               {item.isOnline && item.role !== "Manager" && (
-                <Xbutton onPress={() => {
-                  console.log(`Xbutton pressed for user: ${item._id}`);
-                  setSelectedUser(item);
-                  setModalVisible(true);
-                }} />
+                <Xbutton
+                  onPress={() => {
+                    console.log(`Xbutton pressed for user: ${item._id}`);
+                    setSelectedUser(item);
+                    setModalVisible(true);
+                  }}
+                />
               )}
             </TouchableOpacity>
           )}
@@ -153,28 +168,29 @@ const EmployeeScreen = () => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
-          <View className="bg-white p-5 rounded-lg w-[80%]">
-            <Text className="text-lg font-bold mb-4">Confirm Logout</Text>
-            <Text className="text-base mb-4">
-              Are you sure you want to log out {selectedUser?.firstName} {selectedUser?.lastName}?
-            </Text>
-            <View className="flex-row justify-around">
-              <TouchableOpacity
-                className="bg-red-500 p-3 rounded-lg"
-                onPress={handleLogoutUser}
-              >
-                <Text className="text-white">Yes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="bg-gray-300 p-3 rounded-lg"
-                onPress={() => setModalVisible(false)}
-              >
-                <Text className="text-black">No</Text>
-              </TouchableOpacity>
+          <View className="flex-1 justify-center items-center bg-black opacity-90">
+            <View className="bg-white p-5 rounded-lg w-[80%]">
+              <Text className="text-lg font-bold mb-4">Confirm Logout</Text>
+              <Text className="text-base mb-4 ">
+                Are you sure you want to log out {selectedUser?.firstName}{" "}
+                {selectedUser?.lastName}?
+              </Text>
+              <View className="flex-row justify-around">
+                <TouchableOpacity
+                  className="bg-red-500 p-3 rounded-lg w-[35%] items-center justify-center"
+                  onPress={handleLogoutUser}
+                >
+                  <Text className="text-white">Yes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="bg-gray-300 p-3 rounded-lg w-[35%] items-center justify-center"
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text className="text-black">No</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
       </Modal>
     </SafeAreaView>
   );
