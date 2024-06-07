@@ -49,11 +49,6 @@ const register = asyncHandler(async (req, res) => {
 @access   Public
 */
 const login = asyncHandler(async (req, res) => {
-  if (req.cookies.token) {
-    res.status(200).json({ message: "User is already logged in" });
-    return;
-  }
-
   const { username, password } = req.body;
 
   const user = await UserModel.findOne({ username });

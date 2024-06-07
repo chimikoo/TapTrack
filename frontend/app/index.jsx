@@ -51,10 +51,10 @@ export default function App() {
       const { data } = await axios.post(`${TAP_TRACK_URL}/users/login`, form, {
         withCredentials: true,
       });
-
+  
       console.log("Server response received", data);
-
-      if (data.message === "User logged in successfully") {
+  
+      if (data.message === "User logged in successfully" || data.message === "User is already logged in") {
         const userData = {
           token: data.token,
           username: form.username,
@@ -71,10 +71,6 @@ export default function App() {
         console.log("User data and token stored successfully");
         dispatch({ type: "LOGIN", payload: userData });
         router.push("/(tabs)/(home)");
-      } else if (data.message === "User is already logged in") {
-        console.log("User is already logged in, logging out and retrying");
-        await logout();
-        submit(); // Retry login after logging out
       } else {
         Alert.alert("Login Failed", data.message);
       }
