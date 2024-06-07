@@ -45,6 +45,7 @@ const EmployeeScreen = () => {
       } else {
         setHasMore(false); // No more data available
       }
+      console.log("Fetched employees:", newEmployees);
     } catch (error) {
       console.error("Error fetching employees:", error);
       Alert.alert("Error", "Failed to load employees");
@@ -76,10 +77,10 @@ const EmployeeScreen = () => {
           renderItem={({ item }) => (
             <TouchableOpacity
               className={`flex-row items-center p-2 my-2 mx-4 rounded-lg ${getItemBackgroundColor(item.isOnline)}`}
-              onPress={() => router.push({
-                pathname: "/(tabs)/(profile)/adminViewProfile",
-                params: { userId: item._id },
-              })}
+              onPress={() => {
+                console.log("Navigating to profile of user:", item._id);
+                router.push(`/adminViewProfile?userId=${item._id}`);
+              }}
             >
               <Image
                 source={{ uri: item.avatar || "https://example.com/user-avatar.png" }}

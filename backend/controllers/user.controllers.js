@@ -321,8 +321,10 @@ const getUsersList = asyncHandler(async (req, res) => {
 */
 const getUserById = asyncHandler(async (req, res) => {
   const { userId } = req.params;
+  console.log('Fetching user by ID:', userId);
   const user = await UserModel.findById(userId);
   if (!user) {
+    console.log('User not found:', userId);
     res.status(404).json({ message: "User not found" });
     return;
   }
@@ -338,6 +340,7 @@ const getUserById = asyncHandler(async (req, res) => {
     },
   });
 });
+
 
 /* 
 @desc     Show user's avatar

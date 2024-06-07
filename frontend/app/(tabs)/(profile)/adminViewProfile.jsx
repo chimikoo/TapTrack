@@ -1,59 +1,50 @@
-import React, { useCallback, useContext, useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
+  SafeAreaView,
   View,
   Text,
+  TouchableOpacity,
   Image,
+  ScrollView,
   ActivityIndicator,
   Alert,
-  ScrollView,
-  TouchableOpacity,
   Modal,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import CustomButton from "../../../components/CustomButton";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { UserContext } from "../../../contexts/userContext.jsx";
 import { TAP_TRACK_URL } from "@env";
+import CustomButton from "../../../components/CustomButton";
 import TimeTrackComp from "../../../components/TimeTrack.jsx";
-import edit_icon from "../../../assets/icons/edit_icon.png";
 import { Picker } from "@react-native-picker/picker";
-import { useRouter, useSearchParams } from "expo-router";
+import edit_icon from "../../../assets/icons/edit_icon.png";
 
 const AdminProfile = () => {
-  const { dispatch } = useContext(UserContext);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRole, setSelectedRole] = useState("");
+  const { userId } = useLocalSearchParams();
   const router = useRouter();
-  const { userId } = useSearchParams(); // Use useSearchParams to get userId
 
   useEffect(() => {
     console.log("UserId from params:", userId);
     if (userId) {
-      fetchUser(userId);
+      fetchUser();
     }
   }, [userId]);
 
-  const fetchUser = async (userId) => {
+  const fetchUser = async () => {
     setLoading(true);
     try {
       const token = await SecureStore.getItemAsync("userToken");
-      if (!token) {
-        throw new Error("No token found in SecureStore");
-      }
       console.log("Retrieved token from SecureStore:", token);
 
-      const response = await axios.get(
-        `${TAP_TRACK_URL}/users/info/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${TAP_TRACK_URL}/users/info/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      });
 
       console.log("API response:", response);
 
@@ -86,9 +77,7 @@ const AdminProfile = () => {
         `${TAP_TRACK_URL}/users/role/${user._id}`,
         { role: newRole },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         }
       );
@@ -114,49 +103,42 @@ const AdminProfile = () => {
     setModalVisible(false);
   };
 
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter justify-start items-center">
       <ScrollView>
         <View className="items-center">
-          {loading ? (
-            <ActivityIndicator size="large" color="#0000ff" />
-          ) : (
-            user && (
-              <>
-                <Image
-                  source={{
-                    uri: `${TAP_TRACK_URL}/users/${user.username}/avatar?${Math.random()}`,
-                    headers: { Authorization: `Bearer ${user.token}` },
-                  }}
-                  className="w-30 h-30 rounded-full"
-                  style={{ width: 160, height: 160 }}
-                  onError={(e) =>
-                    console.log("Image Load Error:", e.nativeEvent.error)
-                  }
-                />
-                <View className="flex-row items-center mt-6">
-                  <Text className="text-4xl font-bold">
-                    {`${user.firstName} ${user.lastName}`}
-                  </Text>
-                </View>
-                <Text className="text-lg text-gray-600 mt-4">{user.email}</Text>
-                <View className="flex-row items-center mt-2">
-                  <Text className="text-lg text-gray-600">{user.role}</Text>
-                  <TouchableOpacity className='' onPress={() => setModalVisible(true)}>
-                    <Image
-                      source={edit_icon}
-                      className="w-6 h-6 ml-2"
-                    />
-                  </TouchableOpacity>
-                </View>
-              </>
-            )
+          {user && (
+            <>
+              <Image
+                source={{
+                  uri: `${TAP_TRACK_URL}/users/${user.username}/avatar?${Math.random()}`,
+                  headers: { Authorization: `Bearer ${user.token}` },
+                }}
+                className="w-30 h-30 rounded-full"
+                style={{ width: 160, height: 160 }}
+              />
+              <View className="flex-row items-center mt-6">
+                <Text className="text-4xl font-bold">
+                  {`${user.firstName} ${user.lastName}`}
+                </Text>
+              </View>
+              <Text className="text-lg text-gray-600 mt-4">{user.email}</Text>
+              <View className="flex-row items-center mt-2">
+                <Text className="text-lg text-gray-600">{user.role}</Text>
+                <TouchableOpacity onPress={() => setModalVisible(true)}>
+                  <Image source={edit_icon} className="w-6 h-6 ml-2" />
+                </TouchableOpacity>
+              </View>
+            </>
           )}
         </View>
         <TimeTrackComp />
       </ScrollView>
 
-      {/* Modal for role selection */}
       <Modal
         animationType="slide"
         transparent={true}

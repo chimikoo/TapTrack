@@ -40,14 +40,14 @@ router.patch("/", isAuth, upload.single("avatar"), updateUser);
 // GET /users
 router.get("/", isAuth, getUsersList);
 
-// GET /users/info/:id
-router.get("/info/:id", isAuth, getUserById);
+// GET /users/info/:userId
+router.get("/info/:userId", isAuth, getUserById);
 
-// PATCH /users/role/:id
-router.patch("/role/:id", isAuth, updateUserRole);
+// PATCH /users/role/:userId
+router.patch("/role/:userId", isAuth, updateUserRole);
 
-// DELETE /users/:id
-router.delete("/:id", isAuth, deleteUser);
+// DELETE /users/:userId
+router.delete("/:userId", isAuth, deleteUser);
 
 // PUT /users/forcedLogout/
 router.put("/forcedLogout", isAuth, isAdminOrManager, forceLogoutUsers);
