@@ -113,19 +113,18 @@ const AdminProfile = () => {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
-
+  
       if (response.status === 200) {
         Alert.alert("Success", "User deleted successfully");
         router.push("/(tabs)/(menu)/allEmployees");
+      } else {
         throw new Error(`Unexpected response code: ${response.status}`);
       }
     } catch (error) {
       console.error("Error deleting user:", error);
       Alert.alert(
         "Error",
-        `Failed to delete user. ${
-          error.response?.data?.message || error.message
-        }`
+        `Failed to delete user. ${error.response?.data?.message || error.message}`
       );
     }
   };
