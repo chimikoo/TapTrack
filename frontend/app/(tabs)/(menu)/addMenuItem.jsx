@@ -37,12 +37,11 @@ const AddMenuItem = () => {
     try {
       if (menuItem.category === "beverage") {
         url += "/beverages";
-        const { data } = await axios.post(url, menuItem);
-        console.log("data", data);
       } else {
         url += "/foods";
-        const { data } = await axios.post(url, menuItem);
       }
+      // Send a POST request to the server
+      const { data } = await axios.post(url, menuItem);
       // Show success message
       Alert.alert("Menu item added successfully");
       // Clear the form

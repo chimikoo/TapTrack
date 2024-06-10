@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, Alert } from "react-native";
 import Filters from "../../../components/Filters";
 import Xbutton from "../../../components/XButton.jsx";
 import EditButton from "../../../components/EditButton.jsx";
@@ -7,18 +7,33 @@ import DeleteModal from "../../../components/DeleteModal.jsx";
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { useMenu } from "../../../contexts/menuContext.jsx";
+import { TAP_TRACK_URL } from "@env";
+import axios from "axios";
 
 const EditMenu = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const { menuItems, loading } = useMenu();
+  const { menuItems } = useMenu();
   const [menuSelected, setMenuSelected] = useState(menuItems.foods);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("starter"); // default category
   const [sortBy, setSortBy] = useState("");
   const [limit, setLimit] = useState("");
+  const [deleteId, setDeleteId] = useState("");
 
-  const handleDelete = () => {};
+  const handleDelete = async () => {
+    try {
+      let url = `${TAP_TRACK_URL}/users/menu-items`;
+      if (category === "beverage") {
+        url += `/beverages/${deleteId}`;
+      } else {
+        url += `/foods/${deleteId}`;
+      }
+      await axios.delete(url);
+      Alert.alert("Success", "Item deleted successfully");
+      setModalVisible(false);
+    } catch (error) {}
+  };
 
   const handleFilter = () => {
     let filteredMenu = menuItems.foods.concat(menuItems.beverages);
@@ -86,7 +101,10 @@ const EditMenu = () => {
                   }}
                 />
                 <Xbutton
-                  onPress={() => setModalVisible(true)}
+                  onPress={() => {
+                    setModalVisible(true);
+                    setDeleteId(dish._id);
+                  }}
                   containerStyle="bg-secondary"
                 />
               </View>

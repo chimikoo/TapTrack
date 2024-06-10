@@ -34,13 +34,11 @@ const UpdateMenu = () => {
         let url = `${TAP_TRACK_URL}/users/menu-items`;
         if (itemCategory === "beverage") {
           url += `/beverages/${itemId}`;
-          const { data } = await axios.get(url);
-          setMenuItem(data.data);
         } else {
           url += `/foods/${itemId}`;
-          const { data } = await axios.get(url);
-          setMenuItem(data.data);
         }
+        const { data } = await axios.get(url);
+        setMenuItem(data.data);
       } catch (error) {
         console.log("error", error);
       }
@@ -53,11 +51,12 @@ const UpdateMenu = () => {
       let url = `${TAP_TRACK_URL}/users/menu-items/stock`;
       if (itemCategory === "beverage") {
         url += `/beverages/${itemId}`;
-        const { data } = await axios.put(url, { stock });
       } else {
         url += `/foods/${itemId}`;
-        const { data } = await axios.put(url, { stock });
       }
+      // Send a PUT request to the server
+      const { data } = await axios.put(url, { stock });
+      // Show success message
       setModalVisible(false);
     } catch (error) {
       console.log("error", error);
@@ -69,12 +68,14 @@ const UpdateMenu = () => {
       let url = `${TAP_TRACK_URL}/users/menu-items`;
       if (itemCategory === "beverage") {
         url += `/beverages/${itemId}`;
-        const { data } = await axios.put(url, menuItem);
       } else {
         url += `/foods/${itemId}`;
-        const { data } = await axios.put(url, menuItem);
       }
+      // Send a PUT request to the server
+      const { data } = await axios.put(url, menuItem);
+      // Show success message
       Alert.alert("Success", "Menu item updated successfully");
+      // Redirect to the menu page
       router.push("editMenu");
     } catch (error) {
       console.log("error", error);
