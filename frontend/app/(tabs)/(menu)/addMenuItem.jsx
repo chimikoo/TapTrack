@@ -6,8 +6,10 @@ import { useState } from "react";
 import axios from "axios";
 import { TAP_TRACK_URL } from "@env";
 import { router } from "expo-router";
+import { useMenu } from "../../../contexts/menuContext.jsx";
 
 const AddMenuItem = () => {
+  const { fetchMenuItems } = useMenu();
   const [menuItem, setMenuItem] = useState({
     name: "",
     category: "",
@@ -60,6 +62,8 @@ const AddMenuItem = () => {
         isVegan: false,
         isLactoseFree: false,
       });
+      // Fetch the menu items again to update the list
+      fetchMenuItems();
       // Redirect to the menu page
       router.push("editMenu");
     } catch (error) {

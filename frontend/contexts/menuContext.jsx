@@ -30,7 +30,6 @@ export const MenuProvider = ({ children }) => {
   useEffect(() => {
     fetchMenuItems();
   }, []);
-  
 
   return (
     <MenuContext.Provider value={{ menuItems, loading, fetchMenuItems }}>

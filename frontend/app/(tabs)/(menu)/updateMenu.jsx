@@ -7,8 +7,10 @@ import RestockModal from "../../../components/PaymentModal.jsx";
 import { router, useLocalSearchParams } from "expo-router";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
+import { useMenu } from "../../../contexts/menuContext.jsx";
 
 const UpdateMenu = () => {
+  const { fetchMenuItems } = useMenu();
   const { itemId, itemCategory } = useLocalSearchParams();
   const [modalVisible, setModalVisible] = useState(false);
   const [stock, setStock] = useState(0);
@@ -75,6 +77,8 @@ const UpdateMenu = () => {
       const { data } = await axios.put(url, menuItem);
       // Show success message
       Alert.alert("Success", "Menu item updated successfully");
+      // Fetch the menu items again to update the list
+      fetchMenuItems();
       // Redirect to the menu page
       router.push("editMenu");
     } catch (error) {

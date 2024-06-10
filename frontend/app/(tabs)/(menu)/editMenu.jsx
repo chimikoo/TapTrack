@@ -21,8 +21,6 @@ const EditMenu = () => {
   const [limit, setLimit] = useState("");
   const [deleteId, setDeleteId] = useState("");
 
-  console.log("menuItems", menuItems.beverages.length);
-
   useEffect(() => {
     setMenuSelected(menuItems.foods);
   }, [menuItems]);
@@ -104,7 +102,6 @@ const EditMenu = () => {
                     router.push({
                       pathname: "updateMenu",
                       params: { itemId: dish._id, itemCategory: dish.category },
-                      onPop: fetchMenuItems, // fetch menu items again when returning to this page
                     });
                   }}
                 />
@@ -126,7 +123,6 @@ const EditMenu = () => {
         handlePress={() => {
           router.push({
             pathname: "addMenuItem",
-            onPop: fetchMenuItems, // fetch menu items again when returning to this page
           });
         }}
       />
