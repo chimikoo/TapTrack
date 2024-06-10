@@ -163,10 +163,22 @@ const updateReceipt = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Receipt updated", data: receipt });
 });
 
+const getOldReceiptsByUserId = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    // Assuming old receipts can be identified with a specific field or condition
+    const oldReceipts = await Receipt.find({ userId, isOld: true });
+    res.status(200).json({ data: oldReceipts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export {
   getAllReceipts,
   createReceipt,
   getReceiptById,
   getReceiptByUserId,
   updateReceipt,
+  getOldReceiptsByUserId,
 };
