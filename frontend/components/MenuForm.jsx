@@ -19,6 +19,7 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
           }
           className="w-full"
         >
+          <Picker.Item label="Select the Category" value="" />
           <Picker.Item label="Starter" value="starter" />
           <Picker.Item label="Main" value="main" />
           <Picker.Item label="Side" value="side" />
@@ -26,6 +27,23 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
           <Picker.Item label="Drink" value="beverage" />
         </Picker>
       </View>
+      {menuItem.category === "beverage" ? (
+        <View className="w-full h-[6vh] mb-4 px-4 rounded-lg border border-primary-dark bg-myWhite flex justify-center ">
+          <Picker
+            selectedValue={menuItem.type}
+            onValueChange={(itemValue, itemIndex) =>
+              setMenuItem({ ...menuItem, type: itemValue })
+            }
+            className="w-full"
+          >
+            <Picker.Item label="Select the Drink Type" value="" />
+            <Picker.Item label="Wine" value="wine" />
+            <Picker.Item label="Spirits" value="spirits" />
+            <Picker.Item label="Beer" value="beer" />
+            <Picker.Item label="Soda" value="soda" />
+          </Picker>
+        </View>
+      ) : null}
       <TextInput
         value={menuItem.description}
         placeholder={"Enter Description"}
@@ -60,15 +78,21 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
           return (
             <TextInput
               key={index}
-              value={menuItem.sizesPrices[size].toString()}
+              value={menuItem.sizesPrices[index].price.toString()}
               placeholder={`Enter Price for ${size}`}
               placeholderTextColor="#8e8e8e"
-              onChangeText={(text) =>
+              onChangeText={(text) => {
+                // Create a copy of sizesPrices array
+                const newSizesPrices = menuItem.sizesPrices.map((item, i) =>
+                  i === index ? { ...item, price: text } : item
+                );
+
+                // Update the state
                 setMenuItem({
                   ...menuItem,
-                  sizesPrices: { ...menuItem.sizesPrices, [size]: text },
-                })
-              }
+                  sizesPrices: newSizesPrices.slice(0, 3),
+                });
+              }}
               className="w-full h-[6vh] mb-4 px-4 rounded-lg border border-primary-dark bg-myWhite"
               keyboardType="numeric"
             />

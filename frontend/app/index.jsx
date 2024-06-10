@@ -123,7 +123,6 @@ export default function App() {
           }}
         />
       </View>
-      <Link href="/(tabs)/(menu)/editMenu">Edit menu</Link>
     </SafeAreaView>
   );
 }

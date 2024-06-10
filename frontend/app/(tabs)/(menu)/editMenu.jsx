@@ -6,44 +6,44 @@ import CustomButton from "../../../components/CustomButton.jsx";
 import DeleteModal from "../../../components/DeleteModal.jsx";
 import { useState } from "react";
 import { router } from "expo-router";
-
-const mainDishes = [
-  "Burger",
-  "Pizza",
-  "Pasta",
-  "Salad",
-  "Soup",
-  "Sandwich",
-  "Taco",
-  "Burrito",
-  "Hot Dog",
-  "Sushi",
-  "Ramen",
-  "Curry",
-  "Stir Fry",
-  "Fried Rice",
-  "Noodles",
-  "Kebab",
-  "Shawarma",
-  "Tandoori",
-];
+import { useMenu } from "../../../contexts/menuContext.jsx";
 
 const EditMenu = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const { menuItems, loading } = useMenu();
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("starter"); // default category
+  const [sortBy, setSortBy] = useState("");
+  const [limit, setLimit] = useState("");
 
   const handleDelete = () => {};
 
   return (
     <SafeAreaView className="bg-primary-lighter h-full w-full p-8 flex justify-center items-center">
-      <Filters />
-      <Text className="text-xl font-bold text-primary-dark">Main</Text>
-      <ScrollView className="w-full">
-        {mainDishes.map((dish, index) => (
+      <Filters
+        name={name}
+        setName={setName}
+        price={price}
+        setPrice={setPrice}
+        category={category}
+        setCategory={setCategory}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        limit={limit}
+        setLimit={setLimit}
+      />
+      {/* <Text className="text-xl font-bold text-primary-dark">{category}</Text> */}
+      <ScrollView className="w-full mt-4">
+        {(category === "beverage"
+          ? menuItems.beverages
+          : menuItems.foods.filter((item) => item.category === category)
+        ).map((dish, index) => (
           <View
             key={index}
             className="border-b mb-4 flex-row justify-between items-center"
           >
-            <Text className="text-xl m-2">{dish}</Text>
+            <Text className="text-lg m-2">{dish.name}</Text>
             <View className="w-[25%] flex-row items-center justify-between">
               <EditButton
                 handleEdit={() => {

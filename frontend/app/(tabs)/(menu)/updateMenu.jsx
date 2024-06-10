@@ -8,14 +8,15 @@ const UpdateMenu = () => {
   const [menuItem, setMenuItem] = useState({
     name: "Bruschetta",
     category: "starter",
+    type: "",
     description: "some description for bruschetta",
     ingredients: "some ingredients",
     price: 15,
-    sizesPrices: {
-      small: 0,
-      medium: 0,
-      large: 0,
-    },
+    sizesPrices: [
+      { size: "small", price: 0 },
+      { size: "medium", price: 0 },
+      { size: "large", price: 0 },
+    ],
     isVegan: true,
     isLactoseFree: false,
   });
