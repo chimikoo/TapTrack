@@ -12,7 +12,7 @@ import axios from "axios";
 
 const EditMenu = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const { menuItems } = useMenu();
+  const { menuItems, fetchMenuItems } = useMenu();
   const [menuSelected, setMenuSelected] = useState(menuItems.foods);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -20,6 +20,12 @@ const EditMenu = () => {
   const [sortBy, setSortBy] = useState("");
   const [limit, setLimit] = useState("");
   const [deleteId, setDeleteId] = useState("");
+
+  console.log("menuItems", menuItems.beverages.length);
+
+  useEffect(() => {
+    setMenuSelected(menuItems.foods);
+  }, [menuItems]);
 
   const handleDelete = async () => {
     try {
@@ -32,6 +38,7 @@ const EditMenu = () => {
       await axios.delete(url);
       Alert.alert("Success", "Item deleted successfully");
       setModalVisible(false);
+      fetchMenuItems(); // fetch menu items again to update the list
     } catch (error) {}
   };
 
@@ -97,6 +104,7 @@ const EditMenu = () => {
                     router.push({
                       pathname: "updateMenu",
                       params: { itemId: dish._id, itemCategory: dish.category },
+                      onPop: fetchMenuItems, // fetch menu items again when returning to this page
                     });
                   }}
                 />
@@ -116,7 +124,10 @@ const EditMenu = () => {
         text="Add Item"
         containerStyles="w-[50%] mt-6 -mb-3"
         handlePress={() => {
-          router.push("addMenuItem");
+          router.push({
+            pathname: "addMenuItem",
+            onPop: fetchMenuItems, // fetch menu items again when returning to this page
+          });
         }}
       />
       <DeleteModal

@@ -43,7 +43,7 @@ const AddMenuItem = () => {
       // Send a POST request to the server
       const { data } = await axios.post(url, menuItem);
       // Show success message
-      Alert.alert("Menu item added successfully");
+      Alert.alert("Success", "Menu item added successfully");
       // Clear the form
       setMenuItem({
         name: "",
