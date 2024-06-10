@@ -16,28 +16,28 @@ const Profile = () => {
   const fetchUser = async () => {
     setLoading(true);
     try {
-      const token = await SecureStore.getItemAsync('userToken'); // Get the token from SecureStore
+      const token = await SecureStore.getItemAsync('userToken');
       console.log('Retrieved token from SecureStore:', token);
-
+  
       const response = await axios.get(
-        `${TAP_TRACK_URL}/users/info/${user.username}`,
+        `${TAP_TRACK_URL}/users/info/${user.id}`, // Use user.id instead of user._id if needed
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          withCredentials: true, // Ensure cookies are sent with the request
+          withCredentials: true,
         }
       );
-
+  
       if (response.status === 200) {
         const fetchedUserData = {
           token: token,
-          username: response.data.employee.username,
           firstName: response.data.employee.firstName,
           lastName: response.data.employee.lastName,
           email: response.data.employee.email,
           role: response.data.employee.role,
           avatar: response.data.employee.avatar,
+          id: response.data.employee.userId,
         };
         console.log('Fetched user data:', fetchedUserData);
         dispatch({ type: 'UPDATE_PROFILE', payload: fetchedUserData });

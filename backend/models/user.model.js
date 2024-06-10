@@ -23,7 +23,7 @@ const userModelSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ["waiter", "manager", "admin"],
+    enum: ["waiter", "manager", "admin", "chef", "bartender"],
     default: "waiter",
   },
   avatar: {

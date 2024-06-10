@@ -49,11 +49,6 @@ const register = asyncHandler(async (req, res) => {
 @access   Public
 */
 const login = asyncHandler(async (req, res) => {
-  if (req.cookies.token) {
-    res.status(200).json({ message: "User is already logged in" });
-    return;
-  }
-
   const { username, password } = req.body;
 
   const user = await UserModel.findOne({ username });
@@ -144,6 +139,29 @@ const forceLogoutUsers = asyncHandler(async (req, res) => {
 });
 
 /* 
+@desc     Logout a specific user by ID
+@route    POST /users/logout/:userId
+@access   Private (Admin or Manager)
+*/
+const logoutUserById = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  // Record the end time of the last shift
+  const timeTrack = await endShift(userId);
+
+  // Set user as offline
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+  user.isOnline = false;
+  await user.save();
+
+  res.status(200).json({ message: "User logged out successfully", timeTrack });
+});
+
+/* 
 @desc     Update user info
 @route    PATCH /users
 @access   Private
@@ -212,17 +230,23 @@ const updateUserRole = asyncHandler(async (req, res) => {
 @access   Private
 */
 const deleteUser = asyncHandler(async (req, res) => {
+  console.log("Delete request received for user ID:", req.params.userId);
   const { userRole } = req;
   if (userRole !== "admin") {
     res.status(401);
     throw new Error("You are not authorized to perform this action");
   }
 
-  const { id } = req.params;
-  // delete the user
-  await UserModel.findByIdAndDelete(id);
-  // Send the response
-  res.status(200).json({ message: "User deleted successfully" });
+  const { userId } = req.params;
+  console.log("Attempting to delete user with ID:", userId);
+  const deletedUser = await UserModel.findByIdAndDelete(userId);
+  if (deletedUser) {
+    console.log("User deleted successfully:", deletedUser);
+    res.status(200).json({ message: "User deleted successfully" });
+  } else {
+    console.log("User not found with ID:", userId);
+    res.status(404).json({ message: "User not found" });
+  }
 });
 
 /* 
@@ -315,20 +339,19 @@ const getUsersList = asyncHandler(async (req, res) => {
 });
 
 /* 
-@desc     Get a user by username
-@route    GET /users/info/:username
+@desc     Get a user by ID
+@route    GET /users/info/:userId
 @access   Private
 */
-const getUserByUsername = asyncHandler(async (req, res) => {
-  const { username } = req.params;
-
-  // Fetch user data from the database by username, not by ObjectId
-  const user = await UserModel.findOne({ username });
-
+const getUserById = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  console.log('Fetching user by ID:', userId);
+  const user = await UserModel.findById(userId);
   if (!user) {
-    return res.status(404).json({ message: 'User not found' });
+    console.log('User not found:', userId);
+    res.status(404).json({ message: "User not found" });
+    return;
   }
-
   res.status(200).json({
     employee: {
       username: user.username,
@@ -337,9 +360,11 @@ const getUserByUsername = asyncHandler(async (req, res) => {
       email: user.email,
       role: user.role,
       avatar: user.avatar,
+      userId: user._id,
     },
   });
 });
+
 
 /* 
 @desc     Show user's avatar
@@ -408,8 +433,9 @@ export {
   timeTrack,
   getUserTimeTrack,
   getUsersList,
-  getUserByUsername,
+  getUserById,
   showAvatar,
   getTables,
   getTableByNumber,
+  logoutUserById,
 };

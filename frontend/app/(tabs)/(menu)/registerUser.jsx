@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, ScrollView } from "react-native";
+import { View, Text, TextInput, ScrollView, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import CustomButton from "../../../components/CustomButton";
+import Xbutton from "../../../components/XButton";
+import axios from "axios";
+import { TAP_TRACK_URL } from "@env";
+import { router } from "expo-router";
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState("");
@@ -10,6 +14,8 @@ const RegisterScreen = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const getInputBorderColor = (input) => {
     if (input.length === 0) return "#949494";
@@ -18,6 +24,44 @@ const RegisterScreen = () => {
 
   const getRoleBorderColor = () => {
     return role === "" ? "border-[#FF0000]" : "border-[#293B2F]";
+  };
+
+  const handleRegister = async () => {
+    if (!username || !password || !firstName || !lastName || !email || !role) {
+      Alert.alert("Error", "All fields are required");
+      return;
+    }
+
+    const userData = {
+      username,
+      password,
+      firstName,
+      lastName,
+      email,
+      role,
+    };
+
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${TAP_TRACK_URL}/users/register`,
+        userData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setLoading(false);
+      Alert.alert("Success", "User registered successfully");
+      router.push({
+        pathname: "/(tabs)/(menu)/allEmployees",
+      });
+    } catch (error) {
+      setLoading(false);
+      setError(error.message);
+      Alert.alert("Error", error.message || "Failed to register user");
+    }
   };
 
   return (
@@ -85,8 +129,10 @@ const RegisterScreen = () => {
           </Picker>
         </View>
         <CustomButton
-          text="Register"
+          text={loading ? "Registering..." : "Register"}
           containerStyles="w-[75%] mt-7 bg-blue-500 p-3 rounded-lg"
+          handlePress={handleRegister}
+          disabled={loading}
         />
       </ScrollView>
     </View>

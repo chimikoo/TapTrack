@@ -1,7 +1,12 @@
 import { Slot } from "expo-router";
+import { MenuProvider } from "../../../contexts/menuContext";
 
 const MenuLayout = () => {
-  return <Slot />;
+  return (
+    <MenuProvider>
+      <Slot />
+    </MenuProvider>
+  );
 };
 
 export default MenuLayout;

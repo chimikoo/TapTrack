@@ -23,6 +23,7 @@ const AdminPanel = () => {
               className={`${category.color} m-2 w-24 h-24 p-4 rounded-lg flex justify-center items-center`}
               style={{ width: "35%" }}
               onPress={() => {
+
                 switch (category.type) {
                   case "Employees":
                     router.push("/allEmployees");
@@ -32,6 +33,7 @@ const AdminPanel = () => {
                     break;
                   default:
                     console.log("Navigation not set up for this category");
+
                 }
               }}
             >

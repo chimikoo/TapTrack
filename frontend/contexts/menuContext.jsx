@@ -9,29 +9,30 @@ export const MenuProvider = ({ children }) => {
   const [menuItems, setMenuItems] = useState({ foods: [], beverages: [] });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMenuItems = async () => {
-      try {
-        const [foodsResponse, beveragesResponse] = await Promise.all([
-          axios.get(`${TAP_TRACK_URL}/users/menu-items/foods`),
-          axios.get(`${TAP_TRACK_URL}/users/menu-items/beverages`),
-        ]);
-        setMenuItems({
-          foods: foodsResponse.data.data,
-          beverages: beveragesResponse.data.data,
-        });
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching menu items:", error);
-        setLoading(false);
-      }
-    };
+  const fetchMenuItems = async () => {
+    setLoading(true);
+    try {
+      const [foodsResponse, beveragesResponse] = await Promise.all([
+        axios.get(`${TAP_TRACK_URL}/users/menu-items/foods`),
+        axios.get(`${TAP_TRACK_URL}/users/menu-items/beverages`),
+      ]);
+      setMenuItems({
+        foods: foodsResponse.data.data,
+        beverages: beveragesResponse.data.data,
+      });
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching menu items:", error);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchMenuItems();
   }, []);
 
   return (
-    <MenuContext.Provider value={{ menuItems, loading }}>
+    <MenuContext.Provider value={{ menuItems, loading, fetchMenuItems }}>
       {children}
     </MenuContext.Provider>
   );

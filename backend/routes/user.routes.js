@@ -10,10 +10,11 @@ import {
   getUserTimeTrack,
   updateUserRole,
   getUsersList,
-  getUserByUsername,
   showAvatar,
   getTables,
   getTableByNumber,
+  logoutUserById,
+  getUserById,
 } from "../controllers/user.controllers.js";
 import isAuth from "../middlewares/isAuth.js";
 import isAdminOrManager from "../middlewares/isAdminOrManager.js";
@@ -40,17 +41,20 @@ router.patch("/", isAuth, upload.single("avatar"), updateUser);
 // GET /users
 router.get("/", isAuth, getUsersList);
 
-// GET /users/info/:username
-router.get("/info/:username", isAuth, getUserByUsername);
+// GET /users/info/:userId
+router.get("/info/:userId", isAuth, getUserById);
 
-// PATCH /users/role/:id
-router.patch("/role/:id", isAuth, updateUserRole);
+// PATCH /users/role/:userId
+router.patch("/role/:userId", isAuth, updateUserRole);
 
-// DELETE /users/:id
-router.delete("/:id", isAuth, deleteUser);
+// DELETE /users/:userId
+router.delete("/:userId", isAuth, deleteUser);
 
-// PUT /users/forcedLogout/
+// PUT /users/forcedLogout/ (all users)
 router.put("/forcedLogout", isAuth, isAdminOrManager, forceLogoutUsers);
+
+// PUT /users/forcedLogout/:userId
+router.put("/forcedLogout/:userId", isAuth, isAdminOrManager, logoutUserById);
 
 // GET /users/timeTrack
 router.get("/timeTrack", isAuth, timeTrack);
