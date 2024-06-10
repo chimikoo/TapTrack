@@ -1,7 +1,12 @@
-import { View, Text, SafeAreaView, ScrollView, Alert } from "react-native";
+import {
+  Text,
+  SafeAreaView,
+  Alert,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import Filters from "../../../components/Filters";
 import Xbutton from "../../../components/XButton.jsx";
-import EditButton from "../../../components/EditButton.jsx";
 import CustomButton from "../../../components/CustomButton.jsx";
 import DeleteModal from "../../../components/DeleteModal.jsx";
 import { useEffect, useState } from "react";
@@ -86,37 +91,36 @@ const EditMenu = () => {
         setLimit={setLimit}
         handleFilter={handleFilter}
       />
-      {/* <Text className="text-xl font-bold text-primary-dark">{category}</Text> */}
-      <ScrollView className="w-full mt-4">
-        {menuSelected.map((dish, index) => {
-          const outOfStock = dish.stock === 0 ? "text-secondary" : "";
+
+      <FlatList
+        className="w-[90%] mt-4"
+        data={menuSelected}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => {
+          const outOfStock = item.stock === 0 ? "text-secondary" : "";
           return (
-            <View
-              key={index}
-              className="border-b mb-4 flex-row justify-between items-center"
+            <TouchableOpacity
+              className=" border-b mb-4 flex-row justify-between items-center"
+              onPress={() => {
+                router.push({
+                  pathname: "updateMenu",
+                  params: { itemId: item._id, itemCategory: item.category },
+                });
+              }}
             >
-              <Text className={`${outOfStock} text-lg m-2`}>{dish.name}</Text>
-              <View className="w-[25%] flex-row items-center justify-between">
-                <EditButton
-                  handleEdit={() => {
-                    router.push({
-                      pathname: "updateMenu",
-                      params: { itemId: dish._id, itemCategory: dish.category },
-                    });
-                  }}
-                />
-                <Xbutton
-                  onPress={() => {
-                    setModalVisible(true);
-                    setDeleteId(dish._id);
-                  }}
-                  containerStyle="bg-secondary"
-                />
-              </View>
-            </View>
+              <Text className={`${outOfStock} text-lg m-2`}>{item.name}</Text>
+              <Xbutton
+                onPress={() => {
+                  setModalVisible(true);
+                  setDeleteId(item._id);
+                }}
+                containerStyle="bg-secondary"
+              />
+            </TouchableOpacity>
           );
-        })}
-      </ScrollView>
+        }}
+      />
+
       <CustomButton
         text="Add Item"
         containerStyles="w-[50%] mt-6 -mb-3"
