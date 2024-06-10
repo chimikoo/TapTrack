@@ -2,11 +2,12 @@ import { View, Text, Modal, TextInput } from "react-native";
 import CustomButton from "./CustomButton.jsx";
 
 const PaymentModal = ({
+  text,
   modalVisible,
   setModalVisible,
-  tipAmount,
-  setTipAmount,
-  handlePayment,
+  amount,
+  handleAmount,
+  handleConfirm,
 }) => {
   return (
     <Modal
@@ -20,12 +21,12 @@ const PaymentModal = ({
       <View className="w-full h-full bg-black opacity-50 absolute top-0 left-0"></View>
       <View className="w-[70%] h-[200px] p-4 border border-primary-dark rounded-lg flex justify-center items-center absolute top-[40%] left-[15%] bg-myWhite">
         <View className="flex-row gap-2 items-center">
-          <Text>Add Tip</Text>
+          <Text>{text}</Text>
           <TextInput
-            placeholder="Tip Amount"
+            placeholder="Enter Amount"
             keyboardType="numeric"
-            value={tipAmount}
-            onChangeText={(text) => setTipAmount(Number(text))}
+            value={amount}
+            onChangeText={(text) => handleAmount(Number(text))}
             className="border border-gray-300 rounded p-2 mb-4 w-[60%]"
           />
         </View>
@@ -40,7 +41,7 @@ const PaymentModal = ({
           <CustomButton
             text="Confirm"
             containerStyles="w-[40%]"
-            handlePress={handlePayment}
+            handlePress={handleConfirm}
           />
         </View>
       </View>

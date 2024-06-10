@@ -4,7 +4,7 @@ import Xbutton from "../../../components/XButton.jsx";
 import EditButton from "../../../components/EditButton.jsx";
 import CustomButton from "../../../components/CustomButton.jsx";
 import DeleteModal from "../../../components/DeleteModal.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { useMenu } from "../../../contexts/menuContext.jsx";
 
@@ -16,6 +16,11 @@ const EditMenu = () => {
   const [category, setCategory] = useState("starter"); // default category
   const [sortBy, setSortBy] = useState("");
   const [limit, setLimit] = useState("");
+
+  useEffect(() => {
+    // filter menu items based on the filters
+
+  }, [name, price, category, sortBy, limit]);
 
   const handleDelete = () => {};
 
@@ -38,22 +43,31 @@ const EditMenu = () => {
         {(category === "beverage"
           ? menuItems.beverages
           : menuItems.foods.filter((item) => item.category === category)
-        ).map((dish, index) => (
-          <View
-            key={index}
-            className="border-b mb-4 flex-row justify-between items-center"
-          >
-            <Text className="text-lg m-2">{dish.name}</Text>
-            <View className="w-[25%] flex-row items-center justify-between">
-              <EditButton
-                handleEdit={() => {
-                  router.push("updateMenu");
-                }}
-              />
-              <Xbutton onPress={() => setModalVisible(true)} />
+        ).map((dish, index) => {
+          const outOfStock = dish.stock === 0 ? "text-secondary" : "";
+          return (
+            <View
+              key={index}
+              className="border-b mb-4 flex-row justify-between items-center"
+            >
+              <Text className={`${outOfStock} text-lg m-2`}>{dish.name}</Text>
+              <View className="w-[25%] flex-row items-center justify-between">
+                <EditButton
+                  handleEdit={() => {
+                    router.push({
+                      pathname: "updateMenu",
+                      params: { itemId: dish._id, itemCategory: dish.category },
+                    });
+                  }}
+                />
+                <Xbutton
+                  onPress={() => setModalVisible(true)}
+                  containerStyle="bg-secondary"
+                />
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </ScrollView>
       <CustomButton
         text="Add Item"

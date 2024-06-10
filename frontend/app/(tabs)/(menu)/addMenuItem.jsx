@@ -1,6 +1,6 @@
 import { View, Text, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomBotton from "../../../components/CustomButton.jsx";
+import CustomButton from "../../../components/CustomButton.jsx";
 import MenuForm from "../../../components/MenuForm.jsx";
 import { useState } from "react";
 import axios from "axios";
@@ -75,7 +75,7 @@ const AddMenuItem = () => {
           Add Menu
         </Text>
         <MenuForm menuItem={menuItem} setMenuItem={setMenuItem} />
-        <CustomBotton
+        <CustomButton
           text="Add"
           handlePress={handleAddMenuItem}
           containerStyles="w-[50%] mt-9"

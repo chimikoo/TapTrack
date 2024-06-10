@@ -1,16 +1,23 @@
-import { View, Text } from "react-native";
+import { View, Text, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomBotton from "../../../components/CustomButton.jsx";
+import CustomButton from "../../../components/CustomButton.jsx";
 import MenuForm from "../../../components/MenuForm.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import RestockModal from "../../../components/PaymentModal.jsx";
+import { router, useLocalSearchParams } from "expo-router";
+import { TAP_TRACK_URL } from "@env";
+import axios from "axios";
 
 const UpdateMenu = () => {
+  const { itemId, itemCategory } = useLocalSearchParams();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [stock, setStock] = useState(0);
   const [menuItem, setMenuItem] = useState({
-    name: "Bruschetta",
-    category: "starter",
+    name: "",
+    category: "",
     type: "",
-    description: "some description for bruschetta",
-    ingredients: "some ingredients",
+    description: "",
+    ingredients: "",
     price: 15,
     sizesPrices: [
       { size: "small", price: 0 },
@@ -21,7 +28,58 @@ const UpdateMenu = () => {
     isLactoseFree: false,
   });
 
-  console.log("price", menuItem.price);
+  useEffect(() => {
+    const getMenuItem = async () => {
+      try {
+        let url = `${TAP_TRACK_URL}/users/menu-items`;
+        if (itemCategory === "beverage") {
+          url += `/beverages/${itemId}`;
+          const { data } = await axios.get(url);
+          setMenuItem(data.data);
+        } else {
+          url += `/foods/${itemId}`;
+          const { data } = await axios.get(url);
+          setMenuItem(data.data);
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    getMenuItem();
+  }, [itemId]);
+
+  const handleRestock = async () => {
+    try {
+      let url = `${TAP_TRACK_URL}/users/menu-items/stock`;
+      if (itemCategory === "beverage") {
+        url += `/beverages/${itemId}`;
+        const { data } = await axios.put(url, { stock });
+      } else {
+        url += `/foods/${itemId}`;
+        const { data } = await axios.put(url, { stock });
+      }
+      setModalVisible(false);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      let url = `${TAP_TRACK_URL}/users/menu-items`;
+      if (itemCategory === "beverage") {
+        url += `/beverages/${itemId}`;
+        const { data } = await axios.put(url, menuItem);
+      } else {
+        url += `/foods/${itemId}`;
+        const { data } = await axios.put(url, menuItem);
+      }
+      Alert.alert("Success", "Menu item updated successfully");
+      router.push("editMenu");
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   return (
     <SafeAreaView className="bg-primary-lighter h-full">
@@ -30,12 +88,27 @@ const UpdateMenu = () => {
           Edit Menu
         </Text>
         <MenuForm menuItem={menuItem} setMenuItem={setMenuItem} />
-        <CustomBotton
-          text="Update"
-          handlePress={() => {}}
-          containerStyles="w-[50%] mt-9"
-        />
+        <View className="w-full flex-row justify-between">
+          <CustomButton
+            text="Restock"
+            handlePress={() => setModalVisible(true)}
+            containerStyles="w-[40%] mt-9"
+          />
+          <CustomButton
+            text="Update"
+            handlePress={handleUpdate}
+            containerStyles="w-[40%] mt-9"
+          />
+        </View>
       </View>
+      <RestockModal
+        text="Restock"
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        amount={stock}
+        handleAmount={setStock}
+        handleConfirm={handleRestock}
+      />
     </SafeAreaView>
   );
 };
