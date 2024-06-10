@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import CustomButton from "../../../components/CustomButton";
+import Xbutton from "../../../components/XButton";
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState("");
