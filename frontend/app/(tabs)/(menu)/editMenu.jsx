@@ -11,18 +11,45 @@ import { useMenu } from "../../../contexts/menuContext.jsx";
 const EditMenu = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const { menuItems, loading } = useMenu();
+  const [menuSelected, setMenuSelected] = useState(menuItems.foods);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("starter"); // default category
   const [sortBy, setSortBy] = useState("");
   const [limit, setLimit] = useState("");
 
-  useEffect(() => {
-    // filter menu items based on the filters
-
-  }, [name, price, category, sortBy, limit]);
-
   const handleDelete = () => {};
+
+  const handleFilter = () => {
+    let filteredMenu = menuItems.foods.concat(menuItems.beverages);
+    if (name) {
+      // filter menu items by name not caring if it is upper or lower case
+      filteredMenu = filteredMenu.filter((item) =>
+        item.name.toLowerCase().includes(name.toLowerCase())
+      );
+    }
+    if (price) {
+      filteredMenu = filteredMenu.filter((item) => item.price <= price);
+    }
+    if (category) {
+      filteredMenu = filteredMenu.filter((item) => item.category === category);
+    }
+    if (sortBy) {
+      filteredMenu.sort((a, b) => {
+        if (sortBy === "name") {
+          return a.name.localeCompare(b.name);
+        } else if (sortBy === "price") {
+          return a.price - b.price;
+        } else {
+          return a.category.localeCompare(b.category);
+        }
+      });
+    }
+    if (limit) {
+      filteredMenu = filteredMenu.slice(0, limit);
+    }
+    setMenuSelected(filteredMenu);
+  };
 
   return (
     <SafeAreaView className="bg-primary-lighter h-full w-full p-8 flex justify-center items-center">
@@ -37,13 +64,11 @@ const EditMenu = () => {
         setSortBy={setSortBy}
         limit={limit}
         setLimit={setLimit}
+        handleFilter={handleFilter}
       />
       {/* <Text className="text-xl font-bold text-primary-dark">{category}</Text> */}
       <ScrollView className="w-full mt-4">
-        {(category === "beverage"
-          ? menuItems.beverages
-          : menuItems.foods.filter((item) => item.category === category)
-        ).map((dish, index) => {
+        {menuSelected.map((dish, index) => {
           const outOfStock = dish.stock === 0 ? "text-secondary" : "";
           return (
             <View

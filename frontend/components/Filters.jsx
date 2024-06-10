@@ -14,6 +14,7 @@ const Filters = ({
   setSortBy,
   limit,
   setLimit,
+  handleFilter,
 }) => {
   return (
     <>
@@ -67,9 +68,7 @@ const Filters = ({
         <CustomButton
           text="Filter"
           containerStyles="w-[30%] h-12 ml-2"
-          handlePress={() => {
-            /* Implement filter logic */
-          }}
+          handlePress={handleFilter}
         />
       </View>
     </>
