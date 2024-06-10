@@ -23,10 +23,17 @@ const AdminPanel = () => {
               className={`${category.color} m-2 w-24 h-24 p-4 rounded-lg flex justify-center items-center`}
               style={{ width: "35%" }}
               onPress={() => {
-                if (category.type === "Employees") {
-                  router.push("/allEmployees");
-                } else if (category.type === "Edit Menu") {
-                  router.push("/editMenu");
+
+                switch (category.type) {
+                  case "Employees":
+                    router.push("/allEmployees");
+                    break;
+                  case "Old Receipts":
+                    router.push("/oldReceipts");
+                    break;
+                  default:
+                    console.log("Navigation not set up for this category");
+
                 }
               }}
             >

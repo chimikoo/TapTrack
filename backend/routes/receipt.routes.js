@@ -4,6 +4,7 @@ import {
   getAllReceipts,
   getReceiptById,
   getReceiptByUserId,
+  getOldReceiptsByUserId, // Import the new controller function
   updateReceipt,
 } from "../controllers/receipt.controller.js";
 
@@ -23,5 +24,8 @@ router.patch("/:id", updateReceipt);
 
 // GET /users/checkout/user/:id
 router.get("/user/:id", getReceiptByUserId);
+
+// GET /users/checkout/user/:id/old - Add the new route for old receipts
+router.get("/user/:id/old", getOldReceiptsByUserId);
 
 export default router;
