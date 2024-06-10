@@ -230,17 +230,23 @@ const updateUserRole = asyncHandler(async (req, res) => {
 @access   Private
 */
 const deleteUser = asyncHandler(async (req, res) => {
+  console.log("Delete request received for user ID:", req.params.userId);
   const { userRole } = req;
   if (userRole !== "admin") {
     res.status(401);
     throw new Error("You are not authorized to perform this action");
   }
 
-  const { id } = req.params;
-  // delete the user
-  await UserModel.findByIdAndDelete(id);
-  // Send the response
-  res.status(200).json({ message: "User deleted successfully" });
+  const { userId } = req.params;
+  console.log("Attempting to delete user with ID:", userId);
+  const deletedUser = await UserModel.findByIdAndDelete(userId);
+  if (deletedUser) {
+    console.log("User deleted successfully:", deletedUser);
+    res.status(200).json({ message: "User deleted successfully" });
+  } else {
+    console.log("User not found with ID:", userId);
+    res.status(404).json({ message: "User not found" });
+  }
 });
 
 /* 

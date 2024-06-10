@@ -147,7 +147,7 @@ const AdminProfile = () => {
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter justify-start items-center">
       <ScrollView>
-        <View className="">
+        <View className="w-full flex-row justify-end p-4">
           <Xbutton onPress={() => setDeleteModalVisible(true)} />
         </View>
         <View className="items-center">
@@ -163,8 +163,8 @@ const AdminProfile = () => {
                 className="w-30 h-30 rounded-full"
                 style={{ width: 160, height: 160 }}
               />
-              <View className="flex-row items-center mt-6 w-[100%]">
-                <Text className="text-4xl font-bold">
+              <View className="items-center mt-6 w-full">
+                <Text className="text-4xl font-bold text-center">
                   {`${user.firstName} ${user.lastName}`}
                 </Text>
               </View>
