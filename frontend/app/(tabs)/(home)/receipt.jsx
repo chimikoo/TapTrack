@@ -51,7 +51,11 @@ const Receipt = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter items-center px-4 pb-4">
-      <ReceiptComponent receipt={receipt} loading={loading} tipAmount={tipAmount} />
+      <ReceiptComponent
+        receipt={receipt}
+        loading={loading}
+        tipAmount={tipAmount}
+      />
       {isPrinted ? (
         <View className="w-full flex-row justify-between mt-4">
           <CustomButton
@@ -81,11 +85,12 @@ const Receipt = () => {
         </View>
       )}
       <PaymentModal
+        text="Add Tip"
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        tipAmount={tipAmount}
-        setTipAmount={setTipAmount}
-        handlePayment={handlePayment}
+        amount={tipAmount}
+        handleAmount={setTipAmount}
+        handleConfirm={handlePayment}
       />
     </SafeAreaView>
   );

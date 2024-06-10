@@ -1,7 +1,6 @@
-import { useRouter } from 'expo-router'; // Make sure to import useRouter
-import React from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity } from 'react-native';
-
+import { useRouter } from "expo-router"; // Make sure to import useRouter
+import React from "react";
+import { SafeAreaView, View, Text, TouchableOpacity } from "react-native";
 
 const AdminPanel = () => {
   const router = useRouter(); // Initialize the router
@@ -22,10 +21,12 @@ const AdminPanel = () => {
             <TouchableOpacity
               key={index}
               className={`${category.color} m-2 w-24 h-24 p-4 rounded-lg flex justify-center items-center`}
-              style={{ width: '35%' }}
+              style={{ width: "35%" }}
               onPress={() => {
                 if (category.type === "Employees") {
-                  router.push('/allEmployees');
+                  router.push("/allEmployees");
+                } else if (category.type === "Edit Menu") {
+                  router.push("/editMenu");
                 }
               }}
             >

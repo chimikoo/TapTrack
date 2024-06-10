@@ -108,7 +108,7 @@ const getAllBeverageItems = asyncHandler(async (req, res) => {
 
   // Pagination
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const limit = parseInt(req.query.limit) || 100;
   const startIndex = (page - 1) * limit;
   beverageQuery = beverageQuery.limit(limit).skip(startIndex);
 

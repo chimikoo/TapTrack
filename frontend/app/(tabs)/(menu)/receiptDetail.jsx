@@ -86,11 +86,12 @@ const ReceiptDetail = () => {
         />
       </View>
       <PaymentModal
+        text="Add Tip"
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        tipAmount={tipAmount}
-        setTipAmount={setTipAmount}
-        handlePayment={handlePayment}
+        amount={tipAmount}
+        handleAmount={setTipAmount}
+        handleConfirm={handlePayment}
       />
     </View>
   );

@@ -14,23 +14,24 @@ const Filters = ({
   setSortBy,
   limit,
   setLimit,
+  handleFilter,
 }) => {
   return (
     <>
       <View className="flex flex-row justify-between items-center mb-4 space-x-2">
         <TextInput
-          className="w-[30%] h-10 px-2 border bg-[#F5F5F5] border-gray-300 rounded"
+          className="w-[30%] h-12 px-2 border bg-[#F5F5F5] border-gray-300 rounded"
           placeholder="name"
           value={name}
           onChangeText={setName}
         />
         <TextInput
-          className="w-[30%] h-10 px-2 border bg-[#F5F5F5] border-gray-300 rounded"
+          className="w-[30%] h-12 px-2 border bg-[#F5F5F5] border-gray-300 rounded"
           placeholder="price"
           value={price}
           onChangeText={setPrice}
         />
-        <View className="w-[30%] h-10 bg-[#F5F5F5] rounded-lg border border-gray-300 justify-center">
+        <View className="w-[30%] h-12 bg-[#F5F5F5] rounded-lg border border-gray-300 justify-center">
           <Picker
             selectedValue={category}
             onValueChange={(itemValue) => setCategory(itemValue)}
@@ -46,7 +47,7 @@ const Filters = ({
         </View>
       </View>
       <View className="flex flex-row justify-between items-center mb-4 space-x-2">
-        <View className="w-[30%] h-10 bg-[#F5F5F5] rounded-lg border border-gray-300 justify-center">
+        <View className="w-[30%] h-12 bg-[#F5F5F5] rounded-lg border border-gray-300 justify-center">
           <Picker
             selectedValue={sortBy}
             onValueChange={(itemValue) => setSortBy(itemValue)}
@@ -59,17 +60,15 @@ const Filters = ({
           </Picker>
         </View>
         <TextInput
-          className="w-[30%] h-10 bg-[#F5F5F5] px-2 border border-gray-300 rounded"
+          className="w-[30%] h-12 bg-[#F5F5F5] px-2 border border-gray-300 rounded"
           placeholder="limit"
           value={limit}
           onChangeText={setLimit}
         />
         <CustomButton
           text="Filter"
-          containerStyles="w-[30%] h-10 ml-2"
-          handlePress={() => {
-            /* Implement filter logic */
-          }}
+          containerStyles="w-[30%] h-12 ml-2"
+          handlePress={handleFilter}
         />
       </View>
     </>

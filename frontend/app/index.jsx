@@ -6,7 +6,7 @@ import * as SecureStore from "expo-secure-store";
 import InputField from "../components/InputField";
 import CustomButton from "../components/CustomButton";
 import logo from "../assets/images/logo.png";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { UserContext } from "../contexts/userContext.jsx";
 import { TAP_TRACK_URL } from "@env";
 

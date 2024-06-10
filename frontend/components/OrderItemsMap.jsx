@@ -3,8 +3,6 @@ import { View, Text } from "react-native";
 const OrderItemsMap = ({ title, items }) => {
   if (!items.length) return null;
 
-  console.log("items", items);
-
   return (
     <>
       <View className="flex-row justify-between border-b border-myWhite py-4">
