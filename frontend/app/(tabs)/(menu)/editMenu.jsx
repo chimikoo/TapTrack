@@ -74,6 +74,10 @@ const EditMenu = () => {
       filteredMenu = filteredMenu.slice(0, limit);
     }
     setMenuSelected(filteredMenu);
+    // Reset filters
+    setName("");
+    setPrice("");
+    setLimit("");
   };
 
   return (
@@ -93,7 +97,7 @@ const EditMenu = () => {
       />
 
       <FlatList
-        className="w-[90%] mt-4"
+        className="w-full mt-4"
         data={menuSelected}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => {

@@ -27,6 +27,7 @@ const MenuItemSelector = () => {
   const params = useLocalSearchParams();
 
   const { menuItems, loading } = useMenu(); // Use the custom hook to access menu items
+  const [menuSelected, setMenuSelected] = useState(null);
 
   useEffect(() => {
     // Ensure category is set from params if available
@@ -47,6 +48,41 @@ const MenuItemSelector = () => {
       setQuantities(newQuantities);
     }
   }, [category, menuItems]);
+
+  const handleFilter = () => {
+    let filteredMenu = menuItems.foods.concat(menuItems.beverages);
+    if (name) {
+      // filter menu items by name not caring if it is upper or lower case
+      filteredMenu = filteredMenu.filter((item) =>
+        item.name.toLowerCase().includes(name.toLowerCase())
+      );
+    }
+    if (price) {
+      filteredMenu = filteredMenu.filter((item) => item.price <= price);
+    }
+    if (category) {
+      filteredMenu = filteredMenu.filter((item) => item.category === category);
+    }
+    if (sortBy) {
+      filteredMenu.sort((a, b) => {
+        if (sortBy === "name") {
+          return a.name.localeCompare(b.name);
+        } else if (sortBy === "price") {
+          return a.price - b.price;
+        } else {
+          return a.category.localeCompare(b.category);
+        }
+      });
+    }
+    if (limit) {
+      filteredMenu = filteredMenu.slice(0, limit);
+    }
+    setMenuSelected(filteredMenu);
+    // Reset filters
+    setName("");
+    setPrice("");
+    setLimit("");
+  };
 
   const incrementQuantity = (index) => {
     const newQuantities = [...quantities];
@@ -108,12 +144,15 @@ const MenuItemSelector = () => {
         setSortBy={setSortBy}
         limit={limit}
         setLimit={setLimit}
+        handleFilter={handleFilter}
       />
       <ScrollView className="flex-1">
         {loading ? (
           <ActivityIndicator size="large" color="#7CA982" />
         ) : (
-          (category === "beverage"
+          (menuSelected
+            ? menuSelected
+            : category === "beverage"
             ? menuItems.beverages
             : menuItems.foods.filter((item) => item.category === category)
           ).map((item, index) => {
