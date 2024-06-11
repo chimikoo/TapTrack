@@ -174,6 +174,24 @@ const getOldReceiptsByUserId = async (req, res) => {
   }
 };
 
+/* 
+@desc    Update a receipt by ID
+@route   PUT /users/checkout/oldReceipts
+@access  Private
+*/
+
+const getAllOldReceipts = async (req, res) => {
+  try {
+    // Assuming old receipts can be identified with a specific field or condition
+    const oldReceipts = await Receipt.find({ });
+    res.status(200).json({ data: oldReceipts });
+    console.log('Sending the old Receipts..')
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 export {
   getAllReceipts,
   createReceipt,
@@ -181,4 +199,5 @@ export {
   getReceiptByUserId,
   updateReceipt,
   getOldReceiptsByUserId,
+  getAllOldReceipts,
 };
