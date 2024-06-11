@@ -42,6 +42,7 @@ const createReceipt = asyncHandler(async (req, res) => {
   }
   // Retrieve the order to get the items
   const order = await Order.findById(orderId).populate([
+    "userId",
     "drinks.drinkItem",
     "starter.dishItem",
     "main.dishItem",
@@ -78,14 +79,13 @@ const createReceipt = asyncHandler(async (req, res) => {
   // Create the receipt object with the populated items array
   const newReceipt = await Receipt.create({
     orderId,
+    host: order.userId.firstName,
     totalAmount,
     paymentMethod,
     notes,
     items,
     tableNumber: table.tableNumber,
   });
-
-  // console.log("Receipt created", newReceipt);
 
   res.status(201).json({ message: "Receipt created", receipt: newReceipt });
 });

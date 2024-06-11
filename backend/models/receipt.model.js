@@ -17,13 +17,14 @@ const eodReceiptSchema = new Schema(
 );
 
 const receiptSchema = new Schema({
-  orderId: { type: Schema.Types.ObjectId, ref: "order", required: true }, // Reference to the order
+  orderId: { type: Schema.Types.ObjectId, ref: "order" }, // Reference to the order
+  host: { type: String },
   totalAmount: { type: Number },
   tableNumber: { type: Number },
   paymentMethod: {
     type: String,
     required: true,
-    enum: ["Credit card", "Cash"],
+    enum: ["Credit Card", "Cash"],
   },
   transactionDate: { type: Date, default: Date.now },
   notes: { type: String, default: "" },

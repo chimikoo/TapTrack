@@ -16,7 +16,7 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
           </View>
           <View className="flex-row justify-between items-center pt-4">
             <Text>Order: </Text>
-            <Text>{order?._id ?? ""}</Text>
+            <Text>{order?._id ?? "1234567890"}</Text>
           </View>
           <View className="flex-row justify-between items-center pt-4 border-b-2 border-dashed pb-5">
             <Text>Date:</Text>
@@ -24,13 +24,12 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
             <Text>{transactionDate.slice(11, 16)}</Text>
           </View>
           <View className="flex-row justify-between items-center pt-4 border-b-2 border-dashed pb-5">
-            <Text>Host: {order?.userId?.firstName ?? "Default Name"}</Text>
+            <Text>Host: {receipt.host ?? "Bruce Wayne"}</Text>
             <Text>Table No: {receipt.tableNumber}</Text>
           </View>
           <View className="border-b-2 border-dashed">
             {items &&
               items.map((item, index) => {
-                console.log("extras", item.extras);
 
                 return (
                   <View key={index} className="border-b border-gray-300 pb-2">
