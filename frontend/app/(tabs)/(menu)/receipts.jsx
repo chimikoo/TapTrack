@@ -10,11 +10,13 @@ import { UserContext } from "../../../contexts/userContext.jsx";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
 import { router } from "expo-router";
+import NotFound from "../../../components/NotFound.jsx";
 
 const Receipts = () => {
   const { user } = useContext(UserContext);
   const [receipts, setReceipts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const getReceipts = async () => {
@@ -24,11 +26,19 @@ const Receipts = () => {
         setReceipts(data.data);
         setLoading(false);
       } catch (error) {
-        console.error(error);
+        console.log("Error fetching receipts. Status: ", error.response.status);
+        if (error.response.status === 404) {
+          setNotFound(true);
+        }
       }
     };
     getReceipts();
   }, []);
+
+  // If no receipts are found, display a message
+  if (notFound) {
+    return <NotFound text="No receipts found" />;
+  }
 
   return (
     <SafeAreaView className="flex justify-center items-center">

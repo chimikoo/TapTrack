@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import NotFound from "../../../components/NotFound.jsx";
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
 import { TAP_TRACK_URL } from "@env";
@@ -17,6 +18,7 @@ const Orders = () => {
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const getAllOrders = async () => {
@@ -25,7 +27,10 @@ const Orders = () => {
         const { data } = await axios.get(url);
         setOrders(data.data);
       } catch (error) {
-        console.error("error", error);
+        console.log("error", error);
+        if (error.response.status === 404) {
+          setNotFound(true);
+        }
       }
     };
     const getAllUsers = async () => {
@@ -36,12 +41,16 @@ const Orders = () => {
         setSelectedUserId(data.employees[0]._id);
         setLoading(false);
       } catch (error) {
-        console.error("error", error);
+        console.log("error", error);
       }
     };
     getAllOrders();
     getAllUsers();
   }, []);
+
+  if (notFound) {
+    return <NotFound text="No orders found" />;
+  }
 
   const filteredOrders = orders.filter(
     (order) => order.userId._id === selectedUserId
