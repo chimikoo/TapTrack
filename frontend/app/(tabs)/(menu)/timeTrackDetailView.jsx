@@ -116,25 +116,25 @@ const DailyView = () => {
       <View className="p-5 bg-primary-lighter flex-1">
         <View className="flex items-center">
           <Text className="text-2xl font-bold mb-5 text-center border-b border-gray-300 pb-2 w-[75%]">
-            {firstName} Hour Log
+            {firstName}'s Hour Log
           </Text>
         </View>
         {mergedShifts.length > 0 ? (
           <ScrollView ref={scrollViewRef} className="bg-grayBG">
             {mergedShifts.map((shift, index) => (
               <View key={index} className="bg-primary p-1 rounded-lg mb-3">
-                <Text className="text-lg font-bold text-center">
+                <Text className="text-lg font-bold text-center text-myWhite">
                   {shift.day} - {getDayOfWeek(shift.day)}
                 </Text>
-                <Text className="text-base text-center pt-1">
+                <Text className="text-base text-center pt-1 text-myWhite">
                   Time: {shift.total.hours}h {shift.total.minutes}m
                 </Text>
                 <View className="flex flex-column items-center p-3">
-                  <Text className="text-sm">
+                  <Text className="text-sm text-myWhite">
                     Login:{" "}
                     {new Date(shift.total.earliestLogin).toLocaleTimeString()}
                   </Text>
-                  <Text className="text-sm">
+                  <Text className="text-sm text-myWhite">
                     Logout:{" "}
                     {new Date(shift.total.latestLogout).toLocaleTimeString()}
                   </Text>
