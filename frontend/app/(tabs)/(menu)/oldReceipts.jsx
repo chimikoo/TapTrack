@@ -21,7 +21,7 @@ const OldReceipts = () => {
   useEffect(() => {
     const getOldReceipts = async () => {
       try {
-        const url = `${TAP_TRACK_URL}/users/checkout/user/${selectedUserId}/old`;
+        const url = `${TAP_TRACK_URL}/users/checkout/oldReceipts`;
         const { data } = await axios.get(url);
         setReceipts(data.data);
         setLoading(false);
@@ -41,11 +41,10 @@ const OldReceipts = () => {
       }
     };
 
+    getOldReceipts();
     getAllUsers();
-    if (selectedUserId) {
-      getOldReceipts();
-    }
-  }, [selectedUserId]);
+
+  }, []);
 
   const filteredReceipts = receipts.filter(
     (receipt) => receipt.userId === selectedUserId

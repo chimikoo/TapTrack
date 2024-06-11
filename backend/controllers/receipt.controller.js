@@ -1,5 +1,5 @@
 import asyncHandler from "../config/asyncHandler.js";
-import Receipt from "../models/receipt.model.js";
+import Receipt, { OldReceipt } from "../models/receipt.model.js";
 import calculateTotalAmount from "../utils/calculateTotalAmount.js";
 import Order from "../models/order.model.js";
 import extractItemsFromOrder from "../utils/extractItemsFromOrder.js";
@@ -181,9 +181,10 @@ const getOldReceiptsByUserId = async (req, res) => {
 */
 
 const getAllOldReceipts = async (req, res) => {
+  console.log('Getting the old Receipts..');
   try {
     // Assuming old receipts can be identified with a specific field or condition
-    const oldReceipts = await Receipt.find({ });
+    const oldReceipts = await OldReceipt.find({ });
     res.status(200).json({ data: oldReceipts });
     console.log('Sending the old Receipts..')
   } catch (error) {
