@@ -29,7 +29,7 @@ router.get("/user/:id", getReceiptByUserId);
 // GET /users/checkout/user/:id/old - Add the new route for old receipts
 router.get("/user/:id/old", getOldReceiptsByUserId);
 
-// GET /users/checkout/oldReceipts
-router.get("/oldReceipts", getAllOldReceipts);
+// GET /users/checkout/receipts/oldreceipts
+router.get("/receipts/oldreceipts", getAllOldReceipts);
 
 export default router;

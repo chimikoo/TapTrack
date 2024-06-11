@@ -21,7 +21,7 @@ const OldReceipts = () => {
   useEffect(() => {
     const getOldReceipts = async () => {
       try {
-        const url = `${TAP_TRACK_URL}/users/checkout/oldReceipts`;
+        const url = `${TAP_TRACK_URL}/users/checkout/receipts/oldreceipts`;
         const { data } = await axios.get(url);
         setReceipts(data.data);
         setLoading(false);

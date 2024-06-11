@@ -176,7 +176,7 @@ const getOldReceiptsByUserId = async (req, res) => {
 
 /* 
 @desc    Update a receipt by ID
-@route   PUT /users/checkout/oldReceipts
+@route   PUT /users/checkout/receipts/oldreceipts
 @access  Private
 */
 
