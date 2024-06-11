@@ -14,6 +14,7 @@ import CustomButton from "../../../components/CustomButton.jsx";
 import * as SecureStore from "expo-secure-store";
 import { UserContext } from "../../../contexts/userContext.jsx";
 import { TAP_TRACK_URL } from "@env";
+import { router } from "expo-router";
 
 const EditProfile = () => {
   const { user, dispatch } = useContext(UserContext);
@@ -112,6 +113,7 @@ const EditProfile = () => {
       } else {
         throw new Error(`Unexpected response code: ${response.status}`);
       }
+      router.push("/(tabs)/(profile)");
     } catch (error) {
       console.error("Error updating profile:", error);
       Alert.alert(
@@ -124,10 +126,30 @@ const EditProfile = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-primary-lighter justify-center items-center pt-16">
-      <ScrollView>
-        <Text className="text-3xl font-bold mb-6">Edit Profile</Text>
-        <View className="w-full space-y-4 items-center">
+    <SafeAreaView className="flex-1 bg-primary-lighter justify-center items-center pt-10">
+      <Text className="text-3xl font-bold mb-6 text-center">Edit Profile</Text>
+      <ScrollView className="w-full">
+        <View className="w-full m-auto flex justify-center items-center pb-6">
+          <Image
+            source={{
+              uri: `${TAP_TRACK_URL}/users/${
+                user.username
+              }/avatar?${Math.random()}` /* Remove math.Random when you find out how to refresh the cache */,
+              headers: { Authorization: `Bearer ${user.token}` },
+            }}
+            className="w-40 h-40 rounded-full"
+            style={{ width: 160, height: 160 }}
+            onError={(e) =>
+              console.log("Image Load Error:", e.nativeEvent.error)
+            }
+          />
+          <CustomButton
+            text="Choose Avatar"
+            containerStyles="w-[50%] mt-4"
+            handlePress={pickImage}
+          />
+        </View>
+        <View className="flex items-center">
           <InputField
             title="First Name"
             value={firstName}
@@ -149,11 +171,6 @@ const EditProfile = () => {
             value={confirmPassword}
             handleChange={setConfirmPassword}
           />
-          <CustomButton
-            text="Choose Avatar"
-            containerStyles="w-[50%] mt-7 bg-blue-500 p-3 rounded-lg"
-            handlePress={pickImage}
-          />
           {avatar && (
             <Image
               source={{ uri: avatar }}
@@ -162,11 +179,13 @@ const EditProfile = () => {
           )}
         </View>
       </ScrollView>
-      <CustomButton
-            text="Update"
-            containerStyles="w-[50%] mt-7 bg-blue-500 p-3 rounded-lg"
-            handlePress={updateUserProfile}
-          />
+      <View className="w-[90%] p-4 flex items-end">
+        <CustomButton
+          text="Update"
+          containerStyles="w-[50%] bg-blue-500 p-3 rounded-lg"
+          handlePress={updateUserProfile}
+        />
+      </View>
     </SafeAreaView>
   );
 };

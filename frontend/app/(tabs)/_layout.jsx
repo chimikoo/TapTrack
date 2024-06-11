@@ -97,7 +97,7 @@ const TabsLayout = () => {
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
-          tabBarActiveTintColor: "#7CA982",
+          tabBarActiveTintColor: "#FFBA00",
           tabBarInactiveTintColor: "#F1F7ED",
           tabBarStyle: {
             backgroundColor: "#152E2B",
