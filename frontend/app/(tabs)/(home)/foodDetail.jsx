@@ -221,6 +221,7 @@ const FoodDetail = () => {
                   placeholder="price"
                   value={price}
                   onChangeText={setPrice}
+                  keyboardType="numeric"
                   className="bg-myWhite border border-gray-400 flex-1 p-2 rounded mx-2"
                 />
                 <CustomButton

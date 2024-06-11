@@ -1,5 +1,5 @@
-import { useLocalSearchParams } from "expo-router";
-import { View, Text, ScrollView } from "react-native";
+import { useLocalSearchParams, router } from "expo-router";
+import { View, Text, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import OrderItemsMap from "../../../components/OrderItemsMap.jsx";
 import CustomButton from "../../../components/CustomButton.jsx";
@@ -23,6 +23,20 @@ const OrderDetail = () => {
     };
     getOrder();
   }, []);
+
+  const handleCheckout = async () => {
+    console.log("checkout");
+    try {
+      await axios.post(`${TAP_TRACK_URL}/users/checkout`, {
+        orderId: orderId,
+        paymentMethod: "Cash",
+      });
+      Alert.alert("Checkout successful");
+      router.push("/orders");
+    } catch (error) {
+      Alert.alert("Error checking out", error.message);
+    }
+  };
 
   return (
     <SafeAreaView>
@@ -68,9 +82,7 @@ const OrderDetail = () => {
           <CustomButton
             text="Checkout"
             containerStyles="w-[50%] m-auto mb-4"
-            handlePress={() => {
-              console.log("Pay button pressed");
-            }}
+            handlePress={handleCheckout}
           />
         )}
       </>

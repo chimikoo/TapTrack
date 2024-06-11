@@ -5,7 +5,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import InputField from "../components/InputField";
 import CustomButton from "../components/CustomButton";
-import logo from "../assets/images/logo.png";
+import logo from "../assets/images/logo_dark.png";
 import { Link, router } from "expo-router";
 import { UserContext } from "../contexts/userContext.jsx";
 import { TAP_TRACK_URL } from "@env";
@@ -51,10 +51,13 @@ export default function App() {
       const { data } = await axios.post(`${TAP_TRACK_URL}/users/login`, form, {
         withCredentials: true,
       });
-  
+
       console.log("Server response received", data);
-  
-      if (data.message === "User logged in successfully" || data.message === "User is already logged in") {
+
+      if (
+        data.message === "User logged in successfully" ||
+        data.message === "User is already logged in"
+      ) {
         const userData = {
           token: data.token,
           username: form.username,
@@ -90,7 +93,7 @@ export default function App() {
     <SafeAreaView className="h-full bg-primary-lighter">
       <View className="w-full flex-1 justify-center items-center">
         <View className="w-full h-[60%] flex justify-center items-center">
-          <View className="w-[75%] h-[65%] rounded-full overflow-hidden">
+          <View className="w-[95%] h-[65%] rounded-full overflow-hidden">
             <Image
               source={logo}
               resizeMode="cover"
