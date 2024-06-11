@@ -46,21 +46,21 @@ const OldReceipts = () => {
 
   }, []);
 
-  const filteredReceipts = receipts.filter(
+  /* const filteredReceipts = receipts.filter(
     (receipt) => receipt.userId === selectedUserId
-  );
+  ); */
 
   return (
     <SafeAreaView className="flex-1 justify-center items-center bg-primary-lighter">
       <Text className="text-2xl font-bold text-primary-dark mb-4">
         Old Receipts
-      </Text>
+      </Text>        
       {loading ? (
         <ActivityIndicator size="large" color="#7CA982" />
       ) : (
         <>
           <FlatList
-            data={filteredReceipts}
+            data={receipts}
             keyExtractor={(item) => item._id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -69,7 +69,7 @@ const OldReceipts = () => {
                 }`}
                 onPress={() => {
                   router.push({
-                    pathname: "/receiptDetail",
+                    pathname: "/oldReceiptDetail",
                     params: { receiptId: item._id },
                   });
                 }}

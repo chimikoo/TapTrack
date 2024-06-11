@@ -7,6 +7,7 @@ import {
   getOldReceiptsByUserId, // Import the new controller function
   getAllOldReceipts,
   updateReceipt,
+  getOldReceiptById,
 } from "../controllers/receipt.controller.js";
 
 const router = Router();
@@ -31,5 +32,8 @@ router.get("/user/:id/old", getOldReceiptsByUserId);
 
 // GET /users/checkout/receipts/oldreceipts
 router.get("/receipts/oldreceipts", getAllOldReceipts);
+
+// GET /users/checkout/receipts/oldreceipts/:id
+router.get("/receipts/oldreceipts/:id", getOldReceiptById);
 
 export default router;

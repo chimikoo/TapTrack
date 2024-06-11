@@ -180,7 +180,7 @@ const getOldReceiptsByUserId = async (req, res) => {
 @access  Private
 */
 
-const getAllOldReceipts = async (req, res) => {
+const getAllOldReceipts = asyncHandler( async (req, res) => {
   console.log('Getting the old Receipts..');
   try {
     // Assuming old receipts can be identified with a specific field or condition
@@ -190,7 +190,22 @@ const getAllOldReceipts = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
+});
+
+/* 
+@desc    Update a receipt by ID
+@route   PUT /users/checkout/receipts/oldreceipts/:id
+@access  Private
+*/
+
+const getOldReceiptById = asyncHandler(async (req, res) => {
+  const oldReceipt = await OldReceipt.findById(req.params.id);
+  if (!oldReceipt) {
+    res.status(404);
+    throw new Error("Old Receipt not found");
+  }
+  res.status(200).json({ data: oldReceipt });
+});
 
 
 export {
@@ -201,4 +216,5 @@ export {
   updateReceipt,
   getOldReceiptsByUserId,
   getAllOldReceipts,
+  getOldReceiptById,
 };
