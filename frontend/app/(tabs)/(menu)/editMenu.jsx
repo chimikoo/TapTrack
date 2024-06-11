@@ -118,7 +118,7 @@ const EditMenu = () => {
                   setModalVisible(true);
                   setDeleteId(item._id);
                 }}
-                containerStyle="bg-secondary"
+                containerStyle="bg-red-600"
               />
             </TouchableOpacity>
           );

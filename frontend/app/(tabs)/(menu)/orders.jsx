@@ -63,29 +63,37 @@ const Orders = () => {
         <ActivityIndicator size="large" color="#7CA982" />
       ) : (
         <>
-          <FlatList
-            data={filteredOrders}
-            keyExtractor={(item) => item._id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                className={`flex-row justify-between items-center p-4 mb-4 rounded-lg w-full ${
-                  item.isCheckout ? "bg-primary" : "bg-secondary"
-                }`}
-                onPress={() => {
-                  router.push({
-                    pathname: "/orderDetail",
-                    params: { orderId: item._id },
-                  });
-                }}
-              >
-                <Text className="text-white">Table: {item.tableNumber}</Text>
-                <Text className="text-white">
-                  {item.timestamp.slice(0, 10)}
-                </Text>
-              </TouchableOpacity>
-            )}
-            contentContainerStyle={{ paddingHorizontal: 16, width: "100%" }}
-          />
+          {filteredOrders.length !== 0 ? (
+            <FlatList
+              data={filteredOrders}
+              keyExtractor={(item) => item._id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  className={`flex-row justify-between items-center p-4 mb-4 rounded-lg w-full ${
+                    item.isCheckout ? "bg-primary" : "bg-secondary"
+                  }`}
+                  onPress={() => {
+                    router.push({
+                      pathname: "/orderDetail",
+                      params: { orderId: item._id },
+                    });
+                  }}
+                >
+                  <Text className="text-white">Table: {item.tableNumber}</Text>
+                  <Text className="text-white">
+                    {item.timestamp.slice(0, 10)}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              contentContainerStyle={{ paddingHorizontal: 16, width: "100%" }}
+            />
+          ) : (
+            <View className="h-[77%]">
+              <Text className="text-xl text-primary-dark">
+                No orders found for this user
+              </Text>
+            </View>
+          )}
           <View className="mt-4 mb-4 w-full px-4 flex items-center">
             <View className="w-[60%] border rounded-lg pb-2 bg-primary-dark">
               <Picker

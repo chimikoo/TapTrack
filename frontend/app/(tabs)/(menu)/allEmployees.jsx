@@ -66,7 +66,7 @@ const EmployeeScreen = () => {
   };
 
   const getItemBackgroundColor = (isOnline) => {
-    return isOnline ? "bg-primary" : "bg-secondary";
+    return isOnline ? "bg-primary" : "bg-myGray";
   };
 
   const getAvatarUrl = (username, avatar) => {
@@ -136,7 +136,11 @@ const EmployeeScreen = () => {
                 source={{ uri: getAvatarUrl(item.username, item.avatar) }}
                 className="w-16 h-16 rounded-full mr-2"
               />
-              <Text className="flex-1 text-white pl-5 text-lg">{`${item.firstName} ${item.lastName}`}</Text>
+              <Text
+                className={`flex-1 text-white pl-5 text-lg ${
+                  item.isOnline ? "" : "text-primary"
+                }`}
+              >{`${item.firstName} ${item.lastName}`}</Text>
               {item.isOnline && item.role !== "Manager" && (
                 <Xbutton
                   onPress={() => {
@@ -168,29 +172,29 @@ const EmployeeScreen = () => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-          <View className="flex-1 justify-center items-center bg-black opacity-90">
-            <View className="bg-white p-5 rounded-lg w-[80%]">
-              <Text className="text-lg font-bold mb-4">Confirm Logout</Text>
-              <Text className="text-base mb-4 ">
-                Are you sure you want to log out {selectedUser?.firstName}{" "}
-                {selectedUser?.lastName}?
-              </Text>
-              <View className="flex-row justify-around">
-                <TouchableOpacity
-                  className="bg-red-500 p-3 rounded-lg w-[35%] items-center justify-center"
-                  onPress={handleLogoutUser}
-                >
-                  <Text className="text-white">Yes</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  className="bg-gray-300 p-3 rounded-lg w-[35%] items-center justify-center"
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Text className="text-black">No</Text>
-                </TouchableOpacity>
-              </View>
+        <View className="flex-1 justify-center items-center bg-black opacity-90">
+          <View className="bg-white p-5 rounded-lg w-[80%]">
+            <Text className="text-lg font-bold mb-4">Confirm Logout</Text>
+            <Text className="text-base mb-4 ">
+              Are you sure you want to log out {selectedUser?.firstName}{" "}
+              {selectedUser?.lastName}?
+            </Text>
+            <View className="flex-row justify-around">
+              <TouchableOpacity
+                className="bg-red-500 p-3 rounded-lg w-[35%] items-center justify-center"
+                onPress={handleLogoutUser}
+              >
+                <Text className="text-white">Yes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="bg-gray-300 p-3 rounded-lg w-[35%] items-center justify-center"
+                onPress={() => setModalVisible(false)}
+              >
+                <Text className="text-black">No</Text>
+              </TouchableOpacity>
             </View>
           </View>
+        </View>
       </Modal>
     </SafeAreaView>
   );

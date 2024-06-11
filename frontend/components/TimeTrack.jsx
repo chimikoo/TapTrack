@@ -74,13 +74,13 @@ const TimeTrackComp = ({ containerStyle, itemStyle }) => {
           {Object.entries(timeTrackData).map(([key, item], index) => (
             <TouchableOpacity
               key={index}
-              className={`p-4 rounded-lg mb-4 ${isCurrentMonth(key) ? "bg-blue-400" : "bg-primary"} ${itemStyle}`}
+              className={`p-4 rounded-lg mb-4 ${isCurrentMonth(key) ? "bg-tertiary" : "bg-primary"} ${itemStyle}`}
               onPress={() => handlePress(key, item)}
             >
-              <Text className="text-lg font-bold text-center">
+              <Text className="text-lg font-bold text-center text-myWhite">
                 {getMonthNameFromKey(key)}
               </Text>
-              <Text className="text-base text-center">
+              <Text className="text-base text-center text-myWhite">
                 Time: {item?.monthlyTotal?.hours ?? 0}h {item?.monthlyTotal?.minutes ?? 0}m
               </Text>
             </TouchableOpacity>

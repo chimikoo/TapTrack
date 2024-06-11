@@ -109,7 +109,7 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
               setMenuItem({ ...menuItem, isVegan: value })
             }
             thumbColor={true ? "#C8C8C8" : "#FFFFFF"}
-            trackColor={{ false: "#7CA982", true: "#81b0ff" }}
+            trackColor={{ false: "#B46617", true: "#6D9773" }}
           />
         </View>
       </View>
@@ -122,7 +122,7 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
               setMenuItem({ ...menuItem, isLactoseFree: value })
             }
             thumbColor={true ? "#C8C8C8" : "#FFFFFF"}
-            trackColor={{ false: "#7CA982", true: "#81b0ff" }}
+            trackColor={{ false: "#B46617", true: "#6D9773" }}
           />
         </View>
       </View>
