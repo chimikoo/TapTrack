@@ -31,6 +31,9 @@ const AdminPanel = () => {
                   case "Old Receipts":
                     router.push("/oldReceipts");
                     break;
+                  case "Edit Menu":
+                    router.push("/editMenu");
+                    break;
                   default:
                     console.log("Navigation not set up for this category");
 
