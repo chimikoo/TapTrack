@@ -14,6 +14,7 @@ import Filters from "../../../components/Filters.jsx";
 import CustomButton from "../../../components/CustomButton";
 import { useOrder } from "../../../contexts/orderContext";
 import { useMenu } from "../../../contexts/menuContext"; // Import the custom hook
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const MenuItemSelector = () => {
   const [name, setName] = useState("");
@@ -28,6 +29,11 @@ const MenuItemSelector = () => {
 
   const { menuItems, loading } = useMenu(); // Use the custom hook to access menu items
   const [menuSelected, setMenuSelected] = useState(null);
+  const { theme } = useTheme();
+
+  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const textColor =
+    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
 
   useEffect(() => {
     // Ensure category is set from params if available
@@ -132,7 +138,7 @@ const MenuItemSelector = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-primary-lighter p-4">
+    <SafeAreaView className={`flex-1 p-4 ${bgColor}`}>
       <Filters
         name={name}
         setName={setName}
@@ -178,7 +184,7 @@ const MenuItemSelector = () => {
                   }
                 >
                   <Text
-                    className={`w-full font-bold text-md ${outOfStockStyle}`}
+                    className={`w-full font-bold text-md ${textColor} ${outOfStockStyle}`}
                   >
                     {item.name}
                   </Text>
@@ -191,10 +197,14 @@ const MenuItemSelector = () => {
                         key={`${item._id}-${spIndex}`}
                         className="flex flex-row justify-between items-center mt-2"
                       >
-                        <Text className={`w-[20%] ${outOfStockStyle}`}>
+                        <Text
+                          className={`w-[20%] ${textColor} ${outOfStockStyle}`}
+                        >
                           {sp.size}
                         </Text>
-                        <Text className={`w-[20%] ${outOfStockStyle}`}>
+                        <Text
+                          className={`w-[20%] ${textColor} ${outOfStockStyle}`}
+                        >
                           {sp.price}€
                         </Text>
                         {item.stock > 0 && (
@@ -209,7 +219,7 @@ const MenuItemSelector = () => {
                   })
                 ) : (
                   <View className="flex flex-row justify-between items-center">
-                    <Text className={`w-[30%] pl-5 ${outOfStockStyle}`}>
+                    <Text className={`w-[30%] pl-5 ${textColor} ${outOfStockStyle}`}>
                       {item.price}€
                     </Text>
                     {item.stock > 0 && (

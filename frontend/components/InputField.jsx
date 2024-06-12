@@ -12,6 +12,8 @@ const InputField = ({ title, value, handleChange }) => {
     theme === "light"
       ? "border-primary-dark bg-myWhite"
       : "border-primary-light bg-opacGray";
+  const textColor =
+    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
 
   return (
     <View className="space-y-2 w-[80%] py-2 ">
@@ -29,7 +31,7 @@ const InputField = ({ title, value, handleChange }) => {
             !showPassword
           }
           onChangeText={handleChange}
-          className="flex-1"
+          className={`flex-1 ${textColor}`}
         />
         {(title === "Password" ||
           title === "New Password" ||
