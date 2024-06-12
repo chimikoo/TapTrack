@@ -52,6 +52,9 @@ const AdminPanel = () => {
                   case "Edit Menu":
                     router.push("/editMenu");
                     break;
+                  case "Dashboard":
+                    router.push("/dashboard");
+                    break;
                   default:
                     console.log("Navigation not set up for this category");
                 }
