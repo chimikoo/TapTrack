@@ -14,6 +14,7 @@ import { router } from "expo-router";
 import { useMenu } from "../../../contexts/menuContext.jsx";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const EditMenu = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -25,6 +26,7 @@ const EditMenu = () => {
   const [sortBy, setSortBy] = useState("");
   const [limit, setLimit] = useState("");
   const [deleteId, setDeleteId] = useState("");
+  const { theme, bgColor, textColor } = useTheme();
 
   useEffect(() => {
     setMenuSelected(menuItems.foods);
@@ -81,7 +83,9 @@ const EditMenu = () => {
   };
 
   return (
-    <SafeAreaView className="bg-primary-lighter h-full w-full p-8 flex justify-center items-center">
+    <SafeAreaView
+      className={`${bgColor} h-full w-full p-8 flex justify-center items-center`}
+    >
       <Filters
         name={name}
         setName={setName}
@@ -104,7 +108,9 @@ const EditMenu = () => {
           const outOfStock = item.stock === 0 ? "text-secondary" : "";
           return (
             <TouchableOpacity
-              className=" border-b mb-4 flex-row justify-between items-center"
+              className={`border-b mb-4 flex-row justify-between items-center ${
+                theme === "dark" ? "border-primary-lighter" : "border-gray-700"
+              }`}
               onPress={() => {
                 router.push({
                   pathname: "updateMenu",
@@ -112,7 +118,9 @@ const EditMenu = () => {
                 });
               }}
             >
-              <Text className={`${outOfStock} text-lg m-2`}>{item.name}</Text>
+              <Text className={`${outOfStock} ${textColor} text-lg m-2`}>
+                {item.name}
+              </Text>
               <Xbutton
                 onPress={() => {
                   setModalVisible(true);

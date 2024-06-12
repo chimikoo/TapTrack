@@ -7,6 +7,7 @@ import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
 import PaymentModal from "../../../components/PaymentModal.jsx";
 import ReceiptComponent from "../../../components/ReceiptComponent.jsx";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const Receipt = () => {
   const { receiptId } = useLocalSearchParams();
@@ -16,6 +17,7 @@ const Receipt = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [tipAmount, setTipAmount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("");
+  const { theme, bgColor } = useTheme();
 
   useEffect(() => {
     const getReceipt = async () => {
@@ -50,7 +52,7 @@ const Receipt = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-primary-lighter items-center px-4 pb-4">
+    <SafeAreaView className={`flex-1 items-center px-4 pb-4 ${bgColor}`}>
       <ReceiptComponent
         receipt={receipt}
         loading={loading}

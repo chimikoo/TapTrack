@@ -6,6 +6,7 @@ import { View } from "react-native";
 import ReceiptComponent from "../../../components/ReceiptComponent.jsx";
 import CustomButton from "../../../components/CustomButton.jsx";
 import PaymentModal from "../../../components/PaymentModal.jsx";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const ReceiptDetail = () => {
   const { receiptId } = useLocalSearchParams();
@@ -14,6 +15,8 @@ const ReceiptDetail = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [tipAmount, setTipAmount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("");
+
+  const { theme, bgColor } = useTheme();
 
   useEffect(() => {
     const getReceipt = async () => {
@@ -48,7 +51,7 @@ const ReceiptDetail = () => {
   };
 
   return (
-    <View className="h-full">
+    <View className={`h-full ${bgColor}`}>
       <View className="h-[83%] m-4">
         <ReceiptComponent
           receipt={receipt}

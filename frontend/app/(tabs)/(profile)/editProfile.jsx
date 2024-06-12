@@ -15,6 +15,7 @@ import * as SecureStore from "expo-secure-store";
 import { UserContext } from "../../../contexts/userContext.jsx";
 import { TAP_TRACK_URL } from "@env";
 import { router } from "expo-router";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const EditProfile = () => {
   const { user, dispatch } = useContext(UserContext);
@@ -24,6 +25,7 @@ const EditProfile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [avatar, setAvatar] = useState(user.avatar || "");
+  const { theme, bgColor, textColor } = useTheme();
 
   const pickImage = async () => {
     let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -126,8 +128,12 @@ const EditProfile = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-primary-lighter justify-center items-center pt-10">
-      <Text className="text-3xl font-bold mb-6 text-center">Edit Profile</Text>
+    <SafeAreaView
+      className={`flex-1 justify-center items-center pt-10 ${bgColor}`}
+    >
+      <Text className={`text-3xl font-bold mb-6 text-center ${textColor}`}>
+        Edit Profile
+      </Text>
       <ScrollView className="w-full">
         <View className="w-full m-auto flex justify-center items-center pb-6">
           <Image

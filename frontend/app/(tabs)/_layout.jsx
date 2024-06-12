@@ -11,9 +11,11 @@ import TabIcon from "../../components/TabIcon.jsx";
 import DropDownMenu from "../../components/DropDownMenu.jsx";
 import Header from "../../components/Header.jsx";
 import { TAP_TRACK_URL } from "@env";
+import { useTheme } from "../../contexts/themeContext.jsx";
 
 const TabsLayout = () => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const { toggleTheme } = useTheme();
 
   const router = useRouter();
   const navigationState = useRootNavigationState();
@@ -40,6 +42,8 @@ const TabsLayout = () => {
         await SecureStore.deleteItemAsync("userToken");
         await SecureStore.deleteItemAsync("userData");
         Alert.alert("Logged out successfully");
+        // reset theme to default
+        toggleTheme();
         router.push("/");
       } else {
         Alert.alert("Logout failed, please try again");
@@ -63,7 +67,7 @@ const TabsLayout = () => {
   const handleTimeTrack = () => {
     setMenuVisible(false);
     router.push("/(menu)/monthlyView");
-  }
+  };
 
   const handleReceipts = () => {
     setMenuVisible(false);

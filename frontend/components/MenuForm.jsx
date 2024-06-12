@@ -1,7 +1,14 @@
 import { Picker } from "@react-native-picker/picker";
 import { View, Text, ScrollView, TextInput, Switch } from "react-native";
+import { useTheme } from "../contexts/themeContext.jsx";
 
 const MenuForm = ({ menuItem, setMenuItem }) => {
+  const { theme, textColor } = useTheme();
+  const bgAndBorderColor =
+    theme === "light"
+      ? "border-primary-dark bg-myWhite"
+      : "border-primary-light bg-opacGray";
+
   return (
     <ScrollView className="h-[75%]">
       <TextInput
@@ -9,15 +16,22 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
         placeholder={"Enter Name"}
         placeholderTextColor="#8e8e8e"
         onChangeText={(text) => setMenuItem({ ...menuItem, name: text })}
-        className="w-full h-[6vh] mb-4 px-4 rounded-lg border border-primary-dark bg-myWhite"
+        className={`w-full h-[6vh] mb-4 px-4 rounded-lg border ${bgAndBorderColor} ${textColor}`}
       />
-      <View className="w-full h-[6vh] mb-4 px-4 rounded-lg border border-primary-dark bg-myWhite flex justify-center ">
+      <View
+        className={`w-full h-[6vh] mb-4 px-4 rounded-lg border flex justify-center ${bgAndBorderColor}`}
+      >
         <Picker
           selectedValue={menuItem.category}
           onValueChange={(itemValue, itemIndex) =>
             setMenuItem({ ...menuItem, category: itemValue })
           }
-          className="w-full"
+          className={`w-full ${textColor}`}
+          style={{
+            height: 50,
+            width: "100%",
+            color: `${theme === "light" ? "#000" : "#fff"}`,
+          }}
         >
           <Picker.Item label="Select the Category" value="" />
           <Picker.Item label="Starter" value="starter" />
@@ -28,13 +42,20 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
         </Picker>
       </View>
       {menuItem.category === "beverage" ? (
-        <View className="w-full h-[6vh] mb-4 px-4 rounded-lg border border-primary-dark bg-myWhite flex justify-center ">
+        <View
+          className={`w-full h-[6vh] mb-4 px-4 rounded-lg border flex justify-center ${bgAndBorderColor}`}
+        >
           <Picker
             selectedValue={menuItem.type}
             onValueChange={(itemValue, itemIndex) =>
               setMenuItem({ ...menuItem, type: itemValue })
             }
             className="w-full"
+            style={{
+              height: 50,
+              width: "100%",
+              color: `${theme === "light" ? "#000" : "#fff"}`,
+            }}
           >
             <Picker.Item label="Select the Drink Type" value="" />
             <Picker.Item label="Wine" value="wine" />
@@ -49,7 +70,7 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
         placeholder={"Enter Description"}
         placeholderTextColor="#8e8e8e"
         onChangeText={(text) => setMenuItem({ ...menuItem, description: text })}
-        className="w-full max-w-full h-auto mb-4 px-4 rounded-lg border border-primary-dark bg-myWhite"
+        className={`w-full max-w-full h-auto mb-4 px-4 rounded-lg border ${bgAndBorderColor} ${textColor}`}
         multiline={true}
         numberOfLines={4}
       />
@@ -59,7 +80,7 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
         placeholder={"Enter Ingredients"}
         placeholderTextColor="#8e8e8e"
         onChangeText={(text) => setMenuItem({ ...menuItem, ingredients: text })}
-        className="w-full max-w-full h-auto mb-4 px-4 rounded-lg border border-primary-dark bg-myWhite"
+        className={`w-full max-w-full h-auto mb-4 px-4 rounded-lg border ${bgAndBorderColor} ${textColor}`}
         multiline={true}
         numberOfLines={3}
       />
@@ -70,7 +91,7 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
           placeholder={"Enter Price"}
           placeholderTextColor="#8e8e8e"
           onChangeText={(text) => setMenuItem({ ...menuItem, price: text })}
-          className="w-full h-[6vh] mb-4 px-4 rounded-lg border border-primary-dark bg-myWhite"
+          className={`w-full h-[6vh] mb-4 px-4 rounded-lg border ${bgAndBorderColor} ${textColor}`}
           keyboardType="numeric"
         />
       ) : (
@@ -93,7 +114,7 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
                   sizesPrices: newSizesPrices.slice(0, 3),
                 });
               }}
-              className="w-full h-[6vh] mb-4 px-4 rounded-lg border border-primary-dark bg-myWhite"
+              className={`w-full h-[6vh] mb-4 px-4 rounded-lg border ${bgAndBorderColor} ${textColor}`}
               keyboardType="numeric"
             />
           );
@@ -101,7 +122,7 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
       )}
 
       <View className="flex flex-row justify-between items-center w-full px-2">
-        <Text className="text-lg">Is Vegan?</Text>
+        <Text className={`${textColor} text-lg`}>Is Vegan?</Text>
         <View className="transform scale-150">
           <Switch
             value={menuItem.isVegan}
@@ -114,7 +135,7 @@ const MenuForm = ({ menuItem, setMenuItem }) => {
         </View>
       </View>
       <View className="flex flex-row justify-between items-center w-full mb-4 px-2">
-        <Text className="text-lg">Is Lactose Free?</Text>
+        <Text className={`${textColor} text-lg`}>Is Lactose Free?</Text>
         <View className="transform scale-150">
           <Switch
             value={menuItem.isLactoseFree}

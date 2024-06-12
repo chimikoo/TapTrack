@@ -11,12 +11,15 @@ import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
 import { router } from "expo-router";
 import NotFound from "../../../components/NotFound.jsx";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const Receipts = () => {
   const { user } = useContext(UserContext);
   const [receipts, setReceipts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+
+  const { theme, bgColor, textColor } = useTheme();
 
   useEffect(() => {
     const getReceipts = async () => {
@@ -41,8 +44,10 @@ const Receipts = () => {
   }
 
   return (
-    <SafeAreaView className="flex justify-center items-center">
-      <Text className="text-2xl font-bold text-primary-dark">Receipts</Text>
+    <SafeAreaView
+      className={`flex justify-center items-center h-full ${bgColor}`}
+    >
+      <Text className={`text-2xl font-bold ${textColor}`}>Receipts</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#7CA982" />
       ) : (

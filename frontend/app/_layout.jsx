@@ -3,6 +3,7 @@ import { useEffect, useContext } from "react";
 import * as NavigationBar from "expo-navigation-bar";
 import { UserProvider, UserContext } from "../contexts/userContext.jsx";
 import * as SecureStore from "expo-secure-store";
+import { ThemeProvider } from "../contexts/themeContext.jsx";
 
 const AppInitializer = () => {
   const { dispatch } = useContext(UserContext);
@@ -35,12 +36,14 @@ const AppInitializer = () => {
 
 export default function RoutLayout() {
   return (
-    <UserProvider>
-      <AppInitializer />
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </UserProvider>
+    <ThemeProvider>
+      <UserProvider>
+        <AppInitializer />
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </UserProvider>
+    </ThemeProvider>
   );
 }

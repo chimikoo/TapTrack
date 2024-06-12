@@ -2,37 +2,43 @@ import { useRouter } from "expo-router"; // Make sure to import useRouter
 import React from "react";
 import { SafeAreaView, View, Text, TouchableOpacity } from "react-native";
 import { Icon } from "@rneui/themed";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const AdminPanel = () => {
   const router = useRouter(); // Initialize the router
 
+  const { theme, bgColor, textColor } = useTheme();
+  const btnColor = theme === "light" ? "bg-primary-dark" : "bg-primary";
+
   return (
-    <SafeAreaView className="flex-1 bg-primary-lighter">
+    <SafeAreaView className={`flex-1 ${bgColor}`}>
       <View className="flex-1 justify-center items-center">
-        <Text className="text-3xl font-bold mb-6">Admin Panel</Text>
+        <Text className={`text-3xl font-bold mb-6 ${textColor}`}>
+          Admin Panel
+        </Text>
         <View className="flex flex-row flex-wrap justify-center">
           {[
             {
               type: "Edit Menu",
-              color: "bg-primary-dark",
+              color: btnColor,
               iconName: "edit",
               iconType: "feather",
             },
             {
               type: "Employees",
-              color: "bg-primary-dark",
+              color: btnColor,
               iconName: "users",
               iconType: "feather",
             },
             {
               type: "Old Receipts",
-              color: "bg-primary-dark",
+              color: btnColor,
               iconName: "file-text",
               iconType: "feather",
             },
             {
               type: "Dashboard",
-              color: "bg-primary-dark",
+              color: btnColor,
               iconName: "pie-chart",
               iconType: "feather",
             },

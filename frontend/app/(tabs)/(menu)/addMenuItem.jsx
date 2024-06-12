@@ -7,9 +7,11 @@ import axios from "axios";
 import { TAP_TRACK_URL } from "@env";
 import { router } from "expo-router";
 import { useMenu } from "../../../contexts/menuContext.jsx";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const AddMenuItem = () => {
   const { fetchMenuItems } = useMenu();
+  const { theme, bgColor, textColor } = useTheme();
   const [menuItem, setMenuItem] = useState({
     name: "",
     category: "",
@@ -72,11 +74,9 @@ const AddMenuItem = () => {
   };
 
   return (
-    <SafeAreaView className="bg-primary-lighter h-full">
+    <SafeAreaView className={`${bgColor} h-full`}>
       <View className="w-full flex items-center justify-center px-8">
-        <Text className="text-primary-dark text-xl font-bold mb-4">
-          Add Menu
-        </Text>
+        <Text className={`${textColor} text-xl font-bold mb-4`}>Add Menu</Text>
         <MenuForm menuItem={menuItem} setMenuItem={setMenuItem} />
         <CustomButton
           text="Add"

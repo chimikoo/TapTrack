@@ -1,19 +1,28 @@
-import React, { useState } from 'react';
-import { View, Text, Switch, SafeAreaView } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import CustomButton from '../../../components/CustomButton';
+import React, { useState } from "react";
+import { View, Text, Switch, SafeAreaView } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import CustomButton from "../../../components/CustomButton";
+import { useTheme } from "../../../contexts/themeContext.jsx";
+import { router } from "expo-router";
 
 const Settings = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [theme, setTheme] = useState('light');
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState("en");
+  const { theme, toggleTheme, bgColor, textColor } = useTheme();
+
+  const bgAndBorderColor =
+    theme === "light"
+      ? "border-primary-dark bg-myWhite"
+      : "border-primary-light bg-opacGray";
 
   return (
-    <SafeAreaView className="flex-1 bg-primary-lighter justify-center items-center pt-16">
-      <Text className="text-3xl font-bold mb-6">Settings</Text>
+    <SafeAreaView
+      className={`flex-1 justify-center items-center pt-16 ${bgColor}`}
+    >
+      <Text className={`text-3xl font-bold mb-6 ${textColor}`}>Settings</Text>
       <View className="w-[80%] space-y-4">
         <View className="flex flex-row justify-between items-center">
-          <Text className="text-lg">Notifications</Text>
+          <Text className={`text-lg ${textColor}`}>Notifications</Text>
           <View className="transform scale-150">
             <Switch
               value={notificationsEnabled}
@@ -24,12 +33,20 @@ const Settings = () => {
           </View>
         </View>
         <View className="flex flex-row justify-between items-center">
-          <Text className="text-lg">Theme</Text>
-          <View className="w-[50%] bg-white rounded-lg border border-[#828282] h-12 justify-center">
+          <Text className={`text-lg ${textColor}`}>Theme</Text>
+          <View
+            className={`w-[50%] rounded-lg border h-12 justify-center ${bgAndBorderColor}`}
+          >
             <Picker
               selectedValue={theme}
-              onValueChange={(itemValue) => setTheme(itemValue)}
+              onValueChange={(itemValue) => toggleTheme()}
               className="w-full h-full"
+              style={{
+                height: 50,
+                width: "100%",
+                color: `${theme === "light" ? "black" : "white"}`,
+              }}
+              dropdownIconColor={`${theme === "light" ? "black" : "white"}`}
             >
               <Picker.Item label="Light" value="light" />
               <Picker.Item label="Dark" value="dark" />
@@ -37,12 +54,20 @@ const Settings = () => {
           </View>
         </View>
         <View className="flex flex-row justify-between items-center">
-          <Text className="text-lg">Language</Text>
-          <View className="w-[50%] bg-white rounded-lg border border-[#828282] h-12 justify-center">
+          <Text className={`text-lg ${textColor}`}>Language</Text>
+          <View
+            className={`w-[50%] rounded-lg border h-12 justify-center ${bgAndBorderColor}`}
+          >
             <Picker
               selectedValue={language}
               onValueChange={(itemValue) => setLanguage(itemValue)}
               className="w-full h-full"
+              style={{
+                height: 50,
+                width: "100%",
+                color: `${theme === "light" ? "black" : "white"}`,
+              }}
+              dropdownIconColor={`${theme === "light" ? "black" : "white"}`}
             >
               <Picker.Item label="English" value="en" />
               <Picker.Item label="German" value="de" />
@@ -54,7 +79,10 @@ const Settings = () => {
           <CustomButton
             text="Save"
             containerStyles="w-[50%] mt-20"
-            handlePress={() => {/* Handle save action */}}
+            handlePress={() => {
+              /* Handle save action */
+              router.push("/(tabs)/(menu)");
+            }}
           />
         </View>
       </View>

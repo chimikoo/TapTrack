@@ -14,6 +14,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import axios from "axios";
 import { TAP_TRACK_URL } from "@env";
 import { useOrder } from "../../../contexts/orderContext";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const FoodDetail = () => {
   const { id, category, tableNumber } = useLocalSearchParams();
@@ -26,6 +27,9 @@ const FoodDetail = () => {
 
   const { addItemToOrder } = useOrder();
   const router = useRouter();
+
+  const { theme, bgColor, textColor } = useTheme();
+  const grayColor = theme === "light" ? "bg-gray-200" : "bg-opacGray";
 
   const incrementQuantity = (index) => {
     setQuantity((prevQuantity) => {
@@ -120,15 +124,17 @@ const FoodDetail = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-primary-lighter items-center px-4 pb-4">
-      <ScrollView className="w-full bg-gray-200 rounded-lg p-4">
+    <SafeAreaView className={`flex-1 items-center px-4 pb-4 ${bgColor}`}>
+      <ScrollView className={`w-full rounded-lg p-4 ${grayColor}`}>
         {loading ? (
           <ActivityIndicator size="large" color="#7CA982" />
         ) : (
           <>
             <View className="flex-row w-full justify-between items-center">
               <View className="w-[60%]">
-                <Text className="text-2xl font-bold">{item.name}</Text>
+                <Text className={`text-2xl font-bold ${textColor}`}>
+                  {item.name}
+                </Text>
               </View>
               {category !== "beverage" ? (
                 <AddRemove
@@ -143,7 +149,7 @@ const FoodDetail = () => {
                 category === "beverage" ? "" : "flex-row"
               } w-full gap-x-6`}
             >
-              <Text className="mt-3 text-base font-bold text-primary-dark">
+              <Text className={`mt-3 text-base font-bold ${textColor}`}>
                 Price:
               </Text>
               {category === "beverage" ? (
@@ -154,8 +160,12 @@ const FoodDetail = () => {
                         key={spIndex}
                         className="flex flex-row justify-between items-center mt-2"
                       >
-                        <Text className="w-[20%]">{sp.size}</Text>
-                        <Text className="w-[20%]">{sp.price}€</Text>
+                        <Text className={`w-[20%] ${textColor}`}>
+                          {sp.size}
+                        </Text>
+                        <Text className={`w-[20%] ${textColor}`}>
+                          {sp.price}€
+                        </Text>
                         <AddRemove
                           quantity={quantity[spIndex]}
                           handleDecrement={() => decrementQuantity(spIndex)}
@@ -165,52 +175,52 @@ const FoodDetail = () => {
                     ))}
                 </View>
               ) : (
-                <Text className="text-primary-dark text-lg">{item.price}€</Text>
+                <Text className={`text-lg ${textColor}`}>{item.price}€</Text>
               )}
             </View>
             <View className="mt-5">
-              <Text className="text-base font-bold text-primary-dark">
+              <Text className={`text-base font-bold ${textColor}`}>
                 Description:
               </Text>
-              <Text className="pl-4 text-primary-dark">
+              <Text className={`pl-4 ${textColor}`}>
                 {item.description || "No description"}
               </Text>
-              <Text className="mt-3 text-base font-bold text-primary-dark">
+              <Text className={`mt-3 text-base font-bold ${textColor}`}>
                 Ingredients:
               </Text>
-              <Text className="pl-4 text-primary-dark">
+              <Text className={`pl-4 ${textColor}`}>
                 Tomato, Basil, Olive Oil, Garlic, Bread
               </Text>
 
               <View className="flex flex-row gap-4 mt-2">
-                <Text className="font-bold text-primary-dark">is vegan?</Text>
-                <Text>Yes</Text>
+                <Text className={`font-bold ${textColor}`}>is vegan?</Text>
+                <Text className={textColor}>Yes</Text>
               </View>
               <View className="flex flex-row gap-4">
-                <Text className="font-bold text-primary-dark">
+                <Text className={`font-bold ${textColor}`}>
                   is lactose free?
                 </Text>
-                <Text>No</Text>
+                <Text className={textColor}>No</Text>
               </View>
 
-              <Text className="text-base font-bold mt-4 text-primary-dark">
+              <Text className={`text-base font-bold mt-4 ${textColor}`}>
                 Extra:
               </Text>
               <View className="flex gap-1">
                 {extras.map((extra, index) => (
                   <View
                     key={index}
-                    className="flex-row items-center justify-between"
+                    className="flex-row items-center justify-start gap-x-6"
                   >
-                    <Text>
+                    <Text className={textColor}>
                       {index + 1}. {extra.extra}
                     </Text>
-                    <Text>{extra.price}€</Text>
+                    <Text className={textColor}>{extra.price}€</Text>
                   </View>
                 ))}
               </View>
 
-              <View className="flex-row mt-4">
+              <View className="flex-row mt-4 mb-8">
                 <TextInput
                   placeholder="extra"
                   value={extra}

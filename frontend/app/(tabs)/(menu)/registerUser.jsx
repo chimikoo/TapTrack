@@ -6,6 +6,7 @@ import Xbutton from "../../../components/XButton";
 import axios from "axios";
 import { TAP_TRACK_URL } from "@env";
 import { router } from "expo-router";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState("");
@@ -16,6 +17,12 @@ const RegisterScreen = () => {
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { theme, bgColor, textColor } = useTheme();
+
+  const bgAndBorderColor =
+    theme === "light"
+      ? "border-primary-dark bg-myWhite"
+      : "border-primary-light bg-opacGray";
 
   const getInputBorderColor = (input) => {
     if (input.length === 0) return "#949494";
@@ -65,8 +72,8 @@ const RegisterScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-primary-lighter px-4 pt-5">
-      <Text className="text-2xl font-bold text-center">
+    <View className={`flex-1 px-4 pt-5 ${bgColor}`}>
+      <Text className={`text-2xl font-bold text-center ${textColor}`}>
         Register New Employee
       </Text>
       <ScrollView
@@ -78,43 +85,48 @@ const RegisterScreen = () => {
       >
         <TextInput
           placeholder="Username"
+          placeholderTextColor={theme === "light" ? "#949494" : "#fefefe"}
           value={username}
           onChangeText={setUsername}
-          className={`w-full p-3 bg-white rounded-lg mb-4 border`}
+          className={`w-full p-3 rounded-lg mb-4 border ${bgAndBorderColor} ${textColor}`}
           style={{ borderColor: getInputBorderColor(username) }}
         />
         <TextInput
           placeholder="Password"
+          placeholderTextColor={theme === "light" ? "#949494" : "#fefefe"}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
-          className={`w-full p-3 bg-white rounded-lg mb-4 border`}
+          className={`w-full p-3 rounded-lg mb-4 border ${bgAndBorderColor} ${textColor}`}
           style={{ borderColor: getInputBorderColor(password) }}
         />
         <TextInput
           placeholder="First Name"
+          placeholderTextColor={theme === "light" ? "#949494" : "#fefefe"}
           value={firstName}
           onChangeText={setFirstName}
-          className={`w-full p-3 bg-white rounded-lg mb-4 border`}
+          className={`w-full p-3 rounded-lg mb-4 border ${bgAndBorderColor} ${textColor}`}
           style={{ borderColor: getInputBorderColor(firstName) }}
         />
         <TextInput
           placeholder="Last Name"
+          placeholderTextColor={theme === "light" ? "#949494" : "#fefefe"}
           value={lastName}
           onChangeText={setLastName}
-          className={`w-full p-3 bg-white rounded-lg mb-4 border`}
+          className={`w-full p-3 rounded-lg mb-4 border ${bgAndBorderColor} ${textColor}`}
           style={{ borderColor: getInputBorderColor(lastName) }}
         />
         <TextInput
           placeholder="Email"
+          placeholderTextColor={theme === "light" ? "#949494" : "#fefefe"}
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
-          className={`w-full p-3 bg-white rounded-lg mb-4 border`}
+          className={`w-full p-3 rounded-lg mb-4 border ${bgAndBorderColor} ${textColor}`}
           style={{ borderColor: getInputBorderColor(email) }}
         />
         <View
-          className={`w-full bg-white rounded-lg mb-4 border ${getRoleBorderColor()}`}
+          className={`w-full rounded-lg mb-4 border ${bgAndBorderColor} ${getRoleBorderColor()}`}
         >
           <Picker
             selectedValue={role}

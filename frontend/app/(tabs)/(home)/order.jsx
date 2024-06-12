@@ -22,6 +22,7 @@ import {
 } from "../../../utils/handleQuantity.js";
 import { SvgXml } from "react-native-svg";
 import menuSvgs from "../../../utils/menuSvgs.js";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const Order = () => {
   const { tableNumber } = useLocalSearchParams();
@@ -30,6 +31,7 @@ const Order = () => {
   const { orderItems, setOrderItems } = useOrder();
   const { menuItems, loading: menuLoading } = useMenu(); // Use the custom hook to access menu items
   const [loading, setLoading] = useState(true); // Define the loading state
+  const { theme, bgColor, textColor } = useTheme();
 
   // Get order items for the specific table number
   const currentOrder = orderItems.find(
@@ -142,7 +144,7 @@ const Order = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-primary-lighter">
+    <SafeAreaView className={`flex-1 ${bgColor}`}>
       <View className="flex flex-wrap justify-center flex-row">
         {menuSvgs.map((category, index) => {
           const svgXml = category.xml.replace(/currentColor/g, "#f00");
@@ -171,7 +173,7 @@ const Order = () => {
         ) : (
           <View className="mt-8 px-4">
             {items.length === 0 ? (
-              <Text className="text-center font-bold text-xl text-gray-600">
+              <Text className="text-center font-bold text-xl text-primary">
                 Order is currently empty
               </Text>
             ) : (
@@ -182,11 +184,15 @@ const Order = () => {
                     className="flex flex-col mb-2 border-b border-gray-300 pb-2"
                   >
                     <View className="flex flex-row justify-between items-center">
-                      <Text className="w-[40%] font-bold text-md">
+                      <Text
+                        className={`w-[40%] font-bold text-md ${textColor}`}
+                      >
                         {item.name}
                         {item.size ? ` (${item.size})` : ""}
                       </Text>
-                      <Text className="w-[20%]">{item.price}€</Text>
+                      <Text className={`w-[20%] ${textColor}`}>
+                        {item.price}€
+                      </Text>
                       <AddRemove
                         quantity={item.quantity}
                         handleDecrement={() =>
@@ -216,8 +222,10 @@ const Order = () => {
                             key={index}
                             className="flex-row justify-between"
                           >
-                            <Text className="text-sm">+{extra.extra}</Text>
-                            <Text>{extra.price}€</Text>
+                            <Text className={`text-sm ${textColor}`}>
+                              +{extra.extra}
+                            </Text>
+                            <Text className={textColor}>{extra.price}€</Text>
                           </View>
                         ))}
                     </View>

@@ -19,6 +19,7 @@ import AdminUserTimeTrack from "../../../components/AdminUserTimeTrack"; // Impo
 import { Picker } from "@react-native-picker/picker";
 import edit_icon from "../../../assets/icons/edit_icon.png";
 import Xbutton from "../../../components/XButton";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const AdminProfile = () => {
   const [user, setUser] = useState(null);
@@ -28,6 +29,7 @@ const AdminProfile = () => {
   const [selectedRole, setSelectedRole] = useState("");
   const { userId } = useLocalSearchParams();
   const router = useRouter();
+  const { theme, bgColor, textColor } = useTheme();
 
   useEffect(() => {
     console.log("UserId from params:", userId);
@@ -113,7 +115,7 @@ const AdminProfile = () => {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
-  
+
       if (response.status === 200) {
         Alert.alert("Success", "User deleted successfully");
         router.push("/(tabs)/(menu)/allEmployees");
@@ -124,7 +126,9 @@ const AdminProfile = () => {
       console.error("Error deleting user:", error);
       Alert.alert(
         "Error",
-        `Failed to delete user. ${error.response?.data?.message || error.message}`
+        `Failed to delete user. ${
+          error.response?.data?.message || error.message
+        }`
       );
     }
   };
@@ -140,14 +144,17 @@ const AdminProfile = () => {
   };
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return <ActivityIndicator size="large" color="#7CA982" />;
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-primary-lighter justify-start items-center">
+    <SafeAreaView className={`flex-1 justify-start items-center ${bgColor}`}>
       <ScrollView>
         <View className="w-full flex-row justify-end p-4">
-          <Xbutton onPress={() => setDeleteModalVisible(true)} />
+          <Xbutton
+            onPress={() => setDeleteModalVisible(true)}
+            containerStyle="bg-red-600"
+          />
         </View>
         <View className="items-center">
           {user && (
@@ -163,13 +170,13 @@ const AdminProfile = () => {
                 style={{ width: 160, height: 160 }}
               />
               <View className="items-center mt-6 w-full">
-                <Text className="text-4xl font-bold text-center">
+                <Text className={`text-4xl font-bold text-center ${textColor}`}>
                   {`${user.firstName} ${user.lastName}`}
                 </Text>
               </View>
-              <Text className="text-lg text-gray-600 mt-4">{user.email}</Text>
+              <Text className="text-lg text-primary mt-4">{user.email}</Text>
               <View className="flex-row items-center mt-2">
-                <Text className="text-lg text-gray-600">{user.role}</Text>
+                <Text className="text-lg text-primary">{user.role}</Text>
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
                   <Image source={edit_icon} className="w-6 h-6 ml-2" />
                 </TouchableOpacity>

@@ -6,10 +6,12 @@ import CustomButton from "../../../components/CustomButton.jsx";
 import { useEffect, useState } from "react";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const OrderDetail = () => {
   const { orderId } = useLocalSearchParams();
   const [order, setOrder] = useState({});
+  const { theme, bgColor } = useTheme();
 
   useEffect(() => {
     const getOrder = async () => {
@@ -39,53 +41,51 @@ const OrderDetail = () => {
   };
 
   return (
-    <SafeAreaView>
-      <>
-        {order && (
-          <ScrollView
-            className={`w-[90%] m-auto rounded-lg p-6 mb-4 ${
-              order.isCheckout ? "bg-primary" : "bg-secondary"
-            }`}
-          >
-            <View className="flex-row justify-between items-center border-b border-myWhite py-2">
-              <Text className="text-myWhite text-xl">Order ID</Text>
-              <Text className="text-myWhite text-xs">{orderId}</Text>
-            </View>
-            <View className="flex-row justify-between border-b border-myWhite py-4">
-              <Text className="text-myWhite">Host</Text>
-              <Text className="text-myWhite">{order.userId?.firstName}</Text>
-            </View>
-            <View className="flex-row justify-between border-b border-myWhite py-4">
-              <Text className="text-myWhite">Table N°</Text>
-              <Text className="text-myWhite">{order.tableNumber}</Text>
-            </View>
-            {order.drinks && (
-              <OrderItemsMap title="Drinks" items={order.drinks} />
-            )}
-            {order.starter && (
-              <OrderItemsMap title="Starters" items={order.starter} />
-            )}
-            {order.main && <OrderItemsMap title="Mains" items={order.main} />}
-            {order.side && <OrderItemsMap title="Sides" items={order.side} />}
-            {order.dessert && (
-              <OrderItemsMap title="Desserts" items={order.dessert} />
-            )}
-            <View className="flex-row justify-between py-4 mb-10">
-              <Text className="text-myWhite">Date</Text>
-              <Text className="text-myWhite">
-                {order.timestamp?.slice(0, 10)}
-              </Text>
-            </View>
-          </ScrollView>
-        )}
-        {!order.isCheckout && (
-          <CustomButton
-            text="Checkout"
-            containerStyles="w-[50%] m-auto mb-4"
-            handlePress={handleCheckout}
-          />
-        )}
-      </>
+    <SafeAreaView className={`${bgColor} h-full`}>
+      {order && (
+        <ScrollView
+          className={`w-[90%] m-auto rounded-lg p-6 mb-4 ${
+            order.isCheckout ? "bg-primary" : "bg-secondary"
+          }`}
+        >
+          <View className="flex-row justify-between items-center border-b border-myWhite py-2">
+            <Text className="text-myWhite text-xl">Order ID</Text>
+            <Text className="text-myWhite text-xs">{orderId}</Text>
+          </View>
+          <View className="flex-row justify-between border-b border-myWhite py-4">
+            <Text className="text-myWhite">Host</Text>
+            <Text className="text-myWhite">{order.userId?.firstName}</Text>
+          </View>
+          <View className="flex-row justify-between border-b border-myWhite py-4">
+            <Text className="text-myWhite">Table N°</Text>
+            <Text className="text-myWhite">{order.tableNumber}</Text>
+          </View>
+          {order.drinks && (
+            <OrderItemsMap title="Drinks" items={order.drinks} />
+          )}
+          {order.starter && (
+            <OrderItemsMap title="Starters" items={order.starter} />
+          )}
+          {order.main && <OrderItemsMap title="Mains" items={order.main} />}
+          {order.side && <OrderItemsMap title="Sides" items={order.side} />}
+          {order.dessert && (
+            <OrderItemsMap title="Desserts" items={order.dessert} />
+          )}
+          <View className="flex-row justify-between py-4 mb-10">
+            <Text className="text-myWhite">Date</Text>
+            <Text className="text-myWhite">
+              {order.timestamp?.slice(0, 10)}
+            </Text>
+          </View>
+        </ScrollView>
+      )}
+      {!order.isCheckout && (
+        <CustomButton
+          text="Checkout"
+          containerStyles="w-[50%] m-auto mb-4"
+          handlePress={handleCheckout}
+        />
+      )}
     </SafeAreaView>
   );
 };
