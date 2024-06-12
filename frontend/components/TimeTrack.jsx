@@ -1,21 +1,28 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { TAP_TRACK_URL } from "@env";
+import { useTheme } from "../contexts/themeContext.jsx";
 
 const getMonthNameFromKey = (key) => {
   const [year, month] = key.split("-");
   const date = new Date(year, month - 1);
-  const monthName = date.toLocaleString("default", { month: "long", year: "numeric" });
+  const monthName = date.toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  });
   return monthName.charAt(0).toUpperCase() + monthName.slice(1);
 };
 
 const isCurrentMonth = (key) => {
   const [year, month] = key.split("-");
   const currentDate = new Date();
-  return currentDate.getFullYear() === parseInt(year) && currentDate.getMonth() + 1 === parseInt(month);
+  return (
+    currentDate.getFullYear() === parseInt(year) &&
+    currentDate.getMonth() + 1 === parseInt(month)
+  );
 };
 
 const TimeTrackComp = ({ containerStyle, itemStyle }) => {
@@ -23,6 +30,11 @@ const TimeTrackComp = ({ containerStyle, itemStyle }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
+
+  const { theme } = useTheme();
+  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const textColor =
+    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
 
   const fetchTimeTrackData = useCallback(async () => {
     setLoading(true);
@@ -64,9 +76,9 @@ const TimeTrackComp = ({ containerStyle, itemStyle }) => {
   };
 
   return (
-    <View className={`h-full p-5 bg-primary-lighter ${containerStyle}`}>
+    <View className={`h-full p-5 ${bgColor} ${containerStyle}`}>
       {loading ? (
-        <Text>Loading...</Text>
+        <ActivityIndicator size="large" color="#7CA982" />
       ) : error ? (
         <Text className="text-red-500">{error}</Text>
       ) : timeTrackData && Object.keys(timeTrackData).length > 0 ? (
@@ -74,14 +86,17 @@ const TimeTrackComp = ({ containerStyle, itemStyle }) => {
           {Object.entries(timeTrackData).map(([key, item], index) => (
             <TouchableOpacity
               key={index}
-              className={`p-4 rounded-lg mb-4 ${isCurrentMonth(key) ? "bg-tertiary" : "bg-primary"} ${itemStyle}`}
+              className={`p-4 rounded-lg mb-4 ${
+                isCurrentMonth(key) ? "bg-tertiary" : "bg-primary"
+              } ${itemStyle}`}
               onPress={() => handlePress(key, item)}
             >
               <Text className="text-lg font-bold text-center text-myWhite">
                 {getMonthNameFromKey(key)}
               </Text>
               <Text className="text-base text-center text-myWhite">
-                Time: {item?.monthlyTotal?.hours ?? 0}h {item?.monthlyTotal?.minutes ?? 0}m
+                Time: {item?.monthlyTotal?.hours ?? 0}h{" "}
+                {item?.monthlyTotal?.minutes ?? 0}m
               </Text>
             </TouchableOpacity>
           ))}

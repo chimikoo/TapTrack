@@ -5,6 +5,7 @@ import { useLocalSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import CustomButton from "../../../components/CustomButton";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 // Function to convert date to day of the week
 const getDayOfWeek = (dateString) => {
@@ -67,6 +68,11 @@ const DailyView = () => {
   const params = useLocalSearchParams();
   const { monthKey, monthData } = params || {};
 
+  const { theme } = useTheme();
+  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const textColor =
+    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
+
   useEffect(() => {
     const fetchUserData = async () => {
       const storedUserData = await SecureStore.getItemAsync("userData");
@@ -94,9 +100,12 @@ const DailyView = () => {
   };
 
   const handleConfirm = (date) => {
-    const selectedDate = date.toLocaleDateString('en-CA');
+    const selectedDate = date.toLocaleDateString("en-CA");
     console.log("Selected Date:", selectedDate);
-    console.log("Merged Shifts Dates:", mergedShifts.map((shift) => shift.day));
+    console.log(
+      "Merged Shifts Dates:",
+      mergedShifts.map((shift) => shift.day)
+    );
     const index = mergedShifts.findIndex((shift) => shift.day === selectedDate);
     console.log("Index:", index);
     if (index !== -1) {
@@ -106,16 +115,18 @@ const DailyView = () => {
     hideDatePicker();
   };
 
-    // Calculate the minimum and maximum dates for the current month
-    const [year, month] = monthKey.split("-");
-    const minDate = new Date(year, month - 1, 1);
-    const maxDate = new Date(year, month, 0); // Last day of the month
+  // Calculate the minimum and maximum dates for the current month
+  const [year, month] = monthKey.split("-");
+  const minDate = new Date(year, month - 1, 1);
+  const maxDate = new Date(year, month, 0); // Last day of the month
 
   return (
-    <SafeAreaView className="flex-1 bg-primary-lighter">
-      <View className="p-5 bg-primary-lighter flex-1">
+    <SafeAreaView className={`flex-1 ${bgColor}`}>
+      <View className="p-5 flex-1">
         <View className="flex items-center">
-          <Text className="text-2xl font-bold mb-5 text-center border-b border-gray-300 pb-2 w-[75%]">
+          <Text
+            className={`text-2xl font-bold mb-5 text-center border-b border-gray-300 pb-2 w-[75%] ${textColor}`}
+          >
             {firstName}'s Hour Log
           </Text>
         </View>
