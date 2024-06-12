@@ -10,6 +10,11 @@ const Settings = () => {
   const [language, setLanguage] = useState("en");
   const { theme, toggleTheme, bgColor, textColor } = useTheme();
 
+  const bgAndBorderColor =
+    theme === "light"
+      ? "border-primary-dark bg-myWhite"
+      : "border-primary-light bg-opacGray";
+
   return (
     <SafeAreaView
       className={`flex-1 justify-center items-center pt-16 ${bgColor}`}
@@ -29,11 +34,19 @@ const Settings = () => {
         </View>
         <View className="flex flex-row justify-between items-center">
           <Text className={`text-lg ${textColor}`}>Theme</Text>
-          <View className="w-[50%] bg-white rounded-lg border border-[#828282] h-12 justify-center">
+          <View
+            className={`w-[50%] rounded-lg border h-12 justify-center ${bgAndBorderColor}`}
+          >
             <Picker
               selectedValue={theme}
               onValueChange={(itemValue) => toggleTheme()}
               className="w-full h-full"
+              style={{
+                height: 50,
+                width: "100%",
+                color: `${theme === "light" ? "black" : "white"}`,
+              }}
+              dropdownIconColor={`${theme === "light" ? "black" : "white"}`}
             >
               <Picker.Item label="Light" value="light" />
               <Picker.Item label="Dark" value="dark" />
@@ -42,11 +55,19 @@ const Settings = () => {
         </View>
         <View className="flex flex-row justify-between items-center">
           <Text className={`text-lg ${textColor}`}>Language</Text>
-          <View className="w-[50%] bg-white rounded-lg border border-[#828282] h-12 justify-center">
+          <View
+            className={`w-[50%] rounded-lg border h-12 justify-center ${bgAndBorderColor}`}
+          >
             <Picker
               selectedValue={language}
               onValueChange={(itemValue) => setLanguage(itemValue)}
               className="w-full h-full"
+              style={{
+                height: 50,
+                width: "100%",
+                color: `${theme === "light" ? "black" : "white"}`,
+              }}
+              dropdownIconColor={`${theme === "light" ? "black" : "white"}`}
             >
               <Picker.Item label="English" value="en" />
               <Picker.Item label="German" value="de" />
