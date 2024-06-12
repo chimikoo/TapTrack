@@ -4,18 +4,25 @@ import { useRouter } from "expo-router";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { TAP_TRACK_URL } from "@env";
+import { useTheme } from "../contexts/themeContext.jsx";
 
 const getMonthNameFromKey = (key) => {
   const [year, month] = key.split("-");
   const date = new Date(year, month - 1);
-  const monthName = date.toLocaleString("default", { month: "long", year: "numeric" });
+  const monthName = date.toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  });
   return monthName.charAt(0).toUpperCase() + monthName.slice(1);
 };
 
 const isCurrentMonth = (key) => {
   const [year, month] = key.split("-");
   const currentDate = new Date();
-  return currentDate.getFullYear() === parseInt(year) && currentDate.getMonth() + 1 === parseInt(month);
+  return (
+    currentDate.getFullYear() === parseInt(year) &&
+    currentDate.getMonth() + 1 === parseInt(month)
+  );
 };
 
 const AdminUserTimeTrack = ({ userId, containerStyle, itemStyle }) => {
@@ -23,6 +30,7 @@ const AdminUserTimeTrack = ({ userId, containerStyle, itemStyle }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
+  const { theme, bgColor, textColor } = useTheme();
 
   const fetchTimeTrackData = useCallback(async () => {
     setLoading(true);
@@ -58,24 +66,27 @@ const AdminUserTimeTrack = ({ userId, containerStyle, itemStyle }) => {
   };
 
   return (
-    <View className={`h-full p-5 bg-primary-lighter ${containerStyle}`}>
+    <View className={`h-full p-5 ${bgColor} ${containerStyle}`}>
       {loading ? (
         <Text>Loading...</Text>
       ) : error ? (
-        <Text className="text-red-500">{error}</Text>
+        <Text className="text-red-500 text-center">{error}</Text>
       ) : timeTrackData && Object.keys(timeTrackData).length > 0 ? (
         <ScrollView>
           {Object.entries(timeTrackData).map(([key, item], index) => (
             <TouchableOpacity
               key={index}
-              className={`p-4 rounded-lg mb-4 ${isCurrentMonth(key) ? "bg-blue-400" : "bg-primary"} ${itemStyle}`}
+              className={`p-4 rounded-lg mb-4 ${
+                isCurrentMonth(key) ? "bg-tertiary" : "bg-primary"
+              } ${itemStyle}`}
               onPress={() => handlePress(key, item)}
             >
-              <Text className="text-lg font-bold text-center">
+              <Text className={`text-lg font-bold text-center ${textColor}`}>
                 {getMonthNameFromKey(key)}
               </Text>
-              <Text className="text-base text-center">
-                Time: {item?.monthlyTotal?.hours ?? 0}h {item?.monthlyTotal?.minutes ?? 0}m
+              <Text className={`text-base text-center ${textColor}`}>
+                Time: {item?.monthlyTotal?.hours ?? 0}h{" "}
+                {item?.monthlyTotal?.minutes ?? 0}m
               </Text>
             </TouchableOpacity>
           ))}

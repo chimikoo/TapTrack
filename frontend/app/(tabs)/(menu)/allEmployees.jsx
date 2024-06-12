@@ -17,6 +17,7 @@ import CustomButton from "../../../components/CustomButton";
 import { TAP_TRACK_URL } from "@env";
 import { UserContext } from "../../../contexts/userContext.jsx";
 import * as SecureStore from "expo-secure-store";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const EmployeeScreen = () => {
   const { dispatch } = useContext(UserContext);
@@ -27,6 +28,7 @@ const EmployeeScreen = () => {
   const [hasMore, setHasMore] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const { theme, bgColor, textColor } = useTheme();
   const router = useRouter();
 
   useEffect(() => {
@@ -115,9 +117,9 @@ const EmployeeScreen = () => {
   };
 
   return (
-    <SafeAreaView className="h-full flex-1 pt-5 bg-primary-lighter">
+    <SafeAreaView className={`h-full flex-1 pt-5 ${bgColor}`}>
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#7CA982" />
       ) : (
         <FlatList
           data={employees}
@@ -155,11 +157,11 @@ const EmployeeScreen = () => {
           onEndReached={loadMoreEmployees}
           onEndReachedThreshold={0.5}
           ListFooterComponent={
-            loadingMore && <ActivityIndicator size="small" color="#0000ff" />
+            loadingMore && <ActivityIndicator size="small" color="#7CA982" />
           }
         />
       )}
-      <View className="flex items-center bg-primary-lighter">
+      <View className="flex items-center pb-4">
         <CustomButton
           text="Register Employee"
           containerStyles="w-[75%] mt-2 mb-2"
