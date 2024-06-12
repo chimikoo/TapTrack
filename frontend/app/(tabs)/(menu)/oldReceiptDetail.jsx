@@ -5,12 +5,13 @@ import { useEffect, useState } from "react";
 import { View } from "react-native";
 import ReceiptComponent from "../../../components/ReceiptComponent.jsx";
 import CustomButton from "../../../components/CustomButton.jsx";
-
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const OldReceiptDetail = () => {
   const { receiptId } = useLocalSearchParams();
   const [receipt, setReceipt] = useState({});
   const [loading, setLoading] = useState(false);
+  const { theme, bgColor, textColor } = useTheme();
 
   useEffect(() => {
     const getReceipt = async () => {
@@ -28,7 +29,7 @@ const OldReceiptDetail = () => {
   }, []);
 
   return (
-    <View className="h-full">
+    <View className={`h-full ${bgColor}`}>
       <View className="h-[83%] m-4">
         <ReceiptComponent
           receipt={receipt}

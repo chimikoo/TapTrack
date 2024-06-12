@@ -12,6 +12,7 @@ import { router } from "expo-router";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
 import NotFound from "../../../components/NotFound.jsx";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const OldReceipts = () => {
   const [receipts, setReceipts] = useState([]);
@@ -19,6 +20,12 @@ const OldReceipts = () => {
   const [selectedHost, setSelectedHost] = useState("all");
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const { theme, bgColor, textColor } = useTheme();
+
+  const bgAndBorderColor =
+    theme === "light"
+      ? "border-primary-dark bg-myWhite"
+      : "border-primary-light bg-opacGray";
 
   useEffect(() => {
     const getOldReceipts = async () => {
@@ -62,8 +69,8 @@ const OldReceipts = () => {
   });
 
   return (
-    <SafeAreaView className="flex-1 justify-center items-center bg-primary-lighter">
-      <Text className="text-2xl font-bold text-primary-dark mb-4">
+    <SafeAreaView className={`flex-1 justify-center items-center ${bgColor}`}>
+      <Text className={`text-2xl font-bold mb-4 ${textColor}`}>
         Old Receipts
       </Text>
       {loading ? (
@@ -96,18 +103,24 @@ const OldReceipts = () => {
             />
           ) : (
             <View className="h-[77%]">
-              <Text className="text-xl text-primary-dark">
+              <Text className={`text-xl ${textColor}`}>
                 No receipts found for {selectedHost}
               </Text>
             </View>
           )}
           <View className="mt-4 mb-4 w-full px-4 flex items-center">
-            <View className="w-[60%] border rounded-lg pb-2 bg-primary-dark">
+            <View
+              className={`w-[60%] border rounded-lg pb-2 ${bgAndBorderColor} `}
+            >
               <Picker
                 selectedValue={selectedHost}
                 onValueChange={(itemValue) => setSelectedHost(itemValue)}
-                style={{ height: 50, width: "100%", color: "white" }}
-                dropdownIconColor={"white"}
+                style={{
+                  height: 50,
+                  width: "100%",
+                  color: `${theme === "light" ? "black" : "white"}`,
+                }}
+                dropdownIconColor={`${theme === "light" ? "black" : "white"}`}
               >
                 <Picker.Item label="All" value="all" />
                 {users.map((user) => (
