@@ -8,9 +8,11 @@ import { router, useLocalSearchParams } from "expo-router";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
 import { useMenu } from "../../../contexts/menuContext.jsx";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const UpdateMenu = () => {
   const { fetchMenuItems } = useMenu();
+  const { theme, bgColor, textColor } = useTheme();
   const { itemId, itemCategory } = useLocalSearchParams();
   const [modalVisible, setModalVisible] = useState(false);
   const [stock, setStock] = useState(0);
@@ -87,11 +89,9 @@ const UpdateMenu = () => {
   };
 
   return (
-    <SafeAreaView className="bg-primary-lighter h-full">
+    <SafeAreaView className={`${bgColor} h-full`}>
       <View className="w-full flex items-center justify-center px-8">
-        <Text className="text-primary-dark text-xl font-bold mb-4">
-          Edit Menu
-        </Text>
+        <Text className={`${textColor} text-xl font-bold mb-4`}>Edit Menu</Text>
         <MenuForm menuItem={menuItem} setMenuItem={setMenuItem} />
         <View className="w-full flex-row justify-between">
           <CustomButton
