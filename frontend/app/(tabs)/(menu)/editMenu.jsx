@@ -108,7 +108,9 @@ const EditMenu = () => {
           const outOfStock = item.stock === 0 ? "text-secondary" : "";
           return (
             <TouchableOpacity
-              className=" border-b mb-4 flex-row justify-between items-center"
+              className={`border-b mb-4 flex-row justify-between items-center ${
+                theme === "dark" ? "border-primary-lighter" : "border-gray-700"
+              }`}
               onPress={() => {
                 router.push({
                   pathname: "updateMenu",
@@ -116,7 +118,9 @@ const EditMenu = () => {
                 });
               }}
             >
-              <Text className={`${outOfStock} ${textColor} text-lg m-2`}>{item.name}</Text>
+              <Text className={`${outOfStock} ${textColor} text-lg m-2`}>
+                {item.name}
+              </Text>
               <Xbutton
                 onPress={() => {
                   setModalVisible(true);
