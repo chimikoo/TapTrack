@@ -18,7 +18,7 @@ module.exports = {
         },
         myWhite: "#f5f5f5",
         myGray: "#C9C9C9",
-        backgroundColorMenu: 'rgba(0, 0, 0, 0.5)'
+        backgroundColorMenu: 'rgba(0, 0, 0, 0.5)',
       },
       fontFamily: {},
     },

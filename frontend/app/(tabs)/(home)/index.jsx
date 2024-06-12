@@ -5,10 +5,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Table from "../../../components/Table.jsx";
 import { router } from "expo-router";
 import { TAP_TRACK_URL } from "@env";
-
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const Home = () => {
   const [tables, setTables] = useState([]);
+  const { theme } = useTheme();
+
+  console.log("theme", theme);
+  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
 
   useEffect(() => {
     const getTables = async () => {
@@ -32,7 +36,7 @@ const Home = () => {
   }, []);
 
   return (
-    <SafeAreaView className="h-full bg-primary-lighter">
+    <SafeAreaView className={`h-full ${bgColor}`}>
       <ScrollView className="w-full mb-4">
         <View className="w-full flex flex-row flex-wrap items-center justify-center">
           {tables.map((table) => (
@@ -43,7 +47,7 @@ const Home = () => {
               handleTablePress={() =>
                 router.push({
                   pathname: "/(tabs)/(home)/order",
-                  params: { tableNumber: table.tableNumber},
+                  params: { tableNumber: table.tableNumber },
                 })
               }
             />
@@ -55,4 +59,3 @@ const Home = () => {
 };
 
 export default Home;
-
