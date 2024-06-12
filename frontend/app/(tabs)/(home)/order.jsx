@@ -20,6 +20,8 @@ import {
   decrementQuantity,
   incrementQuantity,
 } from "../../../utils/handleQuantity.js";
+import { SvgXml } from "react-native-svg";
+import menuSvgs from "../../../utils/menuSvgs.js";
 
 const Order = () => {
   const { tableNumber } = useLocalSearchParams();
@@ -142,27 +144,26 @@ const Order = () => {
   return (
     <SafeAreaView className="flex-1 bg-primary-lighter">
       <View className="flex flex-wrap justify-center flex-row">
-        {[
-          { type: "Beverage", color: "bg-[#1370CC]" },
-          { type: "Starter", color: "bg-[#BC50BE]" },
-          { type: "Main", color: "bg-[#D3B61B]" },
-          { type: "Dessert", color: "bg-[#5075BE]" },
-          { type: "Side", color: "bg-[#81BE50]" },
-          { type: "Alcoholic", color: "bg-[#50B8BE]" },
-        ].map((category, index) => (
-          <TouchableOpacity
-            key={index}
-            className={`${category.color} m-2 p-4 rounded-lg w-24 h-24 flex justify-center`}
-            onPress={() =>
-              router.push({
-                pathname: "menuItemSelector",
-                params: { category: category.type.toLowerCase(), tableNumber },
-              })
-            }
-          >
-            <Text className="text-white text-center">{category.type}</Text>
-          </TouchableOpacity>
-        ))}
+        {menuSvgs.map((category, index) => {
+          const svgXml = category.xml.replace(/currentColor/g, "#f00");
+          return (
+            <TouchableOpacity
+              key={index}
+              className={`m-2 w-24 h-24 flex justify-center items-center`}
+              onPress={() =>
+                router.push({
+                  pathname: "menuItemSelector",
+                  params: {
+                    category: category.type.toLowerCase(),
+                    tableNumber,
+                  },
+                })
+              }
+            >
+              <SvgXml xml={svgXml} width="100%" height="100" />
+            </TouchableOpacity>
+          );
+        })}
       </View>
       <ScrollView className="w-full">
         {loading || menuLoading ? (

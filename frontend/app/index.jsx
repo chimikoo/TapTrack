@@ -101,6 +101,7 @@ export default function App() {
             />
           </View>
         </View>
+
         <InputField
           title="Username"
           value={form.username}
