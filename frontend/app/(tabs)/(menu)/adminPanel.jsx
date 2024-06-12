@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router"; // Make sure to import useRouter
 import React from "react";
 import { SafeAreaView, View, Text, TouchableOpacity } from "react-native";
+import { Icon } from "@rneui/themed";
 
 const AdminPanel = () => {
   const router = useRouter(); // Initialize the router
@@ -11,19 +12,36 @@ const AdminPanel = () => {
         <Text className="text-3xl font-bold mb-6">Admin Panel</Text>
         <View className="flex flex-row flex-wrap justify-center">
           {[
-            { type: "All Orders", color: "bg-primary-dark" },
-            { type: "Edit Menu", color: "bg-primary-dark" },
-            { type: "Employees", color: "bg-primary-dark" },
-            { type: "Old Receipts", color: "bg-primary-dark" },
-            { type: "Dashboard", color: "bg-primary-dark" },
-            { type: "Eod", color: "bg-primary-dark" },
+            {
+              type: "Edit Menu",
+              color: "bg-primary-dark",
+              iconName: "edit",
+              iconType: "feather",
+            },
+            {
+              type: "Employees",
+              color: "bg-primary-dark",
+              iconName: "users",
+              iconType: "feather",
+            },
+            {
+              type: "Old Receipts",
+              color: "bg-primary-dark",
+              iconName: "file-text",
+              iconType: "feather",
+            },
+            {
+              type: "Dashboard",
+              color: "bg-primary-dark",
+              iconName: "pie-chart",
+              iconType: "feather",
+            },
           ].map((category, index) => (
             <TouchableOpacity
               key={index}
               className={`${category.color} m-2 w-24 h-24 p-4 rounded-lg flex justify-center items-center`}
               style={{ width: "35%" }}
               onPress={() => {
-
                 switch (category.type) {
                   case "Employees":
                     router.push("/allEmployees");
@@ -34,13 +52,22 @@ const AdminPanel = () => {
                   case "Edit Menu":
                     router.push("/editMenu");
                     break;
+                  case "Dashboard":
+                    router.push("/dashboard");
+                    break;
                   default:
                     console.log("Navigation not set up for this category");
-
                 }
               }}
             >
-              <Text className="text-white text-center">{category.type}</Text>
+              <Text className="text-white text-center mb-2">
+                {category.type}
+              </Text>
+              <Icon
+                name={category.iconName}
+                color="#fff"
+                type={category.iconType}
+              />
             </TouchableOpacity>
           ))}
         </View>
