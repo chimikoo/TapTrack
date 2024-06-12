@@ -6,14 +6,12 @@ import { useTheme } from "../contexts/themeContext.jsx";
 
 const InputField = ({ title, value, handleChange }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const { theme } = useTheme();
+  const { theme, textColor } = useTheme();
 
   const bgColor =
     theme === "light"
       ? "border-primary-dark bg-myWhite"
       : "border-primary-light bg-opacGray";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
 
   return (
     <View className="space-y-2 w-[80%] py-2 ">

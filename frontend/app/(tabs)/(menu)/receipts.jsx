@@ -19,10 +19,7 @@ const Receipts = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  const { theme } = useTheme();
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
+  const { theme, bgColor, textColor } = useTheme();
 
   useEffect(() => {
     const getReceipts = async () => {
@@ -47,7 +44,9 @@ const Receipts = () => {
   }
 
   return (
-    <SafeAreaView className={`flex justify-center items-center h-full ${bgColor}`}>
+    <SafeAreaView
+      className={`flex justify-center items-center h-full ${bgColor}`}
+    >
       <Text className={`text-2xl font-bold ${textColor}`}>Receipts</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#7CA982" />

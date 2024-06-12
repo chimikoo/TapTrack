@@ -16,8 +16,7 @@ const ReceiptDetail = () => {
   const [tipAmount, setTipAmount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("");
 
-  const { theme } = useTheme();
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const { theme, bgColor } = useTheme();
 
   useEffect(() => {
     const getReceipt = async () => {

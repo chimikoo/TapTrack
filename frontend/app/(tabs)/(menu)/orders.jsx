@@ -21,10 +21,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  const { theme } = useTheme();
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
+  const { theme, bgColor, textColor } = useTheme();
 
   useEffect(() => {
     const getAllOrders = async () => {

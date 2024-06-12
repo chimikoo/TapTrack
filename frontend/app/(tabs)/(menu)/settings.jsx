@@ -8,11 +8,7 @@ import { router } from "expo-router";
 const Settings = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [language, setLanguage] = useState("en");
-  const { theme, toggleTheme } = useTheme();
-
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
+  const { theme, toggleTheme, bgColor, textColor } = useTheme();
 
   return (
     <SafeAreaView

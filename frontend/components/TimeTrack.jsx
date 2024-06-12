@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
@@ -31,10 +37,7 @@ const TimeTrackComp = ({ containerStyle, itemStyle }) => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const { theme } = useTheme();
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
+  const { theme, bgColor } = useTheme();
 
   const fetchTimeTrackData = useCallback(async () => {
     setLoading(true);

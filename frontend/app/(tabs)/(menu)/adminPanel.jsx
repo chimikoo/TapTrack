@@ -7,10 +7,7 @@ import { useTheme } from "../../../contexts/themeContext.jsx";
 const AdminPanel = () => {
   const router = useRouter(); // Initialize the router
 
-  const { theme } = useTheme();
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
+  const { theme, bgColor, textColor } = useTheme();
   const btnColor = theme === "light" ? "bg-primary-dark" : "bg-primary";
 
   return (

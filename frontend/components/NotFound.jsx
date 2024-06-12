@@ -4,10 +4,8 @@ import noFileFound from "../assets/icons/no-file-found.png";
 import { useTheme } from "../contexts/themeContext.jsx";
 
 const NotFound = ({ text }) => {
-  const { theme } = useTheme();
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const { theme, bgColor, textColor } = useTheme();
+
   return (
     <SafeAreaView
       className={`h-full flex justify-start items-center pt-6 ${bgColor}`}

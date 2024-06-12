@@ -29,11 +29,7 @@ const MenuItemSelector = () => {
 
   const { menuItems, loading } = useMenu(); // Use the custom hook to access menu items
   const [menuSelected, setMenuSelected] = useState(null);
-  const { theme } = useTheme();
-
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
+  const { theme, bgColor, textColor } = useTheme();
 
   useEffect(() => {
     // Ensure category is set from params if available
@@ -219,7 +215,9 @@ const MenuItemSelector = () => {
                   })
                 ) : (
                   <View className="flex flex-row justify-between items-center">
-                    <Text className={`w-[30%] pl-5 ${textColor} ${outOfStockStyle}`}>
+                    <Text
+                      className={`w-[30%] pl-5 ${textColor} ${outOfStockStyle}`}
+                    >
                       {item.price}€
                     </Text>
                     {item.stock > 0 && (

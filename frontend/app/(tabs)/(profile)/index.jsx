@@ -19,7 +19,7 @@ import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const Profile = () => {
   const { user, dispatch } = useContext(UserContext);
-  const { theme } = useTheme();
+  const { theme, bgColor, textColor } = useTheme();
   const [loading, setLoading] = useState(true);
 
   const fetchUser = async () => {
@@ -75,10 +75,6 @@ const Profile = () => {
   const handleEditProfile = () => {
     router.push("/(tabs)/(profile)/editProfile");
   };
-
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
 
   return (
     <SafeAreaView

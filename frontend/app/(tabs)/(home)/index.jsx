@@ -9,10 +9,7 @@ import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const Home = () => {
   const [tables, setTables] = useState([]);
-  const { theme } = useTheme();
-
-  console.log("theme", theme);
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const { theme, bgColor } = useTheme();
 
   useEffect(() => {
     const getTables = async () => {

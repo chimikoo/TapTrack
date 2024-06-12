@@ -28,11 +28,8 @@ const FoodDetail = () => {
   const { addItemToOrder } = useOrder();
   const router = useRouter();
 
-  const { theme } = useTheme();
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const { theme, bgColor, textColor } = useTheme();
   const grayColor = theme === "light" ? "bg-gray-200" : "bg-opacGray";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
 
   const incrementQuantity = (index) => {
     setQuantity((prevQuantity) => {

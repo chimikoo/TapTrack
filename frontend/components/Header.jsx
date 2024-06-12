@@ -4,8 +4,8 @@ import arrowLeft from "../assets/icons/arrow-left.png";
 import { useTheme } from "../contexts/themeContext.jsx";
 
 const Header = ({ handleBack }) => {
-  const { theme } = useTheme();
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const { theme, bgColor } = useTheme();
+  
   return (
     <SafeAreaView
       className={`w-full h-[8vh] flex justify-center items-start px-4 mt-8 ${bgColor}`}

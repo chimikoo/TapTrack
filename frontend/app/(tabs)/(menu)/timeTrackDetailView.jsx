@@ -68,10 +68,7 @@ const DailyView = () => {
   const params = useLocalSearchParams();
   const { monthKey, monthData } = params || {};
 
-  const { theme } = useTheme();
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
+  const { theme, bgColor, textColor } = useTheme();
 
   useEffect(() => {
     const fetchUserData = async () => {

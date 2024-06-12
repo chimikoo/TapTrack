@@ -4,11 +4,8 @@ import { View, Text } from "react-native";
 import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const monthlyView = () => {
-  const { theme } = useTheme();
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
-
+  const { theme, bgColor, textColor } = useTheme();
+  
   return (
     <>
       <SafeAreaView className={`${bgColor}`}>

@@ -9,8 +9,12 @@ const ThemeProvider = ({ children }) => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
+  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const textColor =
+    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, bgColor, textColor }}>
       {children}
     </ThemeContext.Provider>
   );

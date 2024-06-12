@@ -11,9 +11,7 @@ import { useTheme } from "../../../contexts/themeContext.jsx";
 const OrderDetail = () => {
   const { orderId } = useLocalSearchParams();
   const [order, setOrder] = useState({});
-  const { theme } = useTheme();
-
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const { theme, bgColor } = useTheme();
 
   useEffect(() => {
     const getOrder = async () => {

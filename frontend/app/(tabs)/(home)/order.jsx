@@ -31,11 +31,7 @@ const Order = () => {
   const { orderItems, setOrderItems } = useOrder();
   const { menuItems, loading: menuLoading } = useMenu(); // Use the custom hook to access menu items
   const [loading, setLoading] = useState(true); // Define the loading state
-  const { theme } = useTheme();
-
-  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
-  const textColor =
-    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
+  const { theme, bgColor, textColor } = useTheme();
 
   // Get order items for the specific table number
   const currentOrder = orderItems.find(
