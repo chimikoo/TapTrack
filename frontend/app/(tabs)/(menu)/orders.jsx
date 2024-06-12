@@ -12,6 +12,7 @@ import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
 import { TAP_TRACK_URL } from "@env";
 import axios from "axios";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -19,6 +20,11 @@ const Orders = () => {
   const [selectedUserId, setSelectedUserId] = useState("");
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+
+  const { theme } = useTheme();
+  const bgColor = theme === "light" ? "bg-primary-lighter" : "bg-primary-dark";
+  const textColor =
+    theme === "light" ? "text-primary-dark" : "text-primary-lighter";
 
   useEffect(() => {
     const getAllOrders = async () => {
@@ -57,8 +63,8 @@ const Orders = () => {
   );
 
   return (
-    <SafeAreaView className="flex-1 justify-center items-center bg-primary-lighter">
-      <Text className="text-2xl font-bold text-primary-dark mb-4">Orders</Text>
+    <SafeAreaView className={`flex-1 justify-center items-center ${bgColor}`}>
+      <Text className={`text-2xl font-bold mb-4 ${textColor}`}>Orders</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#7CA982" />
       ) : (
@@ -89,7 +95,7 @@ const Orders = () => {
             />
           ) : (
             <View className="h-[77%]">
-              <Text className="text-xl text-primary-dark">
+              <Text className={`text-xl ${textColor}`}>
                 No orders found for this user
               </Text>
             </View>
