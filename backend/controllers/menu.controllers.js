@@ -1,7 +1,6 @@
 import asyncHandler from "../config/asyncHandler.js";
 import FoodModel from "../models/food.model.js";
 import BeverageModel from "../models/beverage.model.js";
-import ExtraModel from "../models/extra.model.js";
 
 /* 
 @desc   Get all menu items
@@ -52,7 +51,7 @@ const getAllFoodItems = asyncHandler(async (req, res) => {
 
   // Pagination
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const limit = parseInt(req.query.limit) || 100; // Increase the limit to ensure all items are fetched
   const startIndex = (page - 1) * limit;
   foodQuery = foodQuery.limit(limit).skip(startIndex);
 
@@ -109,7 +108,7 @@ const getAllBeverageItems = asyncHandler(async (req, res) => {
 
   // Pagination
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const limit = parseInt(req.query.limit) || 100;
   const startIndex = (page - 1) * limit;
   beverageQuery = beverageQuery.limit(limit).skip(startIndex);
 
@@ -266,21 +265,6 @@ const deleteBeverageItem = asyncHandler(async (req, res) => {
 });
 
 /* 
-@desc   ADD extras
-@route  POST /users/menu-items/extras
-@access Private
-*/
-const addExtra = asyncHandler(async (req, res) => {
-  const { extra, price } = req.body;
-  if (!extra || !price) {
-    res.status(400);
-    throw new Error("Please fill in all fields");
-  }
-  const newExtra = await ExtraModel.create({ extra, price });
-  res.status(201).json({ message: "Extra added", data: newExtra });
-});
-
-/* 
 @desc   Update item stock
 @route  PUT /users/menu-items/stock/:type/:id
 @access Private
@@ -325,6 +309,5 @@ export {
   updateBeverageItem,
   deleteFoodItem,
   deleteBeverageItem,
-  addExtra,
   updateItemStock,
 };

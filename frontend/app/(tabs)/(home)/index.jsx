@@ -1,23 +1,24 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import { View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import CustomButton from "../../../components/CustomButton.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import emptyTable from "../../../assets/icons/empty-table.png";
 import Table from "../../../components/Table.jsx";
+import { router } from "expo-router";
+import { TAP_TRACK_URL } from "@env";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 const Home = () => {
   const [tables, setTables] = useState([]);
+  const { theme, bgColor } = useTheme();
 
   useEffect(() => {
     const getTables = async () => {
       try {
-        const { data } = await axios.get(
-          "https://empty-frog-47.loca.lt/users/tables"
-        );
+        const { data } = await axios.get(`${TAP_TRACK_URL}/users/tables`);
 
-        const sortedTables = data.tables.sort((a, b) => a.tableNumber - b.tableNumber);
+        const sortedTables = data.tables.sort(
+          (a, b) => a.tableNumber - b.tableNumber
+        );
         setTables(sortedTables);
       } catch (error) {
         console.log("error", error);
@@ -32,7 +33,7 @@ const Home = () => {
   }, []);
 
   return (
-    <SafeAreaView className="h-full bg-primary-lighter">
+    <SafeAreaView className={`h-full ${bgColor}`}>
       <ScrollView className="w-full mb-4">
         <View className="w-full flex flex-row flex-wrap items-center justify-center">
           {tables.map((table) => (
@@ -40,6 +41,12 @@ const Home = () => {
               key={table.tableNumber}
               tableNumber={table.tableNumber}
               state={table.state}
+              handleTablePress={() =>
+                router.push({
+                  pathname: "/(tabs)/(home)/order",
+                  params: { tableNumber: table.tableNumber },
+                })
+              }
             />
           ))}
         </View>

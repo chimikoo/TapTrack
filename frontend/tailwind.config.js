@@ -5,19 +5,21 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#7CA982",
-          dark: "#152E2B",
+          DEFAULT: "#6D9773",
+          dark: "#0C3B2E",
           light: "#E0EEC6",
           lighter: "#F1F7ED",
         },
         secondary: {
-          DEFAULT: "#A9827B",
+          DEFAULT: "#B46617",
         },
         tertiary: {
-          DEFAULT: "#817BA9",
+          DEFAULT: "#FFBA00",
         },
         myWhite: "#f5f5f5",
-        backgroundColorMenu: 'rgba(0, 0, 0, 0.5)'
+        myGray: "#C9C9C9",
+        opacGray: "#C9C9C933",
+        backgroundColorMenu: "rgba(0, 0, 0, 0.5)",
       },
       fontFamily: {},
     },

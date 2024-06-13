@@ -11,7 +11,6 @@ import {
   getOneBeverageItem,
   getOneFoodItem,
   updateBeverageItem,
-  addExtra,
   updateFoodItem,
   updateItemStock,
 } from "../controllers/menu.controllers.js";
@@ -45,9 +44,6 @@ router
   .get(getOneBeverageItem) // GET /users/menu-items/beverages/:id
   .put(isAdminOrManager, updateBeverageItem) // PUT /users/menu-items/beverages/:id
   .delete(isAdminOrManager, deleteBeverageItem); // DELETE /users/menu-items/beverages/:id
-
-// POST /users/menu-items/extras
-router.post("/extras", addExtra);
 
 // PUT /users/menu-items/stock/:type/:id
 router.put("/stock/:type/:id", isAdminOrManager, updateItemStock);

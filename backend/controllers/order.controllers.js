@@ -5,13 +5,12 @@ import updateStockAfterOrder from "../utils/updateStockAfterOrder.js";
 
 /* 
 @desc   Add an order
-@route  POST /users/menu/order
+@route  POST /users/menu-orders
 @access Private
 */
 const addOrder = asyncHandler(async (req, res) => {
   const userId = req.userId;
-  const { tableNumber, drinks, starter, main, side, dessert, extras } =
-    req.body;
+  const { tableNumber, drinks, starter, main, side, dessert } = req.body;
   if (!tableNumber || !drinks || !starter || !main || !side || !dessert) {
     res.status(400);
     throw new Error("Please provide all required fields");
@@ -31,6 +30,7 @@ const addOrder = asyncHandler(async (req, res) => {
 
   // Check if the table exists
   let existingTable = await Table.findOne({ tableNumber });
+  console.log("existingTable", existingTable);
   if (!existingTable) {
     // If the table doesn't exist, create a new one
     existingTable = await Table.create({
@@ -41,23 +41,26 @@ const addOrder = asyncHandler(async (req, res) => {
   } else if (existingTable.state === "available") {
     // If the table is available, update the state to occupied
     existingTable.state = "occupied";
+    existingTable.userId = userId;
     await existingTable.save();
   } else {
     res.status(400);
     throw new Error("Table is already occupied/reserved");
   }
 
+  console.log("existingTable", existingTable.tableNumber);
   // Create the order
   const newOrder = await Order.create({
     userId,
-    tableNumber: existingTable._id,
+    tableNumber: existingTable.tableNumber,
     drinks,
     starter,
     main,
     side,
     dessert,
-    extras,
   });
+
+  console.log("newOrder", newOrder);
 
   // Assign the orderId to the table
   existingTable.orderId = newOrder._id;
@@ -86,7 +89,6 @@ const getAllOrders = asyncHandler(async (req, res) => {
     "side.dishItem",
     "dessert.dishItem",
     "drinks.drinkItem",
-    "extras",
   ]);
   if (orders.length === 0 || !orders) {
     res.status(404);
@@ -112,7 +114,6 @@ const getOrderById = asyncHandler(async (req, res) => {
     "side.dishItem",
     "dessert.dishItem",
     "drinks.drinkItem",
-    "extras",
   ]);
   if (!order) {
     res.status(404);

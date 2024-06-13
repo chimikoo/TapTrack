@@ -1,5 +1,5 @@
 import asyncHandler from "../config/asyncHandler.js";
-import Receipt from "../models/receipt.model.js";
+import Receipt, { OldReceipt } from "../models/receipt.model.js";
 import calculateTotalAmount from "../utils/calculateTotalAmount.js";
 import Order from "../models/order.model.js";
 import extractItemsFromOrder from "../utils/extractItemsFromOrder.js";
@@ -36,13 +36,13 @@ const getAllReceipts = asyncHandler(async (req, res) => {
 */
 const createReceipt = asyncHandler(async (req, res) => {
   const { orderId, paymentMethod, notes } = req.body;
-  if (!orderId || !paymentMethod) {
+  if (!orderId) {
     res.status(400);
     throw new Error("Please provide all required fields");
   }
-
   // Retrieve the order to get the items
   const order = await Order.findById(orderId).populate([
+    "userId",
     "drinks.drinkItem",
     "starter.dishItem",
     "main.dishItem",
@@ -53,25 +53,11 @@ const createReceipt = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Order not found");
   }
-
   // Extract the items from the order
   const items = extractItemsFromOrder(order);
 
   // Calculate total amount of the order
   const totalAmount = await calculateTotalAmount(order);
-
-  // Create the receipt object with the populated items array
-  const newReceipt = await Receipt.create({
-    orderId,
-    totalAmount,
-    paymentMethod,
-    notes,
-    items,
-  });
-
-  // Mark the order as paid
-  order.isPaid = true;
-  await order.save();
 
   // Retrieve the associated table
   const table = await Table.findOne({ orderId });
@@ -82,8 +68,24 @@ const createReceipt = asyncHandler(async (req, res) => {
 
   // Update table state to available and remove orderId
   table.state = "available";
-  table.orderId = undefined;
+  table.orderId = null;
+  table.userId = null;
   await table.save();
+
+  // Update the order to be checked out
+  order.isCheckout = true;
+  await order.save();
+
+  // Create the receipt object with the populated items array
+  const newReceipt = await Receipt.create({
+    orderId,
+    host: order.userId.firstName,
+    totalAmount,
+    paymentMethod,
+    notes,
+    items,
+    tableNumber: table.tableNumber,
+  });
 
   res.status(201).json({ message: "Receipt created", receipt: newReceipt });
 });
@@ -108,6 +110,40 @@ const getReceiptById = asyncHandler(async (req, res) => {
 });
 
 /* 
+@desc    Get a receipt by user ID
+@route   GET /users/checkout/user/:id
+@access  Private
+*/
+const getReceiptByUserId = asyncHandler(async (req, res) => {
+  const receipts = await Receipt.find().populate({
+    path: "orderId",
+    populate: {
+      path: "userId drinks.drinkItem starter.dishItem main.dishItem side.dishItem dessert.dishItem",
+    },
+  });
+  if (receipts.length === 0 || !receipts) {
+    res.status(404);
+    throw new Error("No receipts found");
+  }
+  // Filter receipts based on the user ID
+  const userReceipts = receipts.filter((receipt) => {
+    const userId = receipt.orderId?.userId?._id.toString();
+    return userId === req.params.id;
+  });
+
+  if (userReceipts.length === 0) {
+    res.status(404);
+    throw new Error("No receipts found for this user");
+  }
+
+  res.status(200).json({
+    message: "All receipts",
+    numberOfReceipts: userReceipts.length,
+    data: userReceipts,
+  });
+});
+
+/* 
 @desc    Update a receipt by ID
 @route   PUT /users/checkout/:id
 @access  Private
@@ -127,4 +163,58 @@ const updateReceipt = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Receipt updated", data: receipt });
 });
 
-export { getAllReceipts, createReceipt, getReceiptById, updateReceipt };
+const getOldReceiptsByUserId = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    // Assuming old receipts can be identified with a specific field or condition
+    const oldReceipts = await Receipt.find({ userId, isOld: true });
+    res.status(200).json({ data: oldReceipts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/* 
+@desc    Update a receipt by ID
+@route   PUT /users/checkout/receipts/oldreceipts
+@access  Private
+*/
+
+const getAllOldReceipts = asyncHandler( async (req, res) => {
+  console.log('Getting the old Receipts..');
+  try {
+    // Assuming old receipts can be identified with a specific field or condition
+    const oldReceipts = await OldReceipt.find({ });
+    res.status(200).json({ data: oldReceipts });
+    console.log('Sending the old Receipts..')
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+/* 
+@desc    Update a receipt by ID
+@route   PUT /users/checkout/receipts/oldreceipts/:id
+@access  Private
+*/
+
+const getOldReceiptById = asyncHandler(async (req, res) => {
+  const oldReceipt = await OldReceipt.findById(req.params.id);
+  if (!oldReceipt) {
+    res.status(404);
+    throw new Error("Old Receipt not found");
+  }
+  res.status(200).json({ data: oldReceipt });
+});
+
+
+export {
+  getAllReceipts,
+  createReceipt,
+  getReceiptById,
+  getReceiptByUserId,
+  updateReceipt,
+  getOldReceiptsByUserId,
+  getAllOldReceipts,
+  getOldReceiptById,
+};

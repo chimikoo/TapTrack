@@ -1,46 +1,63 @@
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Alert, View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import InputField from "../components/InputField";
 import CustomButton from "../components/CustomButton";
-import logo from "../assets/images/logo.png";
-import { useNavigation } from '@react-navigation/native';
+import logo from "../assets/images/logo_dark.png";
 import { Link, router } from "expo-router";
-
-// to be able to access the local host from the emulator
-// run the following command in the terminal:
-// 1. npm install -g localtunnel
-// 2. lt --port 9000 --subdomain <url-name> (port number of the backend server) -> this will give you a url
+import { UserContext } from "../contexts/userContext.jsx";
+import { TAP_TRACK_URL } from "@env";
 
 export default function App() {
   const [form, setForm] = useState({ username: "", password: "" });
-  const navigation = useNavigation();
+  const { dispatch } = useContext(UserContext);
+
+  useEffect(() => {
+    console.log("App component mounted");
+    return () => {
+      console.log("App component unmounted");
+    };
+  }, []);
 
   const logout = async () => {
+    console.log("Logout process started");
     try {
-      const response = await axios.get('https://empty-frog-47.loca.lt/users/logout', {
-        withCredentials: true,
-      });
-      if (response.status === 200) {
-        await SecureStore.deleteItemAsync("userToken");
-        await SecureStore.deleteItemAsync("userData");
+      const token = await SecureStore.getItemAsync("userToken");
+      if (token) {
+        const response = await axios.get(`${TAP_TRACK_URL}/users/logout`, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          await SecureStore.deleteItemAsync("userToken");
+          await SecureStore.deleteItemAsync("userData");
+          console.log("User logged out and data cleared");
+        }
+      } else {
+        console.log("No token found, skipping logout");
       }
+      dispatch({ type: "LOGOUT" });
     } catch (error) {
       console.error("Logout Error:", error);
     }
+    console.log("Logout process ended");
   };
 
   const submit = async () => {
+    console.log("Submit process started");
     try {
-      const { data } = await axios.post(
-        "https://empty-frog-47.loca.lt/users/login",
-        form,
-        { withCredentials: true }
-      );
+      const { data } = await axios.post(`${TAP_TRACK_URL}/users/login`, form, {
+        withCredentials: true,
+      });
 
-      if (data.message === "User logged in successfully") {
+      console.log("Server response received", data);
+
+      if (
+        data.message === "User logged in successfully" ||
+        data.message === "User is already logged in"
+      ) {
         const userData = {
           token: data.token,
           username: form.username,
@@ -49,28 +66,34 @@ export default function App() {
           email: data.user.email,
           role: data.user.role,
           avatar: data.user.avatar,
+          id: data.user.id,
+          isOnline: data.user.isOnline,
         };
         await SecureStore.setItemAsync("userToken", data.token);
         await SecureStore.setItemAsync("userData", JSON.stringify(userData));
         console.log("User data and token stored successfully");
-        router.replace("/(tabs)/home");
-      } else if (data.message === "User is already logged in") {
-        console.log('Entering logout')
-        await logout();
-        submit(); // Retry login after logging out
+        dispatch({ type: "LOGIN", payload: userData });
+        router.push("/(tabs)/(home)");
       } else {
         Alert.alert("Login Failed", data.message);
       }
     } catch (error) {
-      Alert.alert("Error", error.response ? error.response.data.message : error.message);
+      console.error("Submit Error:", error);
+      Alert.alert(
+        "Error",
+        error.response ? error.response.data.message : error.message
+      );
     }
+    console.log("Submit process ended");
   };
+
+  console.log("Rendering App component");
 
   return (
     <SafeAreaView className="h-full bg-primary-lighter">
       <View className="w-full flex-1 justify-center items-center">
         <View className="w-full h-[60%] flex justify-center items-center">
-          <View className="w-[75%] h-[65%] rounded-full overflow-hidden">
+          <View className="w-[95%] h-[65%] rounded-full overflow-hidden">
             <Image
               source={logo}
               resizeMode="cover"
@@ -78,23 +101,32 @@ export default function App() {
             />
           </View>
         </View>
+
         <InputField
           title="Username"
           value={form.username}
-          handleChange={(e) => setForm({ ...form, username: e })}
+          handleChange={(e) => {
+            console.log("Username changed:", e);
+            setForm({ ...form, username: e });
+          }}
         />
         <InputField
           title="Password"
           value={form.password}
-          handleChange={(e) => setForm({ ...form, password: e })}
+          handleChange={(e) => {
+            console.log("Password changed:", e);
+            setForm({ ...form, password: e });
+          }}
         />
         <CustomButton
           text="Login"
           containerStyles="w-[80%] mt-4"
-          handlePress={submit}
+          handlePress={() => {
+            console.log("Login button pressed");
+            submit();
+          }}
         />
       </View>
-      <Link href="menuItemSelector">Go here</Link>
     </SafeAreaView>
   );
 }
