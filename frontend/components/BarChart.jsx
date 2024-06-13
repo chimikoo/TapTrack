@@ -12,9 +12,8 @@ const data = {
 };
 
 const chartConfig = {
-  backgroundColor: "#E0EEC6",
-  backgroundGradientFrom: "#E0EEC6",
-  backgroundGradientTo: "#E0EEC6",
+  backgroundGradientFrom: "#F1F7ED",
+  backgroundGradientTo: "#F1F7ED",
   color: () => `#6d9773`,  // Solid color for text and lines
   barPercentage: 0.5,
   fillShadowGradientFrom: "#6d9773",  // Solid color for the bars (start)

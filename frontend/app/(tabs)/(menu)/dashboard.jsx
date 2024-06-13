@@ -9,10 +9,11 @@ import {
 import { BarChart } from "react-native-chart-kit";
 import Svg, { Text as SvgText } from "react-native-svg";
 import MyBarChart from "../../../components/BarChart";
+import CustomButton from "../../../components/CustomButton";
 
 export default function DashboardScreen() {
   
-  const [activeTab, setActiveTab] = useState("Daily");
+  const [activeTab, setActiveTab] = useState("Weekly");
 
   const getTabStyle = (tab) => {
     return activeTab === tab
@@ -196,6 +197,9 @@ export default function DashboardScreen() {
           )}
         </View>
         <MyBarChart />
+        <TouchableOpacity>
+          <CustomButton text='Generate EoD' containerStyles={"mb-5"}/>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
