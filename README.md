@@ -18,6 +18,8 @@ This backend system is designed for comprehensive management of restaurant opera
 - **MongoDB**
 - **Mongoose**
 - **JSON Web Tokens (JWT)**
+- **React Native**
+- **NativeWind (Tailwind)**
 
 
 ## Installation
@@ -74,7 +76,7 @@ npm run dev
 - **errorHandler:** Catches and handles errors.
 
 ## Future Developments
-In the near future, we are planning to prototype the frontend using ReactJS to create a responsive web application. Following this, we aim to port the application to React Native to extend our platform to mobile devices, enhancing accessibility and usability across different devices.
+We are currently building out the frontend for the application using react native.
 
 ## Contributing
 Please fork the repository and submit pull requests for any enhancements. Your contributions are greatly appreciated!
