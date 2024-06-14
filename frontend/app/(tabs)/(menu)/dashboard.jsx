@@ -34,10 +34,18 @@ export default function DashboardScreen() {
     0
   );
   const totalPaid = totalOrders - totalUnpaid;
-  const totalCashRevenue = eods.reduce((acc, eod) => acc + eod.cashRevenue, 0).toFixed(2);
-  const totalCardRevenue = eods.reduce((acc, eod) => acc + eod.cardRevenue, 0).toFixed(2);
-  const totalRevenue = (+totalCashRevenue + +totalCardRevenue).toFixed(2);
-  const totalLoss = eods.reduce((acc, eod) => acc + eod.totalLoss, 0).toFixed(2);
+  const totalCashRevenue = eods
+    .reduce((acc, eod) => acc + eod.cashRevenue, 0)
+    .toFixed(2);
+  const totalCardRevenue = eods
+    .reduce((acc, eod) => acc + eod.cardRevenue, 0)
+    .toFixed(2);
+  const totalRevenue = eods
+    .reduce((acc, eod) => acc + eod.totalRevenue, 0)
+    .toFixed(2);
+  const totalLoss = eods
+    .reduce((acc, eod) => acc + eod.totalLoss, 0)
+    .toFixed(2);
   const totalFoodSold = eods.reduce((acc, eod) => acc + eod.totalFoodItems, 0);
   const totalDrinksSold = eods.reduce(
     (acc, eod) => acc + eod.totalBeverageItems,
@@ -223,7 +231,7 @@ export default function DashboardScreen() {
             </View>
           )}
         </View>
-        <MyBarChart />
+        <MyBarChart eods={eods} />
         <TouchableOpacity>
           <CustomButton text="Generate EoD" containerStyles={"mb-5"} />
         </TouchableOpacity>
