@@ -32,10 +32,11 @@ const getDayName = (timestamp) => {
 
 const MyBarChart = ({ eods }) => {
   const screenWidth = Dimensions.get("window").width;
-
-  const labels = eods.map((eod) => getDayName(eod.timestamp));
-  const revenues = eods.map((eod) => eod.totalRevenue);
-  // const losses = eods.map((eod) => eod.totalLoss);
+  
+  const lastWeekEods = eods.slice(-7);
+  const labels = lastWeekEods.map((eod) => getDayName(eod.timestamp));
+  const revenues = lastWeekEods.map((eod) => eod.totalRevenue);
+  // const losses = lastWeekEods.map((eod) => eod.totalLoss);
 
   const data = {
     labels: labels,
