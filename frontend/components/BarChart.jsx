@@ -34,13 +34,16 @@ const MyBarChart = ({ eods }) => {
   const screenWidth = Dimensions.get("window").width;
 
   const labels = eods.map((eod) => getDayName(eod.timestamp));
-  const datasets = eods.map((eod) => eod.totalRevenue);
+  const revenues = eods.map((eod) => eod.totalRevenue);
+  // const losses = eods.map((eod) => eod.totalLoss);
 
   const data = {
     labels: labels,
     datasets: [
       {
-        data: datasets,
+        data: revenues,
+        color: () => `#6d9773`,
+        strokeWidth: 4, // optional
       },
     ],
   };

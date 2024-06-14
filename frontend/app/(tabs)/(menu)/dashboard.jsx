@@ -13,7 +13,6 @@ export default function DashboardScreen() {
     const getAllEods = async () => {
       try {
         const { data } = await axios.get(`${TAP_TRACK_URL}/eod`);
-        console.log(data);
         setEods(data.data);
       } catch (error) {
         console.log(error);
