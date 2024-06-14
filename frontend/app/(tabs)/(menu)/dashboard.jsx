@@ -1,25 +1,55 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import { BarChart } from "react-native-chart-kit";
-import Svg, { Text as SvgText } from "react-native-svg";
+import React, { useEffect, useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import MyBarChart from "../../../components/BarChart";
 import CustomButton from "../../../components/CustomButton";
+import axios from "axios";
+import { TAP_TRACK_URL } from "@env";
 
 export default function DashboardScreen() {
-  
   const [activeTab, setActiveTab] = useState("Weekly");
+  const [eods, setEods] = useState([]);
+
+  useEffect(() => {
+    const getAllEods = async () => {
+      try {
+        const { data } = await axios.get(`${TAP_TRACK_URL}/eod`);
+        setEods(data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAllEods();
+  }, []);
 
   const getTabStyle = (tab) => {
     return activeTab === tab
       ? "text-black border-b-2 border-black"
       : "text-gray-400";
   };
+
+  const totalOrders = eods.reduce((acc, eod) => acc + eod.totalOrders, 0);
+  const totalUnpaid = eods.reduce(
+    (acc, eod) => acc + eod.totalOrdersNotPaid,
+    0
+  );
+  const totalPaid = totalOrders - totalUnpaid;
+  const totalCashRevenue = eods
+    .reduce((acc, eod) => acc + eod.cashRevenue, 0)
+    .toFixed(2);
+  const totalCardRevenue = eods
+    .reduce((acc, eod) => acc + eod.cardRevenue, 0)
+    .toFixed(2);
+  const totalRevenue = eods
+    .reduce((acc, eod) => acc + eod.totalRevenue, 0)
+    .toFixed(2);
+  const totalLoss = eods
+    .reduce((acc, eod) => acc + eod.totalLoss, 0)
+    .toFixed(2);
+  const totalFoodSold = eods.reduce((acc, eod) => acc + eod.totalFoodItems, 0);
+  const totalDrinksSold = eods.reduce(
+    (acc, eod) => acc + eod.totalBeverageItems,
+    0
+  );
 
   return (
     <View className="flex-1 bg-primary-lighter">
@@ -43,34 +73,38 @@ export default function DashboardScreen() {
                 <Text className="text-xl font-bold text-center pl-5">
                   Total Orders
                 </Text>
-                <Text className="text-center pr-5">10</Text>
+                <Text className="text-center pr-5">{totalOrders}</Text>
               </View>
               <View className="flex-row justify-between">
                 <View className="flex-1 justify-between items-center flex-row mr-2 bg-primary-light p-3">
                   <Text className="text-center font-bold">Paid</Text>
-                  <Text className="text-center">8</Text>
+                  <Text className="text-center">{totalPaid}</Text>
                 </View>
                 <View className="flex-1 justify-between items-center flex-row bg-primary-light p-3">
                   <Text className="text-center font-bold">Unpaid</Text>
-                  <Text className="text-center">2</Text>
+                  <Text className="text-center">{totalUnpaid}</Text>
                 </View>
               </View>
               <View className="flex-row justify-between gap-2 mt-1">
                 <View className="justify-center flex-1 bg-primary-light p-3">
                   <Text className="text-center font-bold text-xs">Revenue</Text>
-                  <Text className="text-center text-xs">3.000€</Text>
+                  <Text className="text-center text-xs">{totalRevenue}€</Text>
                 </View>
                 <View className="justify-center flex-1 bg-primary-light p-3">
                   <Text className="text-center font-bold text-xs">Cash</Text>
-                  <Text className="text-center text-xs">1.500€</Text>
+                  <Text className="text-center text-xs">
+                    {totalCashRevenue}€
+                  </Text>
                 </View>
                 <View className="justify-center flex-1 bg-primary-light p-3">
                   <Text className="text-center font-bold text-xs">Card</Text>
-                  <Text className="text-center text-xs">1.500€</Text>
+                  <Text className="text-center text-xs">
+                    {totalCardRevenue}€
+                  </Text>
                 </View>
                 <View className="justify-center flex-1 bg-primary-light p-3">
                   <Text className="text-center font-bold">Loss</Text>
-                  <Text className="text-center text-xs">100€</Text>
+                  <Text className="text-center text-xs">{totalLoss}€</Text>
                 </View>
               </View>
               <View className="flex-row justify-between mt-4">
@@ -78,13 +112,13 @@ export default function DashboardScreen() {
                   <Text className="text-center font-bold text-xs">
                     Food sold
                   </Text>
-                  <Text className="text-center">50€</Text>
+                  <Text className="text-center">{totalFoodSold}</Text>
                 </View>
                 <View className="flex-1 ml-2 bg-primary p-2">
                   <Text className="text-center font-bold text-xs">
                     Drinks sold
                   </Text>
-                  <Text className="text-center">100€</Text>
+                  <Text className="text-center">{totalDrinksSold}</Text>
                 </View>
               </View>
             </View>
@@ -196,9 +230,9 @@ export default function DashboardScreen() {
             </View>
           )}
         </View>
-        <MyBarChart />
+        <MyBarChart eods={eods} />
         <TouchableOpacity>
-          <CustomButton text='Generate EoD' containerStyles={"mb-5"}/>
+          <CustomButton text="Generate EoD" containerStyles={"mb-5"} />
         </TouchableOpacity>
       </ScrollView>
     </View>
