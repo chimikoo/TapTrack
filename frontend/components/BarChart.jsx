@@ -13,7 +13,7 @@ const chartConfig = {
   fillShadowGradientToOpacity: 1,
   fromZero: true,
   yAxisInterval: 1,
-  formatYLabel: (value) => `€${parseInt(value).toString()}`, // Format y-axis labels as integers with €
+  formatYLabel: (value) => `${parseInt(value).toString()}`,
   labelPadding: 10, // Add label padding
 };
 
@@ -78,7 +78,7 @@ const MyBarChart = ({ eods }) => {
           verticalLabelRotation={45}
           fromZero={true}
           showValuesOnTopOfBars={true} // Show values on top of the bars
-          formatYLabel={(value) => `€${parseInt(value).toString()}`} // Format y-axis labels as integers with €
+          formatYLabel={(value) => `${parseInt(value).toString()}`}
         />
       </View>
     </ScrollView>
