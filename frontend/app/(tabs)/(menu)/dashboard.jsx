@@ -75,7 +75,8 @@ export default function DashboardScreen() {
     const dailyRevenue = {};
 
     receipts.forEach(receipt => {
-      const date = new Date(receipt.transactionDate).toLocaleDateString();
+      const date = new Date(receipt.transactionDate);
+      console.log('dashboard', date)
       if (!dailyRevenue[date]) {
         dailyRevenue[date] = 0;
       }
