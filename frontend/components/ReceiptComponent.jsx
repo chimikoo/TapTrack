@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import { useTheme } from "../contexts/themeContext.jsx";
 
-const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
+const ReceiptComponent = ({ receipt, loading, tipAmount = 0 }) => {
   const items = receipt.items || [];
   const order = receipt.orderId || {};
   const transactionDate = receipt.transactionDate || "";
@@ -12,6 +12,9 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
     theme === "light" ? "text-primary-dark" : "text-primary-lighter";
   const borderColor =
     theme === "light" ? "border-primary-dark" : "border-primary-lighter";
+
+  const totalAmount = receipt?.totalAmount ?? 0;
+
   return (
     <ScrollView className={`w-full flex-1 rounded-lg p-8 ${bgColor}`}>
       {loading ? (
@@ -50,54 +53,52 @@ const ReceiptComponent = ({ receipt, loading, tipAmount }) => {
           </View>
           <View className={`border-b-2 border-dashed ${borderColor}`}>
             {items &&
-              items.map((item, index) => {
-                return (
-                  <View key={index} className="border-b border-gray-300 pb-2">
-                    <View className="flex flex-row justify-between pt-4">
-                      <Text className={`w-[10%] ${textColor}`}>
-                        {item.quantity}
-                      </Text>
-                      <Text className={`w-[40%] ${textColor}`}>
-                        {item.itemName}
-                      </Text>
-                      <Text className={`text-right ${textColor}`}>
-                        {item.price}
-                      </Text>
-                      <Text className={`text-right ${textColor}`}>
-                        {item.price * item.quantity}
-                      </Text>
-                    </View>
-                    {item.extras &&
-                      item.extras.map((extra, index) => (
-                        <View
-                          className="flex flex-row justify-between pt-4"
-                          key={index}
-                        >
-                          <Text className=""></Text>
-                          <Text className={`w-[50%] ${textColor}`}>
-                            +{extra?.extraName}
-                          </Text>
-                          <Text className={`text-right ${textColor}`}>
-                            {extra?.extraPrice}
-                          </Text>
-                        </View>
-                      ))}
+              items.map((item, index) => (
+                <View key={index} className="border-b border-gray-300 pb-2">
+                  <View className="flex flex-row justify-between pt-4">
+                    <Text className={`w-[10%] ${textColor}`}>
+                      {item.quantity}
+                    </Text>
+                    <Text className={`w-[40%] ${textColor}`}>
+                      {item.itemName}
+                    </Text>
+                    <Text className={`text-right ${textColor}`}>
+                      {item.price.toFixed(2)}
+                    </Text>
+                    <Text className={`text-right ${textColor}`}>
+                      {(item.price * item.quantity).toFixed(2)}
+                    </Text>
                   </View>
-                );
-              })}
+                  {item.extras &&
+                    item.extras.map((extra, index) => (
+                      <View
+                        className="flex flex-row justify-between pt-4"
+                        key={index}
+                      >
+                        <Text className=""></Text>
+                        <Text className={`w-[50%] ${textColor}`}>
+                          +{extra?.extraName}
+                        </Text>
+                        <Text className={`text-right ${textColor}`}>
+                          {extra?.extraPrice.toFixed(2)}
+                        </Text>
+                      </View>
+                    ))}
+                </View>
+              ))}
           </View>
           <View className="mb-10">
             <View className="flex-row justify-between items-center pt-4">
               <Text className={`text-lg font-bold ${textColor}`}>Total</Text>
               <Text className={`text-lg font-bold ${textColor}`}>
-                {receipt?.totalAmount}€
+                {totalAmount.toFixed(2)}€
               </Text>
             </View>
             {tipAmount > 0 && (
               <View className="flex-row justify-between items-center pt-4">
                 <Text className={`text-lg font-bold ${textColor}`}>Tip</Text>
                 <Text className={`text-lg font-bold ${textColor}`}>
-                  {tipAmount}€
+                  {tipAmount.toFixed(2)}€
                 </Text>
               </View>
             )}
