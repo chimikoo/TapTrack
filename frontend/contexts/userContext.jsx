@@ -10,6 +10,7 @@ const initialState = {
   role: null,
   avatar: null,
   id: null,
+  isOnline: null,
 };
 
 // Define the reducer

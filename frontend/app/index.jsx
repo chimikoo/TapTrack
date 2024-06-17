@@ -12,7 +12,7 @@ import { TAP_TRACK_URL } from "@env";
 
 export default function App() {
   const [form, setForm] = useState({ username: "", password: "" });
-  const { dispatch } = useContext(UserContext);
+  const { user, dispatch } = useContext(UserContext);
 
   useEffect(() => {
     console.log("App component mounted");
@@ -47,17 +47,18 @@ export default function App() {
 
   const submit = async () => {
     console.log("Submit process started");
+
+    // If user is already logged in, logout the user first before logging in
+    if (user.isOnline) {
+      logout();
+    }
+
     try {
       const { data } = await axios.post(`${TAP_TRACK_URL}/users/login`, form, {
         withCredentials: true,
       });
 
       console.log("Server response received", data);
-
-      // If user is already logged in, logout the user first before logging in
-      if (data.user.isOnline) {
-        logout();
-      }
 
       if (
         data.message === "User logged in successfully" ||
