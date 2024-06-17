@@ -19,7 +19,7 @@ const RegisterScreen = () => {
     role: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState([]);
   const { theme, bgColor, textColor } = useTheme();
 
   const bgAndBorderColor =
@@ -69,10 +69,12 @@ const RegisterScreen = () => {
       });
     } catch (error) {
       setLoading(false);
-      setError(error.message);
-      Alert.alert("Error", error.message || "Failed to register user");
+      // console.log("error", error.response.data.errors);
+      setErrors(error.response.data.errors);
+      // Alert.alert("Error", error.message || "Failed to register user");
     }
   };
+
 
   return (
     <View className={`flex-1 px-4 pt-5 ${bgColor}`}>
@@ -94,6 +96,12 @@ const RegisterScreen = () => {
           }}
           inputStyle="w-full"
         />
+        {errors.length !== 0 &&
+          errors
+            .filter((err) => err.username)
+            .map((err) => (
+              <Text className="text-red-500 px-4 w-full">- {err.username}</Text>
+            ))}
         <InputField
           title="Password"
           value={form.password}
@@ -101,6 +109,12 @@ const RegisterScreen = () => {
             setForm({ ...form, password: e });
           }}
         />
+        {errors.length !== 0 &&
+          errors
+            .filter((err) => err.password)
+            .map((err) => (
+              <Text className="text-red-500 px-4 w-full">- {err.password}</Text>
+            ))}
         <InputField
           title="First Name"
           value={form.firstName}
@@ -108,6 +122,14 @@ const RegisterScreen = () => {
             setForm({ ...form, firstName: e });
           }}
         />
+        {errors.length !== 0 &&
+          errors
+            .filter((err) => err.firstName)
+            .map((err) => (
+              <Text className="text-red-500 px-4 w-full">
+                - {err.firstName}
+              </Text>
+            ))}
         <InputField
           title="Last Name"
           value={form.lastName}
@@ -115,6 +137,12 @@ const RegisterScreen = () => {
             setForm({ ...form, lastName: e });
           }}
         />
+        {errors.length !== 0 &&
+          errors
+            .filter((err) => err.lastName)
+            .map((err) => (
+              <Text className="text-red-500 px-4 w-full">- {err.lastName}</Text>
+            ))}
         <InputField
           title="Email"
           value={form.email}
@@ -123,6 +151,12 @@ const RegisterScreen = () => {
             setForm({ ...form, email: e });
           }}
         />
+        {errors.length !== 0 &&
+          errors
+            .filter((err) => err.email)
+            .map((err) => (
+              <Text className="text-red-500 px-4 w-full">- {err.email}</Text>
+            ))}
         <View
           className={`w-full h-[6vh] flex justify-center items-between rounded-lg mb-4 border ${bgAndBorderColor} ${getRoleBorderColor()}`}
         >
