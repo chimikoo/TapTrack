@@ -76,7 +76,6 @@ export default function DashboardScreen() {
 
     receipts.forEach(receipt => {
       const date = new Date(receipt.transactionDate);
-      console.log('dashboard', date)
       if (!dailyRevenue[date]) {
         dailyRevenue[date] = 0;
       }
