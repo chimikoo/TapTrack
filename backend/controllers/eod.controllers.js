@@ -71,6 +71,11 @@ const viewEodReportByDate = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "EoD report", data: eodReport });
 });
 
+/* 
+@desc   View End of Day report for a specific date
+@route  GET /eod/:date
+@access Private (Only accessible to admin or manager)
+*/
 const getReceiptsByDateRange = asyncHandler(async (req, res) => {
   const { startDate, endDate } = req.query;
 
@@ -79,7 +84,7 @@ const getReceiptsByDateRange = asyncHandler(async (req, res) => {
     throw new Error("Please provide both startDate and endDate");
   }
 
-  const receipts = await Receipt.find({
+  const receipts = await OldReceipt.find({
     createdAt: {
       $gte: new Date(startDate),
       $lte: new Date(endDate),
