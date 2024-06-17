@@ -75,7 +75,6 @@ const RegisterScreen = () => {
     }
   };
 
-
   return (
     <View className={`flex-1 px-4 pt-5 ${bgColor}`}>
       <Text className={`text-2xl font-bold text-center mt-4 ${textColor}`}>
@@ -99,8 +98,10 @@ const RegisterScreen = () => {
         {errors.length !== 0 &&
           errors
             .filter((err) => err.username)
-            .map((err) => (
-              <Text className="text-red-500 px-4 w-full">- {err.username}</Text>
+            .map((err, index) => (
+              <Text key={index} className="text-red-500 px-4 w-full">
+                - {err.username}
+              </Text>
             ))}
         <InputField
           title="Password"
@@ -112,8 +113,10 @@ const RegisterScreen = () => {
         {errors.length !== 0 &&
           errors
             .filter((err) => err.password)
-            .map((err) => (
-              <Text className="text-red-500 px-4 w-full">- {err.password}</Text>
+            .map((err, index) => (
+              <Text key={index} className="text-red-500 px-4 w-full">
+                - {err.password}
+              </Text>
             ))}
         <InputField
           title="First Name"
@@ -125,8 +128,8 @@ const RegisterScreen = () => {
         {errors.length !== 0 &&
           errors
             .filter((err) => err.firstName)
-            .map((err) => (
-              <Text className="text-red-500 px-4 w-full">
+            .map((err, index) => (
+              <Text key={index} className="text-red-500 px-4 w-full">
                 - {err.firstName}
               </Text>
             ))}
@@ -140,8 +143,10 @@ const RegisterScreen = () => {
         {errors.length !== 0 &&
           errors
             .filter((err) => err.lastName)
-            .map((err) => (
-              <Text className="text-red-500 px-4 w-full">- {err.lastName}</Text>
+            .map((err, index) => (
+              <Text key={index} className="text-red-500 px-4 w-full">
+                - {err.lastName}
+              </Text>
             ))}
         <InputField
           title="Email"
@@ -154,8 +159,10 @@ const RegisterScreen = () => {
         {errors.length !== 0 &&
           errors
             .filter((err) => err.email)
-            .map((err) => (
-              <Text className="text-red-500 px-4 w-full">- {err.email}</Text>
+            .map((err, index) => (
+              <Text key={index} className="text-red-500 px-4 w-full">
+                - {err.email}
+              </Text>
             ))}
         <View
           className={`w-full h-[6vh] flex justify-center items-between rounded-lg mb-4 border ${bgAndBorderColor} ${getRoleBorderColor()}`}
