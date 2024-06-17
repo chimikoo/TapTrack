@@ -81,8 +81,9 @@ const AdminProfile = () => {
   const updateRole = async (newRole) => {
     try {
       const token = await SecureStore.getItemAsync("userToken");
+      const url = `${TAP_TRACK_URL}/users/role/${userId}`;
       const response = await axios.patch(
-        `${TAP_TRACK_URL}/users/role/${userId}`,
+        url,
         { role: newRole },
         {
           headers: { Authorization: `Bearer ${token}` },
