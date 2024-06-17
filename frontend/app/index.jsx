@@ -109,6 +109,7 @@ export default function App() {
             console.log("Username changed:", e);
             setForm({ ...form, username: e });
           }}
+          inputStyle="w-[80%]"
         />
         <InputField
           title="Password"
@@ -117,6 +118,7 @@ export default function App() {
             console.log("Password changed:", e);
             setForm({ ...form, password: e });
           }}
+          inputStyle="w-[80%]"
         />
         <CustomButton
           text="Login"

@@ -15,7 +15,7 @@ import { useTheme } from "../../contexts/themeContext.jsx";
 
 const TabsLayout = () => {
   const [menuVisible, setMenuVisible] = useState(false);
-  const { toggleTheme } = useTheme();
+  const { setTheme } = useTheme();
 
   const router = useRouter();
   const navigationState = useRootNavigationState();
@@ -43,7 +43,7 @@ const TabsLayout = () => {
         await SecureStore.deleteItemAsync("userData");
         Alert.alert("Logged out successfully");
         // reset theme to default
-        toggleTheme();
+        setTheme("light");
         router.push("/");
       } else {
         Alert.alert("Logout failed, please try again");
