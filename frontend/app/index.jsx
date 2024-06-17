@@ -12,7 +12,7 @@ import { TAP_TRACK_URL } from "@env";
 
 export default function App() {
   const [form, setForm] = useState({ username: "", password: "" });
-  const { dispatch } = useContext(UserContext);
+  const { user, dispatch } = useContext(UserContext);
 
   useEffect(() => {
     console.log("App component mounted");
@@ -47,6 +47,12 @@ export default function App() {
 
   const submit = async () => {
     console.log("Submit process started");
+
+    // If user is already logged in, logout the user first before logging in
+    if (user.isOnline) {
+      logout();
+    }
+
     try {
       const { data } = await axios.post(`${TAP_TRACK_URL}/users/login`, form, {
         withCredentials: true,
@@ -109,6 +115,7 @@ export default function App() {
             console.log("Username changed:", e);
             setForm({ ...form, username: e });
           }}
+          inputStyle="w-[80%]"
         />
         <InputField
           title="Password"
@@ -117,6 +124,7 @@ export default function App() {
             console.log("Password changed:", e);
             setForm({ ...form, password: e });
           }}
+          inputStyle="w-[80%]"
         />
         <CustomButton
           text="Login"

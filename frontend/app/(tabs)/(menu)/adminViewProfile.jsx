@@ -237,11 +237,13 @@ const AdminProfile = () => {
               text="Yes"
               containerStyles="w-[40%]"
               handlePress={handleDelete}
+              bgColor="bg-red-500"
             />
             <CustomButton
               text="No"
               containerStyles="w-[40%]"
               handlePress={() => setDeleteModalVisible(false)}
+              bgColor="bg-gray-300"
             />
           </View>
         </View>

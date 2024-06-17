@@ -160,22 +160,31 @@ const EditProfile = () => {
             title="First Name"
             value={firstName}
             handleChange={setFirstName}
+            inputStyle="w-[80%]"
           />
           <InputField
             title="Last Name"
             value={lastName}
             handleChange={setLastName}
+            inputStyle="w-[80%]"
           />
-          <InputField title="Email" value={email} handleChange={setEmail} />
+          <InputField
+            title="Email"
+            value={email}
+            handleChange={setEmail}
+            inputStyle="w-[80%]"
+          />
           <InputField
             title="New Password"
             value={newPassword}
             handleChange={setNewPassword}
+            inputStyle="w-[80%]"
           />
           <InputField
             title="Confirm new password"
             value={confirmPassword}
             handleChange={setConfirmPassword}
+            inputStyle="w-[80%]"
           />
           {avatar && (
             <Image
