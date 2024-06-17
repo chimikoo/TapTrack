@@ -54,6 +54,11 @@ export default function App() {
 
       console.log("Server response received", data);
 
+      // If user is already logged in, logout the user first before logging in
+      if (data.user.isOnline) {
+        logout();
+      }
+
       if (
         data.message === "User logged in successfully" ||
         data.message === "User is already logged in"
