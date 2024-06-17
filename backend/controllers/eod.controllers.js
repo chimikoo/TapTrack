@@ -71,4 +71,35 @@ const viewEodReportByDate = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "EoD report", data: eodReport });
 });
 
-export { generateEodReport, viewEodReport, viewEodReportByDate };
+const getReceiptsByDateRange = asyncHandler(async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  if (!startDate || !endDate) {
+    res.status(400);
+    throw new Error("Please provide both startDate and endDate");
+  }
+
+  const receipts = await Receipt.find({
+    createdAt: {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    },
+  }).populate({
+    path: "orderId",
+    populate: {
+      path: "userId drinks.drinkItem starter.dishItem main.dishItem side.dishItem dessert.dishItem",
+    },
+  });
+
+  if (!receipts || receipts.length === 0) {
+    res.status(404);
+    throw new Error("No receipts found in the given date range");
+  }
+
+  res.status(200).json({
+    message: "Receipts within the date range",
+    numberOfReceipts: receipts.length,
+    data: receipts,
+  });
+});
+export { generateEodReport, viewEodReport, viewEodReportByDate, getReceiptsByDateRange };

@@ -2,15 +2,6 @@ import React from "react";
 import { View, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 
-/* const data = {
-  labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-  datasets: [
-    {
-      data: [25, 45, 28, 80, 100, 43, 50],
-    },
-  ],
-}; */
-
 const chartConfig = {
   backgroundGradientFrom: "#F1F7ED",
   backgroundGradientTo: "#F1F7ED",
