@@ -44,8 +44,9 @@ const EmployeeScreen = () => {
       const newEmployees = response.data.employees;
 
       if (newEmployees.length > 0) {
+        const sortedEmployees = sortEmployees(newEmployees);
         setEmployees((prevEmployees) =>
-          pageNumber === 1 ? newEmployees : [...prevEmployees, ...newEmployees]
+          pageNumber === 1 ? sortedEmployees : [...prevEmployees, ...sortedEmployees]
         );
         setPage(pageNumber);
         setHasMore(newEmployees.length === 10);
@@ -59,6 +60,10 @@ const EmployeeScreen = () => {
       setLoading(false);
       setLoadingMore(false);
     }
+  };
+
+  const sortEmployees = (employeesList) => {
+    return employeesList.sort((a, b) => b.isOnline - a.isOnline);
   };
 
   const loadMoreEmployees = () => {
@@ -96,8 +101,10 @@ const EmployeeScreen = () => {
         Alert.alert("Success", "User logged out successfully");
         // Update the employees list
         setEmployees((prevEmployees) =>
-          prevEmployees.map((emp) =>
-            emp._id === selectedUser._id ? { ...emp, isOnline: false } : emp
+          sortEmployees(
+            prevEmployees.map((emp) =>
+              emp._id === selectedUser._id ? { ...emp, isOnline: false } : emp
+            )
           )
         );
       } else {
