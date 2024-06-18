@@ -1,4 +1,3 @@
-// app/(tabs)/(home)/menuItemSelector.jsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -30,6 +29,9 @@ const MenuItemSelector = () => {
   const { menuItems, loading } = useMenu(); // Use the custom hook to access menu items
   const [menuSelected, setMenuSelected] = useState(null);
   const { theme, bgColor, textColor } = useTheme();
+  
+  // State to manage filter visibility
+  const [filtersVisible, setFiltersVisible] = useState(false);
 
   useEffect(() => {
     // Ensure category is set from params if available
@@ -135,19 +137,24 @@ const MenuItemSelector = () => {
 
   return (
     <SafeAreaView className={`flex-1 p-4 ${bgColor}`}>
-      <Filters
-        name={name}
-        setName={setName}
-        price={price}
-        setPrice={setPrice}
-        category={category} // Pass category
-        setCategory={setCategory} // Pass setCategory
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        limit={limit}
-        setLimit={setLimit}
-        handleFilter={handleFilter}
-      />
+      <TouchableOpacity onPress={() => setFiltersVisible(!filtersVisible)} className="mb-4 self-end">
+        <Text className={`font-bold text-lg ${textColor}`}>{filtersVisible ? "Hide Filters" : "Show Filters"}</Text>
+      </TouchableOpacity>
+      {filtersVisible && (
+        <Filters
+          name={name}
+          setName={setName}
+          price={price}
+          setPrice={setPrice}
+          category={category} // Pass category
+          setCategory={setCategory} // Pass setCategory
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          limit={limit}
+          setLimit={setLimit}
+          handleFilter={handleFilter}
+        />
+      )}
       <ScrollView className="flex-1">
         {loading ? (
           <ActivityIndicator size="large" color="#7CA982" />
