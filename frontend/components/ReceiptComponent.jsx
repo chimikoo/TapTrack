@@ -98,7 +98,7 @@ const ReceiptComponent = ({ receipt, loading, tipAmount = 0 }) => {
               <View className="flex-row justify-between items-center pt-4">
                 <Text className={`text-lg font-bold ${textColor}`}>Tip</Text>
                 <Text className={`text-lg font-bold ${textColor}`}>
-                  {tipAmount.toFixed(2)}€
+                  {tipAmount}€
                 </Text>
               </View>
             )}
