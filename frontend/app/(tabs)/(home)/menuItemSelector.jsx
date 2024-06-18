@@ -1,4 +1,3 @@
-// app/(tabs)/(home)/menuItemSelector.jsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -28,10 +27,13 @@ const MenuItemSelector = () => {
   const { addItemToOrder } = useOrder();
   const router = useRouter();
   const params = useLocalSearchParams();
-  const [showFilters, setShowFilters] = useState(false);
+  
   const { menuItems, loading } = useMenu(); // Use the custom hook to access menu items
   const [menuSelected, setMenuSelected] = useState(null);
   const { theme, bgColor, textColor } = useTheme();
+  
+  // State to manage filter visibility
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     // Ensure category is set from params if available
