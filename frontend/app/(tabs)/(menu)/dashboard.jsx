@@ -6,6 +6,7 @@ import MyBarChart from "../../../components/BarChart";
 import CustomButton from "../../../components/CustomButton";
 import axios from "axios";
 import { TAP_TRACK_URL } from "@env";
+import { useTheme } from "../../../contexts/themeContext.jsx";
 
 export default function DashboardScreen() {
   const [startDate, setStartDate] = useState(new Date());
@@ -14,8 +15,7 @@ export default function DashboardScreen() {
     useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
   const [receipts, setReceipts] = useState([]);
-
-  const bgColor = "bg-primary-lighter";
+  const { theme, bgColor, textColor } = useTheme();
 
   const fetchData = async () => {
     try {
@@ -156,7 +156,7 @@ export default function DashboardScreen() {
   };
 
   return (
-    <View className="flex-1 bg-primary-lighter">
+    <View className={`flex-1 ${bgColor}`}>
       <ScrollView className="flex-1 pt-5 pl-2 pr-2">
         <View className="bg-primary-lighter shadow p-2">
           <View className="flex-row justify-between mb-4">
