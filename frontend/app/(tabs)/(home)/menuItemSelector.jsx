@@ -14,6 +14,8 @@ import CustomButton from "../../../components/CustomButton";
 import { useOrder } from "../../../contexts/orderContext";
 import { useMenu } from "../../../contexts/menuContext"; // Import the custom hook
 import { useTheme } from "../../../contexts/themeContext.jsx";
+import { SvgXml } from "react-native-svg";
+import filterIcon from "../../../assets/icons/filterIcon.js";
 
 const MenuItemSelector = () => {
   const [name, setName] = useState("");
@@ -25,13 +27,13 @@ const MenuItemSelector = () => {
   const { addItemToOrder } = useOrder();
   const router = useRouter();
   const params = useLocalSearchParams();
-
+  
   const { menuItems, loading } = useMenu(); // Use the custom hook to access menu items
   const [menuSelected, setMenuSelected] = useState(null);
   const { theme, bgColor, textColor } = useTheme();
   
   // State to manage filter visibility
-  const [filtersVisible, setFiltersVisible] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     // Ensure category is set from params if available
@@ -137,10 +139,20 @@ const MenuItemSelector = () => {
 
   return (
     <SafeAreaView className={`flex-1 p-4 ${bgColor}`}>
-      <TouchableOpacity onPress={() => setFiltersVisible(!filtersVisible)} className="mb-4 self-end">
-        <Text className={`font-bold text-lg ${textColor}`}>{filtersVisible ? "Hide Filters" : "Show Filters"}</Text>
-      </TouchableOpacity>
-      {filtersVisible && (
+      <View className="w-full flex items-end mb-4">
+        <TouchableOpacity
+          className="w-10 h-10"
+          onPress={() => setShowFilters((prevShowFilters) => !prevShowFilters)}
+        >
+          <SvgXml
+            xml={filterIcon}
+            width="100%"
+            height="100%"
+            className="mb-4"
+          />
+        </TouchableOpacity>
+      </View>
+      {showFilters && (
         <Filters
           name={name}
           setName={setName}
