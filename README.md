@@ -20,6 +20,7 @@ This backend system is designed for comprehensive management of restaurant opera
 - **JSON Web Tokens (JWT)**
 - **React Native**
 - **NativeWind (Tailwind)**
+- **Expo**
 
 
 ## Installation
