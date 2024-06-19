@@ -18,16 +18,18 @@ const DeleteModal = ({ modalVisible, setModalVisible, handleDelete }) => {
         </Text>
         <View className="flex-row justify-between w-full">
           <CustomButton
+            text="Yes"
+            containerStyles="w-[40%] bg-primary"
+            handlePress={handleDelete}
+            bgColor="bg-red-500"
+          />
+          <CustomButton
             text="No"
             containerStyles="w-[40%] bg-secondary"
             handlePress={() =>
               setModalVisible((prevModalVisible) => !prevModalVisible)
             }
-          />
-          <CustomButton
-            text="Yes"
-            containerStyles="w-[40%] bg-primary"
-            handlePress={handleDelete}
+            bgColor="bg-gray-300"
           />
         </View>
       </View>

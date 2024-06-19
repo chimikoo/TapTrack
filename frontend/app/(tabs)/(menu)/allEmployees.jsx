@@ -18,6 +18,7 @@ import { TAP_TRACK_URL } from "@env";
 import { UserContext } from "../../../contexts/userContext.jsx";
 import * as SecureStore from "expo-secure-store";
 import { useTheme } from "../../../contexts/themeContext.jsx";
+import { Icon } from "@rneui/themed";
 
 const EmployeeScreen = () => {
   const { dispatch } = useContext(UserContext);
@@ -43,8 +44,9 @@ const EmployeeScreen = () => {
       const newEmployees = response.data.employees;
 
       if (newEmployees.length > 0) {
+        const sortedEmployees = sortEmployees(newEmployees);
         setEmployees((prevEmployees) =>
-          pageNumber === 1 ? newEmployees : [...prevEmployees, ...newEmployees]
+          pageNumber === 1 ? sortedEmployees : [...prevEmployees, ...sortedEmployees]
         );
         setPage(pageNumber);
         setHasMore(newEmployees.length === 10);
@@ -58,6 +60,10 @@ const EmployeeScreen = () => {
       setLoading(false);
       setLoadingMore(false);
     }
+  };
+
+  const sortEmployees = (employeesList) => {
+    return employeesList.sort((a, b) => b.isOnline - a.isOnline);
   };
 
   const loadMoreEmployees = () => {
@@ -95,8 +101,10 @@ const EmployeeScreen = () => {
         Alert.alert("Success", "User logged out successfully");
         // Update the employees list
         setEmployees((prevEmployees) =>
-          prevEmployees.map((emp) =>
-            emp._id === selectedUser._id ? { ...emp, isOnline: false } : emp
+          sortEmployees(
+            prevEmployees.map((emp) =>
+              emp._id === selectedUser._id ? { ...emp, isOnline: false } : emp
+            )
           )
         );
       } else {
@@ -144,13 +152,16 @@ const EmployeeScreen = () => {
                 }`}
               >{`${item.firstName} ${item.lastName}`}</Text>
               {item.isOnline && item.role !== "Manager" && (
-                <Xbutton
+                <TouchableOpacity
+                  className="bg-primary-dark p-1 mr-3 rounded-md"
                   onPress={() => {
-                    console.log(`Xbutton pressed for user: ${item._id}`);
+                    console.log(`Log-out pressed for user: ${item._id}`);
                     setSelectedUser(item);
                     setModalVisible(true);
                   }}
-                />
+                >
+                  <Icon name="log-out" color="#fff" type="feather" />
+                </TouchableOpacity>
               )}
             </TouchableOpacity>
           )}

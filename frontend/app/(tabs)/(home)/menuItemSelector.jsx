@@ -1,4 +1,3 @@
-// app/(tabs)/(home)/menuItemSelector.jsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -15,6 +14,8 @@ import CustomButton from "../../../components/CustomButton";
 import { useOrder } from "../../../contexts/orderContext";
 import { useMenu } from "../../../contexts/menuContext"; // Import the custom hook
 import { useTheme } from "../../../contexts/themeContext.jsx";
+import { SvgXml } from "react-native-svg";
+import filterIcon from "../../../assets/icons/filterIcon.js";
 
 const MenuItemSelector = () => {
   const [name, setName] = useState("");
@@ -26,10 +27,13 @@ const MenuItemSelector = () => {
   const { addItemToOrder } = useOrder();
   const router = useRouter();
   const params = useLocalSearchParams();
-
+  
   const { menuItems, loading } = useMenu(); // Use the custom hook to access menu items
   const [menuSelected, setMenuSelected] = useState(null);
   const { theme, bgColor, textColor } = useTheme();
+  
+  // State to manage filter visibility
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     // Ensure category is set from params if available
@@ -135,19 +139,34 @@ const MenuItemSelector = () => {
 
   return (
     <SafeAreaView className={`flex-1 p-4 ${bgColor}`}>
-      <Filters
-        name={name}
-        setName={setName}
-        price={price}
-        setPrice={setPrice}
-        category={category} // Pass category
-        setCategory={setCategory} // Pass setCategory
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        limit={limit}
-        setLimit={setLimit}
-        handleFilter={handleFilter}
-      />
+      <View className="w-full flex items-end mb-4">
+        <TouchableOpacity
+          className="w-10 h-10"
+          onPress={() => setShowFilters((prevShowFilters) => !prevShowFilters)}
+        >
+          <SvgXml
+            xml={filterIcon}
+            width="100%"
+            height="100%"
+            className="mb-4"
+          />
+        </TouchableOpacity>
+      </View>
+      {showFilters && (
+        <Filters
+          name={name}
+          setName={setName}
+          price={price}
+          setPrice={setPrice}
+          category={category} // Pass category
+          setCategory={setCategory} // Pass setCategory
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          limit={limit}
+          setLimit={setLimit}
+          handleFilter={handleFilter}
+        />
+      )}
       <ScrollView className="flex-1">
         {loading ? (
           <ActivityIndicator size="large" color="#7CA982" />

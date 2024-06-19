@@ -14,7 +14,9 @@ const ThemeProvider = ({ children }) => {
     theme === "light" ? "text-primary-dark" : "text-primary-lighter";
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, bgColor, textColor }}>
+    <ThemeContext.Provider
+      value={{ theme, setTheme, toggleTheme, bgColor, textColor }}
+    >
       {children}
     </ThemeContext.Provider>
   );

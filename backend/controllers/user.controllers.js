@@ -99,14 +99,13 @@ const login = asyncHandler(async (req, res) => {
   });
 });
 
-
 /* 
 @desc     Logout a user
 @route    GET /users/logout
 @access   Private
 */
 const logout = asyncHandler(async (req, res) => {
-  console.log('Logging out from Server...')
+  console.log("Logging out from Server...");
   const { userId } = req;
 
   // Clear the cookie
@@ -122,7 +121,6 @@ const logout = asyncHandler(async (req, res) => {
 
   res.status(200).json({ message: "User logged out successfully", timeTrack });
 });
-
 
 /* 
 @desc     Force logout users who haven't logged out by end of day
@@ -172,7 +170,9 @@ const updateUser = asyncHandler(async (req, res) => {
   const avatar = req.file?.filename;
 
   try {
-    const hashedPassword = password ? await bcrypt.hash(password, 12) : password;
+    const hashedPassword = password
+      ? await bcrypt.hash(password, 12)
+      : password;
 
     const user = await UserModel.findById(userId);
     const oldAvatar = user.avatar;
@@ -194,10 +194,11 @@ const updateUser = asyncHandler(async (req, res) => {
     res.status(200).json({ message: "User updated successfully" });
   } catch (error) {
     console.error("Error updating user:", error);
-    res.status(500).json({ message: "Internal Server Error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 });
-
 
 /* 
 @desc     Update a user's role
@@ -211,15 +212,23 @@ const updateUserRole = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("You are not authorized to perform this action");
   }
-  const { id } = req.params;
+
+  const { userId } = req.params;
   const { role } = req.body;
+
   // Check if the role is valid
-  if (role !== "admin" && role !== "manager" && role !== "waiter") {
+  if (
+    role !== "admin" &&
+    role !== "manager" &&
+    role !== "waiter" &&
+    role !== "chef" &&
+    role !== "bartender"
+  ) {
     res.status(400);
     throw new Error("Invalid role");
   }
   // Update the user's role
-  await UserModel.findByIdAndUpdate(id, { role });
+  await UserModel.findByIdAndUpdate(userId, { role });
   // Send the response
   res.status(200).json({ message: "User role updated successfully" });
 });
@@ -255,11 +264,11 @@ const deleteUser = asyncHandler(async (req, res) => {
 @access   Private
 */
 const timeTrack = asyncHandler(async (req, res) => {
-  console.log('Request Query:', req.query); // Log the request query parameters
+  console.log("Request Query:", req.query); // Log the request query parameters
   const { userId } = req.query;
 
   if (!userId) {
-    console.log('No userId provided');
+    console.log("No userId provided");
     res.status(400).json({ message: "User ID is required" });
     return;
   }
@@ -268,22 +277,23 @@ const timeTrack = asyncHandler(async (req, res) => {
     // Get the user's time track record
     const timeTrack = await TimeTrack.findOne({ userId });
     if (!timeTrack) {
-      console.log('Time tracking record not found for userId:', userId);
+      console.log("Time tracking record not found for userId:", userId);
       res.status(400).json({ message: "Time tracking record not found" });
       return;
     }
 
     // Log the retrieved time track record
-    console.log('Time track record found:', timeTrack);
+    console.log("Time track record found:", timeTrack);
 
     // Return all months' data if no specific month and year are provided
     res.status(200).json({ monthData: timeTrack.months });
   } catch (error) {
-    console.error('Server error:', error); // Log server error
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    console.error("Server error:", error); // Log server error
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 });
-
 
 /* 
 @desc     Get time tracking record for a specific user by ID
@@ -313,8 +323,10 @@ const getUserTimeTrack = asyncHandler(async (req, res) => {
 
     res.status(200).json({ monthData: timeTrack.months });
   } catch (error) {
-    console.error('Server error:', error);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    console.error("Server error:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 });
 
@@ -324,7 +336,7 @@ const getUserTimeTrack = asyncHandler(async (req, res) => {
 @access   Private
 */
 const getUsersList = asyncHandler(async (req, res) => {
-/*   // only admins can get the list of users
+  /*   // only admins can get the list of users
   const { userRole } = req;
   if (userRole !== "admin") {
     res.status(401);
@@ -345,10 +357,10 @@ const getUsersList = asyncHandler(async (req, res) => {
 */
 const getUserById = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  console.log('Fetching user by ID:', userId);
+  console.log("Fetching user by ID:", userId);
   const user = await UserModel.findById(userId);
   if (!user) {
-    console.log('User not found:', userId);
+    console.log("User not found:", userId);
     res.status(404).json({ message: "User not found" });
     return;
   }
@@ -364,7 +376,6 @@ const getUserById = asyncHandler(async (req, res) => {
     },
   });
 });
-
 
 /* 
 @desc     Show user's avatar
@@ -390,8 +401,6 @@ const showAvatar = asyncHandler(async (req, res) => {
   const absolutePath = path.join(__dirname, "..", picturePath);
   res.sendFile(absolutePath);
 });
-
-
 
 /* 
 @desc     Get all tables

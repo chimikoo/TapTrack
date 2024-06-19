@@ -2,9 +2,11 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { useTheme } from "../contexts/themeContext.jsx";
 
-const CustomButton = ({ text, containerStyles, handlePress }) => {
+const CustomButton = ({ text, containerStyles, handlePress, bgColor = "" }) => {
   const { theme } = useTheme();
-  const bgColor = theme === "light" ? "bg-primary-dark" : "bg-primary";
+  if (!bgColor) {
+    bgColor = theme === "light" ? "bg-primary-dark" : "bg-primary";
+  }
   return (
     <TouchableOpacity
       onPress={handlePress}

@@ -81,8 +81,9 @@ const AdminProfile = () => {
   const updateRole = async (newRole) => {
     try {
       const token = await SecureStore.getItemAsync("userToken");
+      const url = `${TAP_TRACK_URL}/users/role/${userId}`;
       const response = await axios.patch(
-        `${TAP_TRACK_URL}/users/role/${userId}`,
+        url,
         { role: newRole },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -237,11 +238,13 @@ const AdminProfile = () => {
               text="Yes"
               containerStyles="w-[40%]"
               handlePress={handleDelete}
+              bgColor="bg-red-500"
             />
             <CustomButton
               text="No"
               containerStyles="w-[40%]"
               handlePress={() => setDeleteModalVisible(false)}
+              bgColor="bg-gray-300"
             />
           </View>
         </View>

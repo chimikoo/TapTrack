@@ -18,14 +18,27 @@ const generateEodReport = asyncHandler(async (req, res) => {
   // Create EoD report document
   const eodReport = await EodModel.create(eodVariables);
 
-  // Save old receipts in the oldreceipts collection and Reset all of Receipt/Orders
-  await OldReceipt.insertMany(receipts);
+  // Prepare old receipts data to be inserted into OldReceipt collection
+  const oldReceiptsData = receipts.map(receipt => ({
+    orderId: receipt._id,
+    host: receipt.host,
+    totalAmount: receipt.totalAmount,
+    tableNumber: receipt.tableNumber,
+    paymentMethod: receipt.paymentMethod,
+    transactionDate: receipt.transactionDate,
+    notes: receipt.notes,
+    isPaid: receipt.isPaid,
+    items: receipt.items,
+  }));
+
+  // Save old receipts in the OldReceipt collection
+  await OldReceipt.insertMany(oldReceiptsData);
+
+  // Reset all of Receipt/Orders
   await Receipt.deleteMany({});
   await Order.deleteMany({});
 
-  res
-    .status(200)
-    .json({ message: "End of Day report generated", data: eodReport });
+  res.status(200).json({ message: "End of Day report generated", data: eodReport });
 });
 
 /* 
@@ -71,4 +84,78 @@ const viewEodReportByDate = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "EoD report", data: eodReport });
 });
 
-export { generateEodReport, viewEodReport, viewEodReportByDate };
+/* 
+@desc   View End of Day report for a specific date
+@route  GET /eod/:date
+@access Private (Only accessible to admin or manager)
+*/
+const getReceiptsByDateRange = asyncHandler(async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+      res.status(400);
+      throw new Error("Please provide both startDate and endDate");
+    }
+
+    // Validate date format
+    if (isNaN(Date.parse(startDate)) || isNaN(Date.parse(endDate))) {
+      res.status(400);
+      throw new Error("Invalid date format");
+    }
+
+    // Parse the dates
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Set the time for the start date to the beginning of the day
+    start.setHours(0, 0, 0, 0);
+
+    // Set the time for the end date to the end of the day
+    end.setHours(23, 59, 59, 999);
+
+    console.log(`Start Date: ${start}`);
+    console.log(`End Date: ${end}`);
+
+    const query = {
+      transactionDate: {
+        $gte: start,
+        $lte: end,
+      },
+    };
+
+    console.log('Query:', JSON.stringify(query));
+
+    const receipts = await OldReceipt.find(query).populate({
+      path: "orderId",
+      populate: {
+        path: "userId drinks.drinkItem starter.dishItem main.dishItem side.dishItem dessert.dishItem",
+      },
+    });
+
+    console.log(`Receipts found: ${receipts.length}`);
+    console.log('Receipts:', receipts);
+
+    if (!receipts || receipts.length === 0) {
+      res.status(404).send({
+        message: "No receipts found in the given date range",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Receipts within the date range",
+      numberOfReceipts: receipts.length,
+      data: receipts,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+
+
+export { generateEodReport, viewEodReport, viewEodReportByDate, getReceiptsByDateRange };

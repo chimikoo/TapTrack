@@ -32,16 +32,18 @@ const PaymentModal = ({
         </View>
         <View className="flex-row justify-between w-full">
           <CustomButton
+            text="Confirm"
+            containerStyles="w-[40%]"
+            handlePress={handleConfirm}
+            bgColor="bg-primary"
+          />
+          <CustomButton
             text="Cancel"
             containerStyles="w-[40%]"
             handlePress={() =>
               setModalVisible((prevModalVisible) => !prevModalVisible)
             }
-          />
-          <CustomButton
-            text="Confirm"
-            containerStyles="w-[40%]"
-            handlePress={handleConfirm}
+            bgColor="bg-secondary"
           />
         </View>
       </View>

@@ -25,13 +25,15 @@ const ReceiptDetail = () => {
         const url = `${TAP_TRACK_URL}/users/checkout/${receiptId}`;
         const { data } = await axios.get(url);
         setReceipt(data.data);
+        setTipAmount(data.data.notes || 0); // Set initial tip amount from receipt notes
         setLoading(false);
       } catch (error) {
         console.error(error);
+        setLoading(false);
       }
     };
     getReceipt();
-  }, []);
+  }, [receiptId]);
 
   const handlePayment = async () => {
     try {
@@ -41,9 +43,8 @@ const ReceiptDetail = () => {
         notes: tipAmount,
         isPaid: true,
       };
-      const response = await axios.patch(url, data);
-      setModalVisible((prevModalVisible) => !prevModalVisible);
-      // navigate to the home screen
+      await axios.patch(url, data);
+      setModalVisible(false);
       router.push("/receipts");
     } catch (error) {
       console.log("error", error);
@@ -56,7 +57,7 @@ const ReceiptDetail = () => {
         <ReceiptComponent
           receipt={receipt}
           loading={loading}
-          tipAmount={receipt.notes}
+          tipAmount={tipAmount} // Use tipAmount from state
         />
       </View>
       <View className="flex-row justify-between items-center p-4">
@@ -66,7 +67,7 @@ const ReceiptDetail = () => {
               <CustomButton
                 text="Card"
                 handlePress={() => {
-                  setModalVisible((prevModalVisible) => !prevModalVisible);
+                  setModalVisible(true);
                   setPaymentMethod("Credit Card");
                 }}
                 containerStyles="w-[45%]"
@@ -74,7 +75,7 @@ const ReceiptDetail = () => {
               <CustomButton
                 text="Cash"
                 handlePress={() => {
-                  setModalVisible((prevModalVisible) => !prevModalVisible);
+                  setModalVisible(true);
                   setPaymentMethod("Cash");
                 }}
                 containerStyles="w-[45%]"
