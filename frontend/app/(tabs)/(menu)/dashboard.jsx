@@ -9,7 +9,7 @@ import { TAP_TRACK_URL } from "@env";
 import { useTheme } from "../../../contexts/themeContext.jsx";
 
 export default function DashboardScreen() {
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date(Date.now() - 6 * 24 * 60 * 60 * 1000));
   const [endDate, setEndDate] = useState(new Date());
   const [isStartDatePickerVisible, setStartDatePickerVisibility] =
     useState(false);
