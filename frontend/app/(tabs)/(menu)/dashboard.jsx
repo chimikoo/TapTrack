@@ -9,12 +9,15 @@ import { TAP_TRACK_URL } from "@env";
 import { useTheme } from "../../../contexts/themeContext.jsx";
 
 export default function DashboardScreen() {
-  const [startDate, setStartDate] = useState(new Date(Date.now() - 6 * 24 * 60 * 60 * 1000));
+  const [startDate, setStartDate] = useState(
+    new Date(Date.now() - 6 * 24 * 60 * 60 * 1000)
+  );
   const [endDate, setEndDate] = useState(new Date());
   const [isStartDatePickerVisible, setStartDatePickerVisibility] =
     useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
   const [receipts, setReceipts] = useState([]);
+  const [isEodGenerated, setIsEodGenerated] = useState(false);
   const { theme, bgColor, textColor } = useTheme();
 
   const fetchData = async () => {
@@ -40,7 +43,7 @@ export default function DashboardScreen() {
 
   useEffect(() => {
     fetchData();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, isEodGenerated]);
 
   const showStartDatePicker = () => {
     setStartDatePickerVisibility(true);
@@ -150,6 +153,7 @@ export default function DashboardScreen() {
       const { data } = await axios.post(`${TAP_TRACK_URL}/eod`);
       console.log("EoD generated:", data);
       Alert.alert("Success", "EoD generated successfully!");
+      setIsEodGenerated(true);
     } catch (error) {
       console.log(error);
     }
